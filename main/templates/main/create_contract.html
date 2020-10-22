@@ -1,0 +1,87 @@
+{% extends "main/base.html" %}
+
+{% block title %}{% endblock %}
+{% block title_h1 %}Создание договора к заказу {{ order }}{% endblock %}
+
+
+
+{% block body_content %}
+
+<form method="POST" class="post-form">{% csrf_token %}
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="form-layout form-layout-4">
+                <div class="col-sm-8 mg-t-10 mg-sm-t-0" hidden>
+                    {{ form.order }} {{ form.customer }}
+                </div>
+                <p class="mg-b-30 tx-gray-700">Заполните условия договора для заказчика ({{ customer }}).</p>
+                <div class="row">
+                    <label class="col-sm-4 form-control-label">Сумма договора:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                        {{ form.price }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Гарантийный срок:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                        {{ form.garant }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Размер предоплаты:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                     {{ form.prepay }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Период предоплаты:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                     {{ form.prepay_duration }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Начало работ:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                     {{ form.work_start }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Длительность работ:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                     {{ form.work_duration }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Дата приёмки:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                     {{ form.date_acceptance }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Дата выполнения:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                     {{ form.date_finish }}
+                    </div>
+                </div>
+                <br>
+               <!-- row -->
+
+               <!-- row -->
+               <div class="row mg-t-30">
+                  <div class="col-sm-8">
+                     <div class="form-layout-footer">
+                        <button type="Submit" class="btn btn-primary">Добавить</button>
+                         <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Отменить</a>
+                     </div>
+                     <!-- form-layout-footer -->
+                  </div>
+                  <!-- col-8 -->
+               </div>
+            </div>
+            <!-- form-layout -->
+         </div>
+
+    </div>
+ </form>
+</br>
+{% endblock %}

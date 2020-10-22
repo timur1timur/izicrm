@@ -1,0 +1,79 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Добавление сотрудника{% endblock %}
+
+
+
+{% block body_content %}
+
+<form method="POST" class="post-form">{% csrf_token %}
+    <div class="row">
+        <div class="col-xl-5">
+            <div class="form-layout form-layout-4">
+
+                <p class="mg-b-30 tx-gray-700">Заполните форму добавление сотрудника.</p>
+                <div class="row">
+                    <label class="col-sm-4 form-control-label">Логин:</label>
+                    <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                        <input type="text" class="form-control" name="username" placeholder="Username" aria-label="username" aria-describedby="basic-addon3">
+                    </div>
+                </div>
+
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Пароль:</label>
+                    <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                        <input type="text" class="form-control" name="password" placeholder="Password" aria-label="password" aria-describedby="basic-addon3">
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Email:</label>
+                    <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                        <input type="text" class="form-control" name="email" placeholder="Email" aria-label="email" aria-describedby="basic-addon3">
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Имя и Фамилия:</label>
+                    <div class="col-sm-3 mg-t-10 mg-sm-t-0">
+                        <input type="text" class="form-control" name="first_name" placeholder="Имя">
+                    </div>
+                    <div class="col-sm-5 mg-t-10 mg-sm-t-0">
+                        <input type="text" class="form-control" name="last_name" placeholder="Фамилия">
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                  <label class="col-sm-4 form-control-label">Роль:</label>
+                  <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+
+                      <div class="custom-control custom-radio">
+                          <input name="designer" type="radio" class="custom-control-input" id="radio1">
+                          <label class="custom-control-label" for="radio1">Дизайнер</label>
+                      </div>
+                      <div class="custom-control custom-radio">
+                          <input name="manager" type="radio" class="custom-control-input" id="radio2">
+                          <label class="custom-control-label" for="radio2">Менеджер</label>
+                      </div>
+
+                  </div>
+               </div>
+                <br>
+               <!-- row -->
+
+               <!-- row -->
+               <div class="row mg-t-30">
+                  <div class="col-sm-8">
+                     <div class="form-layout-footer">
+                        <button type="Submit" class="btn btn-primary">Добавить</button>
+                         <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Отменить</a>
+                     </div>
+                     <!-- form-layout-footer -->
+                  </div>
+                  <!-- col-8 -->
+               </div>
+            </div>
+            <!-- form-layout -->
+         </div>
+
+    </div>
+ </form>
+</br>
+{% endblock %}

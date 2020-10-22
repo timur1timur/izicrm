@@ -1,0 +1,92 @@
+{% extends "main/base.html" %}
+
+{% block title %}{% endblock %}
+{% block title_h1 %}Добавление нового заказчика{% endblock %}
+
+
+
+{% block body_content %}
+
+<form method="POST" class="post-form">{% csrf_token %}
+    <div class="row">
+        <div class="col-xl-5">
+            <div class="form-layout form-layout-4">
+               <p class="mg-b-30 tx-gray-700">Введите данные заказчика.</p>
+               <div class="row">
+                  <label class="col-sm-4 form-control-label"><span class="tx-danger">*</span> ФИО:</label>
+                  <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                     {{ form.name }}
+                  </div>
+               </div>
+               <!-- row -->
+               <div class="row mg-t-20">
+                  <label class="col-sm-4 form-control-label">Email:</label>
+                  <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                     {{ form.email }}
+                  </div>
+               </div>
+               <div class="row mg-t-20">
+                  <label class="col-sm-4 form-control-label">Телефон:</label>
+                  <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                     {{ form.phone }}
+                  </div>
+               </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Адрес:</label>
+                    <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                        {{ form.address }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Паспорт:</label>
+                    <div class="col-sm-3 mg-t-10 mg-sm-t-0">
+                        {{ form.pass_series }}
+                    </div>
+                    <div class="col-sm-5 mg-t-10 mg-sm-t-0">
+                        {{ form.pass_number }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label"></label>
+                    <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                        {{ form.pass_date }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label"></label>
+                    <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                        {{ form.pass_issued }}
+                    </div>
+                </div>
+
+                </br>
+               <div class="row">
+                  <label class="col-sm-4 form-control-label"><span class="tx-danger">*</span> Источник заказа:</label>
+                  <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                      {% for choice in form.source %}
+                          <div class="custom-control custom-checkbox">
+                              {{ choice.tag }} <label class="tx-gray-700">{{ choice.choice_label }}</label>
+                          </div>
+                      {% endfor %}
+                  </div>
+               </div>
+
+               <!-- row -->
+               <div class="row mg-t-30">
+                  <div class="col-sm-8">
+                     <div class="form-layout-footer">
+                        <button type="Submit" class="btn btn-primary">Создать</button>
+                        <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Отменить</a>
+                     </div>
+                     <!-- form-layout-footer -->
+                  </div>
+                  <!-- col-8 -->
+               </div>
+            </div>
+            <!-- form-layout -->
+         </div>
+
+    </div>
+ </form>
+</br>
+{% endblock %}

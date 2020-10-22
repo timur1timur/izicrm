@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Bootstrap 4, from LayoutIt!</title>
+
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="LayoutIt!">
+
+    <link href="/static/main/kp/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/main/kp/css/style.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+    <div class="container-fluid">
+	<div class="row">
+        {% load custom_tags %}
+        {% for room in rooms %}
+            <h3>{{ room.name }}</h3>
+            <div class="col-md-4">
+                <il> <h4>Econom</h4>
+                {% if sps|get_item:room.name|get_item:"Econom" %}
+                    <li><p>Textile {{ sps|get_item:room.name|get_item:"Econom"|get_item:"textile" }}</p></li>
+                    <li><p>Cornice {{ sps|get_item:room.name|get_item:"Econom"|get_item:"cornice" }}</p></li>
+                    <li><p>Sewing {{ sps|get_item:room.name|get_item:"Econom"|get_item:"sewing" }}</p></li>
+                    <li><p>Assembly {{ sps|get_item:room.name|get_item:"Econom"|get_item:"assembly" }}</p></li>
+                    <p><h5>TOTAL: {{ sps|get_item:room.name|get_item:"Econom"|get_item:"total" }}</h5></p>
+                {% else %}
+                    <li><p>Textile 0</p></li>
+                    <li><p>Cornice 0</p></li>
+                    <li><p>Sewing 0</p></li>
+                    <li><p>Assembly 0</p></li>
+                    <p><h5>TOTAL: 0</h5></p>
+                {% endif %}
+                </il>
+		    </div>
+
+
+
+        {% endfor %}
+
+	</div>
+</div>
+
+    <script src="/static/main/kp/js/jquery.min.js"></script>
+    <script src="/static/main/kp/js/bootstrap.min.js"></script>
+    <script src="/static/main/kp/js/scripts.js"></script>
+  </body>
+</html>

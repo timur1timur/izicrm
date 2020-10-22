@@ -1,0 +1,297 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Отчет: Бюджет ({{period}}){% endblock %}
+{% block breadcrumb_buttons %}
+<button onclick="location.href='{% url 'report:budget' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
+<i data-feather="bar-chart-2" class="wd-16 mr-2"></i>Текущий месяц</button>
+<button onclick="location.href='{% url 'report:budget_month' %}'" type="button" class="btn btn-secondary mr-2 mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force">
+<i data-feather="bar-chart-2" class="wd-16 mr-2"></i>По месяцам</button>
+{% endblock %}
+
+{% block body_content %}
+                <div class="card mg-b-30">
+                  <div class="clearfix mg-b-30">
+                     <div id="flotChartBehavior" style="height: 250px"></div>
+                  </div>
+                  <div class="table-responsive">
+                     <table class="table table-bordered">
+                        <thead>
+                           <tr>
+                              <th>&nbsp;</th>
+                              <th colspan="3" class="tx-center">По дням</th>
+                              <th colspan="3" class="tx-center">С накоплением</th>
+                           </tr>
+                           <tr>
+                              <th>День</th>
+                              <th>Выручка</th>
+                              <th>Расходы</th>
+                              <th>Доход</th>
+                              <th>Выручка</th>
+                              <th>Расходы</th>
+                              <th>Доход</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           {% for q in budget_mass %}
+                              <tr>
+                                 <td><a href="">{{q}}</a></td>
+
+                                 {% if budget_mass|get_item:q|get_item:"arrival" == 0 %}
+                                    <td>-</td>
+                                 {% else %}
+                                    <td>{{ budget_mass|get_item:q|get_item:"arrival" }}</td>
+                                 {% endif %}
+
+                                 {% if budget_mass|get_item:q|get_item:"expense" == 0 %}
+                                    <td>-</td>
+                                 {% else %}
+                                    <td>{{ budget_mass|get_item:q|get_item:"expense" }}</td>
+                                 {% endif %}
+
+                                 {% if budget_mass|get_item:q|get_item:"profit" < 0 %}
+                                    <td class="tx-danger">{{ budget_mass|get_item:q|get_item:"profit" }}</td>
+                                 {% elif budget_mass|get_item:q|get_item:"profit" == 0 %}
+                                    <td class="tx-light">-</td>
+                                 {% else %}
+                                    <td class="tx-success">{{ budget_mass|get_item:q|get_item:"profit" }}</td>
+                                 {% endif %}
+
+                                 {% if budget_mass|get_item:q|get_item:"arrival_n" == 0 %}
+                                    <td>-</td>
+                                 {% else %}
+                                    <td>{{ budget_mass|get_item:q|get_item:"arrival_n" }}</td>
+                                 {% endif %}
+
+                                 {% if budget_mass|get_item:q|get_item:"expense_n" == 0 %}
+                                    <td>-</td>
+                                 {% else %}
+                                    <td>{{ budget_mass|get_item:q|get_item:"expense_n" }}</td>
+                                 {% endif %}
+
+                                 {% if budget_mass|get_item:q|get_item:"profit_n" < 0 %}
+                                    <td class="tx-danger">{{ budget_mass|get_item:q|get_item:"profit_n" }}</td>
+                                 {% elif budget_mass|get_item:q|get_item:"profit_n" == 0 %}
+                                    <td class="tx-light">-</td>
+                                 {% else %}
+                                    <td class="tx-success">{{ budget_mass|get_item:q|get_item:"profit_n" }}</td>
+                                 {% endif %}
+                              </tr>
+                           {% endfor %}
+
+                        </tbody>
+                     </table>
+                  </div>
+                  <!-- table-responsive -->
+               </div>
+
+
+<script src="/static/main/assets/plugins/chartjs/chartjs.js"></script>
+ <script src="/static/main/assets/plugins/chartjs/chartjs-active.js"></script>
+
+ <script>
+    var ctx = document.getElementById('myChart9').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',// bar, horizontalBar, pie, line, doughnut, radar, polarArea
+
+        data: {
+            labels: {{ cus_label|safe }},
+            datasets: [{
+                data: {{ cus_data|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ]
+            }]
+        },
+        options: {
+            legend: {
+                display: true,
+                position: 'right',
+                labels: {
+                    fontColor: '#000'
+                }
+            }
+
+        }
+
+
+    });
+
+    var ctx = document.getElementById('myChart10').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',// bar, horizontalBar, pie, line, doughnut, radar, polarArea
+
+        data: {
+            labels: {{ cus_label2|safe }},
+            datasets: [{
+                data: {{ cus_data2|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ]
+            }]
+        },
+        options: {
+            legend: {
+                display: true,
+                position: 'right',
+                labels: {
+                    fontColor: '#000'
+                }
+            }
+
+        }
+
+
+    });
+  </script>
+<script src="/static/main/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/main/assets/plugins/jquery-ui/jquery-ui.js"></script>
+<script src="/static/main/assets/plugins/flot/jquery.flot.js"></script>
+<script src="/static/main/assets/plugins/flot/jquery.flot.pie.js"></script>
+<script src="/static/main/assets/plugins/flot/jquery.flot.resize.js"></script>
+<script src="/static/main/assets/plugins/flot/sampledata.js"></script>
+
+<script>
+! function (e) {
+	"use strict";
+
+       $.plot('#flotChartBehavior', [{
+			data: {{arrival_m|safe}},
+			color: '#69b2f8',
+			lines: {
+				lineWidth: 1
+			}
+		}, {
+			data: {{expense_m|safe}},
+			color: '#e83e8c',
+			lines: {
+				lineWidth: 1
+			}
+		}], {
+			series: {
+				stack: 0,
+				shadowSize: 0,
+				lines: {
+					show: true,
+					lineWidth: 1.7,
+					fill: true,
+					fillColor: {
+						colors: [{
+							opacity: 0
+						}, {
+							opacity: 0.5
+						}]
+					}
+				}
+			},
+			grid: {
+				borderWidth: 0,
+				labelMargin: 5,
+				hoverable: true
+			},
+			yaxis: {
+				show: true,
+				color: 'rgba(72, 94, 144, .1)',
+				min: 0,
+				max: {{max}},
+				font: {
+					size: 10,
+					color: '#8392a5'
+				}
+			},
+			xaxis: {
+				show: true,
+				color: 'rgba(72, 94, 144, .1)',
+				ticks: {{ date_m|safe }},
+				font: {
+					size: 8,
+					family: 'IBM Plex Sans", sans-serif',
+					color: '#8392a5'
+				},
+				reserveSpace: false
+			}
+		});
+
+}(jQuery);
+
+
+</script>
+
+<script>
+
+     // Dashboard DateTimePicker
+     $(function() {
+     var isRtl = $('body').attr('dir') === 'rtl' || $('html').attr('dir') === 'rtl';
+
+     // Button
+     var startY = document.getElementById( 'startDateY' );
+     var startM = document.getElementById( 'startDateM' );
+     var startD = document.getElementById( 'startDateD' );
+     var endY = document.getElementById( 'endDateY' );
+     var endM = document.getElementById( 'endDateM' );
+     var endD = document.getElementById( 'endDateD' );
+
+
+     var start = moment([Number(startY.textContent), Number(startM.textContent), Number(startD.textContent)]);
+     var end = moment([Number(endY.textContent), Number(endM.textContent), Number(endD.textContent)]);
+
+
+     function cb(start, end) {
+     $('#dashboardDate3').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+     }
+     $('#dashboardDate3').daterangepicker({
+     startDate: start,
+     endDate: end,
+     ranges: {
+     'Сегодня': [moment(), moment()],
+     'Вчера': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+     'Последние 7 дней': [moment().subtract(6, 'days'), moment()],
+     'Последние 30 дней': [moment().subtract(29, 'days'), moment()],
+     'Это месяц': [moment().startOf('month'), moment().endOf('month')],
+     'Предыдущий месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+     },
+     opens: (isRtl ? 'left' : 'right')
+     }, cb);
+     cb(start, end);
+
+     // Replace icons
+     $('#dashboardDate3').each(function() {
+     var obj = $(this).data('daterangepicker');
+     var _updateCalendars = obj.updateCalendars;
+     obj.updateCalendars = function() {
+     // Call original function
+     _updateCalendars.call(obj)
+     // Replace icons
+     obj.container.find('.prev > i').each(function() { this.className = 'ion ion-ios-arrow-back' });
+     obj.container.find('.next > i').each(function() { this.className = 'ion ion-ios-arrow-forward' });
+     obj.container.find('.daterangepicker_input > i').each(function() { this.className = 'ion ion-md-calendar' });
+     obj.container.find('.calendar-time > i').each(function() { this.className = 'ion ion-md-time' });
+
+     };
+     });
+
+      $('#dashboardDate3').on('apply.daterangepicker', function(ev, picker) {
+
+        var start = (picker.startDate.format('YYYY-MM-DD'));
+        var end = (picker.endDate.format('YYYY-MM-DD'));
+
+        var link = '{% url 'report:orders_date' 'val1' 'val2' %}';
+        link = link.replace('val1', start);
+        link = link.replace('val2', end);
+        window.location.href = link;
+      });
+     });
+</script>
+
+
+{% endblock %}
+

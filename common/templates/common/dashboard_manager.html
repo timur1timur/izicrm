@@ -1,0 +1,561 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Мониторинг заказов{% endblock %}
+{% block breadcrumb_buttons %}
+
+<button id="dashboardDate1" class="btn btn-default dropdown-toggle mr-2 d-none d-md-block pd-y-8-force"></button>
+
+{% endblock %}
+
+{% block body_content %}
+
+               <div class="row">
+                   <div class="d-flex align-items-center">
+                        <span id="startDateY" hidden> {{ startDate.0 }}</span>
+                        <span id="startDateM" hidden> {{ startDate.1 }}</span>
+                        <span id="startDateD" hidden> {{ startDate.2 }}</span>
+                        <span id="endDateY" hidden> {{ endDate.0 }}</span>
+                        <span id="endDateM" hidden> {{ endDate.1 }}</span>
+                        <span id="endDateD" hidden> {{ endDate.2 }}</span>
+                   </div>
+
+                            <table class="table" >
+                                 <thead>
+                                    <tr>
+                                        <th class="tx-center">{{orders.5.name}}</th>
+                                        <th class="tx-center">{{orders.6.name}}</th>
+                                        <th class="tx-center">{{orders.7.name}}</th>
+                                        <th class="tx-center">{{orders.8.name}}</th>
+                                        <th class="tx-center">{{orders.9.name}}</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    <tr>
+
+                                       <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.5.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{% url 'manager:order_view' q.id %}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+                                       <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.6.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{% url 'manager:order_view' q.id %}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+                                        <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.7.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{% url 'manager:order_view' q.id %}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+                                        <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.8.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{% url 'manager:order_view' q.id %}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+                                        <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.9.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{% url 'manager:order_view' q.id %}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+
+
+
+
+                                    </tr>
+
+                                 </tbody>
+                              </table>
+
+               </div>
+
+                <div class="row">
+                  <!-- Expansions Details Start -->
+                  <!--================================-->
+                  <div class="col-xl-6">
+                     <div class="card mg-b-30">
+                        <div class="card-body pd-b-0">
+                           <div class="row mg-b-20">
+                              <div class="col">
+                                 <h5 class="mb-0 tx-14 tx-semibold">Показатели: выручка/заказы/расходы</h5>
+                                 <div class="tx-12 tx-gray-500">За период {{period}}</div>
+                              </div>
+
+                           </div>
+                           <div class="row clearfix mg-b-20">
+                              <div class="col-md-4 col-lg-4 col-xl-4 mg-t-20 mg-sm-t-0 mg-md-t-20 mg-lg-t-0">
+                                 <div class="media">
+                                    <div class="wd-40 ht-40 rounded bd bd-2 bd-primary d-flex flex-shrink-0 align-items-center justify-content-center">
+                                       <i data-feather="bar-chart-2" class="wd-20 ht-20 tx-primary"></i>
+                                    </div>
+                                    <div class="media-body mg-l-10">
+                                       <p class="tx-10 tx-uppercase tx-primary tx-spacing-1 mg-b-0 tx-medium">Выручка</p>
+                                       <h5 class="tx-normal tx-rubik lh-1 mg-b-5">{{ budget_fin|get_item:"arrival"}}</h5>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-md-4 col-lg-4 col-xl-4 mg-t-20 mg-sm-t-0 mg-md-t-20 mg-lg-t-0">
+                                 <div class="media">
+                                    <div class="wd-40 ht-40 rounded bd bd-2 bd-danger d-flex flex-shrink-0 align-items-center justify-content-center">
+                                       <i data-feather="bar-chart-2" class="wd-20 ht-20 tx-danger"></i>
+                                    </div>
+                                    <div class="media-body mg-l-10">
+                                       <p class="tx-10 tx-uppercase tx-danger tx-spacing-1 mg-b-0 tx-medium">Расходы</p>
+                                       <h5 class="tx-normal tx-rubik lh-1 mg-b-5">{{ budget_fin|get_item:"expense"}}</h5>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-md-4 col-lg-4 col-xl-4 mg-t-20 mg-sm-t-0 mg-md-t-20 mg-lg-t-0">
+                                 <div class="media">
+                                    <div class="wd-40 ht-40 rounded bd bd-2 bd-success d-flex flex-shrink-0 align-items-center justify-content-center">
+                                       <i data-feather="bar-chart-2" class="wd-20 ht-20 tx-success"></i>
+                                    </div>
+                                    <div class="media-body mg-l-10">
+                                       <p class="tx-10 tx-uppercase tx-success tx-spacing-1 mg-b-0 tx-medium">Доходы</p>
+                                       <h5 class="tx-normal tx-rubik lh-1 mg-b-5">{{ budget_fin|get_item:"profit"}}</h5>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="clearfix mg-b-20">
+                              <div id="stackedBarChart" style="height: 220px"></div>
+                           </div>
+                        </div>
+                        <div class="table-responsive">
+                           <table class="table table-dashboard mg-b-0">
+                              <thead class="tx-10 tx-uppercase">
+                                 <tr>
+                                     <th>Заказ</th>
+                                    <th>Дата</th>
+                                    <th class="text-left">Приход</th>
+                                    <th class="text-left">Расход</th>
+                                    <th class="text-right">Доход</th>
+                                     <th class="text-right"></th>
+                                 </tr>
+                              </thead>
+                              <tbody class="tx-13">
+                                {% for b in budget_order %}
+                                     <tr>
+                                         <td class="">#{{ b.number }}</td>
+                                        <td class="">{{ b.date_finished|date:'d.m.Y' }}</td>
+                                        <td class="tx-success tx-left">{{ budget|get_item:b.number|get_item:"arrival"}}</td>
+                                        <td class="tx-primary tx-left">{{ budget|get_item:b.number|get_item:"expense"}}</td>
+                                        <td class="tx-gray-500 tx-right">{{ budget|get_item:b.number|get_item:"profit"}}</td>
+                                         <td class="tx-gray-500 tx-left">
+                                            {% if budget|get_item:b.number|get_item:"marga" < 0 %}
+                                                <span class="mg-l-5 tx-10  tx-danger"><i class="ti-arrow-down tx-8"></i> {{ budget|get_item:b.number|get_item:"marga"}}%</span></td>
+                                            {% else %}
+                                                <span class="mg-l-5 tx-10  tx-success"><i class="ti-arrow-up tx-8"></i> {{ budget|get_item:b.number|get_item:"marga"}}%</span></td>
+                                            {% endif %}
+                                     </tr>
+                                {% endfor %}
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+                    <div class="col-xl-6">
+
+                     <div class="card mg-b-30">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-13 mb-0">Поставки</h6>
+                        </div>
+                        <div class="card-body pd-0 collapse show" id="browserUsedByUsers">
+                           <div class="table-responsive">
+                              <table class="table table-hover mg-0">
+                                 <thead class="tx-10 tx-uppercase">
+                                    <tr>
+
+                                       <th>Заказ</th>
+                                       <th class="text-left">Дата</th>
+                                       <th class="text-left">Материал</th>
+                                        <th class="text-left">Количество</th>
+                                       <th class="text-left">Статус</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% for q in qs %}
+                                        <tr>
+
+                                           <td><a href="{% url 'manager:order_view' q.order.id %}">#{{q.order.number}}</a></td>
+                                            <td class="text-left">{{q.date_created|date:'d.m.Y'}}</td>
+                                           <td class="text-left">{{ q.item.item.collection }} {{ q.item.item.model }} {{ q.item.item.color }}</td>
+                                            <td class="text-center">{{ q.item.quantity }}</td>
+                                           <td class="text-left tx-gray-700">
+                                               {% if q.item.ordered == 2 %}
+                                                                <span class="badge badge-secondary">{{ q.item.get_ordered_display }}</span>
+                                                            {% elif q.item.ordered == 3 %}
+                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }}</span>
+                                                            {% elif q.item.ordered == 4 %}
+                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }}</span>
+                                               {% endif %}
+                                           </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                 </tbody>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <!--/ Expansions Details End -->
+                </div>
+
+               <div class="row">
+                  <!--================================-->
+                  <!-- New Customers Start -->
+                  <!--================================-->
+                  <div class="col-lg-6 col-xl-4">
+                     <div class="card mg-b-30">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-13 mb-0">Новые покупатели</h6>
+                        </div>
+                        <div class="card-body pd-y-20">
+                           <ul class="list-unstyled mb-0">
+                               {% for c in customers %}
+                                   <li class="d-flex align-items-center mg-b-15">
+                                     <a href="">
+                                        <div class="avatar avatar-online"><span class="avatar-initial rounded-circle bg-gray-800"><i data-feather="user"></i></span></div>
+                                     </a>
+                                     <div class="media-body pd-l-15 lh-2">
+                                        <p class="tx-medium mg-b-2"><a href="">{{c.name|get_short_name}}</a></p>
+                                        <span class="tx-12 tx-gray-500">Создан: {{c.date_created|date:'d.m.Y'}}</span>
+                                     </div>
+                                     <div class="mg-l-auto d-flex align-self-center action-icon">
+                                        <nav class="nav nav-icon-only">
+                                           <a href="" data-toggle="tooltip" class="mr-2 tx-gray-500" title="" data-placement="top" data-original-title="Send Message"><i data-feather="mail" class="wd-16"></i></a>
+                                           <a href="" data-toggle="tooltip" class="mr-2 tx-gray-500" title="" data-placement="top" data-original-title="Add to Fiend"><i data-feather="user-plus" class="wd-16"></i></a>
+                                        </nav>
+                                     </div>
+                                   </li>
+                               {% endfor %}
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+                  <!--/ New Customers End -->
+                  <!--================================-->
+                  <!-- Transaction History Start -->
+                  <!--================================-->
+                  <div class="col-lg-6 col-xl-4">
+                     <div class="card mg-b-30">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-13 mb-0">История платежей</h6>
+                        </div>
+                        <div class="card-body pd-0 pd-y-15">
+                           <ul class="list-group list-group-flush tx-13">
+                               {% for p in payments %}
+                                  <li class="list-group-item d-flex pd-y-9 pd-sm-x-20">
+                                     <div class="d-none d-sm-block"><span class="wd-40 ht-40 mg-r-10 d-flex align-items-center justify-content-center rounded bg-primary tx-white"><i class="ti-money"></i></span></div>
+                                     <div class="pd-sm-l-10">
+                                        <p class="mg-b-0">{{ p.category.name }} к заказу <a href="{{p.order.get_absolute_url}}" class="tx-dark mg-b-0 tx-semibold">#{{p.order.number}}</a></p>
+                                        <span class="tx-12 mg-b-0 tx-gray-500">ID транзакции: #{{p.id}}</span>
+                                     </div>
+                                     <div class="mg-l-auto text-right">
+                                        <p class="mg-b-0 tx-rubik">{{p.price}}<small class="tx-8">руб.</small></p>
+                                        <span class="tx-success tx-12">Completed</span>
+                                     </div>
+                                  </li>
+                               {% endfor %}
+
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+                  <!--/ Transaction History End -->
+                  <!--================================-->
+                  <!-- Customer Satisfaction Start -->
+                  <!--================================-->
+                  <div class="col-xl-4">
+                     <div class="card mg-b-30">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-13 mb-0">Статусы оплаты заказов</h6>
+                        </div>
+                        <div class="card-body pd-0 pd-y-15">
+                           <ul class="list-group list-group-flush tx-13">
+                                {% for q in order_test %}
+                                  <li class="list-group-item d-flex pd-y-9 pd-sm-x-20">
+                                      <div class="d-none d-sm-block"><span class="wd-40 ht-40 mg-r-10 d-flex align-items-center justify-content-center rounded bg-secondary tx-white"><i class="ti-clipboard"></i></span></div>
+                                      <div class="pd-sm-l-10">
+                                        <p class="mg-b-0">{{ q }}</p>
+                                        <span class="tx-12 mg-b-0 tx-gray-500">Оплачено: {{ order_test|get_item:q|get_item:"progress" }}%</span>
+                                     </div>
+                                     <div class="mg-l-auto text-right">
+                                        <p class="mg-b-0 tx-rubik">{{ order_test|get_item:q|get_item:"status" }} <small class="tx-8">руб.</small></p>
+                                         {% if order_test|get_item:q|get_item:"ready" == 1 %}
+                                            <span class="tx-success tx-12">Оплачен</span>
+                                         {% else %}
+                                            <span class="tx-warning tx-12">Не оплачен</span>
+                                         {% endif %}
+                                     </div>
+                                  </li>
+                                {% endfor %}
+
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+                  <!--/ Customer Satisfaction End -->
+               </div>
+
+
+<script src="/static/main/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/main/assets/plugins/jquery-ui/jquery-ui.js"></script>
+<script src="/static/main/assets/plugins/moment/moment.min.js"></script>
+
+
+  <!-- Dashboard Script -->
+<script src="/static/main/assets/plugins/daterangepicker/daterangepicker.js"></script>
+  <script src="/static/main/assets/plugins/flot/jquery.flot.js"></script>
+  <script src="/static/main/assets/plugins/flot/jquery.flot.pie.js"></script>
+  <script src="/static/main/assets/plugins/flot/jquery.flot.resize.js"></script>
+  <script src="/static/main/assets/plugins/flot/sampledata.js"></script>
+<!--  <script src="/static/main/assets/js/dashboard/sales-dashboard-init2.js"></script>-->
+
+
+
+<script>
+! function (e) {
+	"use strict";
+
+    	//Stacked Bar Chart
+	$.plot('#stackedBarChart', [{
+		data: {{profit_mass|safe}},
+		color: '#23BF08',
+		lines: {
+			lineWidth: 1
+		}
+	}, {
+		data: {{expense_mass|safe}},
+		color: '#ff0000',
+		lines: {
+			lineWidth: 1
+		}
+	}, {
+		data: {{arrival_mass|safe}},
+		color: '#69b2f8'
+	}], {
+		series: {
+			stack: 0,
+			shadowSize: 0,
+			lines: {
+				show: true,
+				lineWidth: 1.7,
+				fill: true,
+				fillColor: {
+					colors: [{
+						opacity: 0
+					}, {
+						opacity: 0.5
+					}]
+				}
+			}
+		},
+		grid: {
+			borderWidth: 0,
+			labelMargin: 5,
+			hoverable: true
+		},
+		yaxis: {
+			show: true,
+			color: 'rgba(72, 94, 144, .1)',
+			min: 0,
+			max: {{max|safe}},
+			font: {
+				size: 10,
+				color: '#8392a5'
+			}
+		},
+		xaxis: {
+			show: true,
+			color: 'rgba(72, 94, 144, .1)',
+			ticks: {{ date_mass|safe }},
+			font: {
+				size: 10,
+				family: 'IBM Plex Sans", sans-serif',
+				color: '#8392a5'
+			},
+			reserveSpace: false
+		}
+	});
+
+	// Float Bar Chat
+	var flotChartOption1 = {
+		series: {
+			shadowSize: 0,
+			bars: {
+				show: true,
+				lineWidth: 0,
+				barWidth: .5,
+				fill: 1
+			}
+		},
+		grid: {
+			aboveData: true,
+			color: '#e5e9f2',
+			borderWidth: 0,
+			labelMargin: 0
+		},
+		yaxis: {
+			show: false,
+			min: 0,
+			max: 15
+		},
+		xaxis: {
+			show: false
+		}
+	};
+
+}(jQuery);
+
+
+</script>
+
+
+
+ <script src="/static/main/assets/plugins/chartjs/chartjs.js"></script>
+ <script src="/static/main/assets/plugins/chartjs/chartjs-active.js"></script>
+
+ <script>
+    var ctx = document.getElementById('myChart9').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',// bar, horizontalBar, pie, line, doughnut, radar, polarArea
+
+        data: {
+            labels: {{ cus_label|safe }},
+            datasets: [{
+                data: {{ cus_data|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ]
+            }]
+        },
+        options: {
+            legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                    fontColor: '#000'
+                }
+            }
+
+        }
+
+
+    });
+
+  </script>
+
+  <!-- Javascript -->
+<script>
+
+     // Dashboard DateTimePicker
+     $(function() {
+     var isRtl = $('body').attr('dir') === 'rtl' || $('html').attr('dir') === 'rtl';
+
+     // Button
+     var startY = document.getElementById( 'startDateY' );
+     var startM = document.getElementById( 'startDateM' );
+     var startD = document.getElementById( 'startDateD' );
+     var endY = document.getElementById( 'endDateY' );
+     var endM = document.getElementById( 'endDateM' );
+     var endD = document.getElementById( 'endDateD' );
+
+
+     var start = moment([Number(startY.textContent), Number(startM.textContent), Number(startD.textContent)]);
+     var end = moment([Number(endY.textContent), Number(endM.textContent), Number(endD.textContent)]);
+
+
+     function cb(start, end) {
+     $('#dashboardDate1').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+     }
+     $('#dashboardDate1').daterangepicker({
+     startDate: start,
+     endDate: end,
+     ranges: {
+     'Сегодня': [moment(), moment()],
+     'Вчера': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+     'Последние 7 дней': [moment().subtract(6, 'days'), moment()],
+     'Последние 30 дней': [moment().subtract(29, 'days'), moment()],
+     'Это месяц': [moment().startOf('month'), moment().endOf('month')],
+     'Предыдущий месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+     },
+     opens: (isRtl ? 'left' : 'right')
+     }, cb);
+     cb(start, end);
+
+     // Replace icons
+     $('#dashboardDate1').each(function() {
+     var obj = $(this).data('daterangepicker');
+     var _updateCalendars = obj.updateCalendars;
+     obj.updateCalendars = function() {
+     // Call original function
+     _updateCalendars.call(obj)
+     // Replace icons
+     obj.container.find('.prev > i').each(function() { this.className = 'ion ion-ios-arrow-back' });
+     obj.container.find('.next > i').each(function() { this.className = 'ion ion-ios-arrow-forward' });
+     obj.container.find('.daterangepicker_input > i').each(function() { this.className = 'ion ion-md-calendar' });
+     obj.container.find('.calendar-time > i').each(function() { this.className = 'ion ion-md-time' });
+
+     };
+     });
+
+      $('#dashboardDate1').on('apply.daterangepicker', function(ev, picker) {
+
+        var start = (picker.startDate.format('YYYY-MM-DD'));
+        var end = (picker.endDate.format('YYYY-MM-DD'));
+
+        var link = '{% url 'common:dashboard_manager_date' 'val1' 'val2' %}';
+        link = link.replace('val1', start);
+        link = link.replace('val2', end);
+        window.location.href = link;
+      });
+     });
+</script>
+
+
+
+
+
+{% endblock %}
+

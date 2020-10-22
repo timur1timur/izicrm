@@ -1,0 +1,127 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Наценка{% endblock %}
+{% block breadcrumb_buttons %}
+{% endblock %}
+
+{% block body_content %}
+                     <!-- Filtering FooTable Start -->
+                     <!--================================-->
+                     <div class="col-md-6 col-lg-6">
+                        <div class="card mg-b-30">
+
+                           <div class="card-body">
+
+
+                              <table class="table table-bordered table-hover">
+                                  <thead class="tx-10 tx-uppercase">
+
+                                    <span class="tx-10 tx-uppercase">Базовая наценка (+ % экваринга + % комиссии) </span>
+
+                                     <tr>
+                                        <th>ID</th>
+                                        <th>Тип</th>
+                                        <th>Коэффициент</th>
+                                        <th class="tx-right">Действия</th>
+                                     </tr>
+                                  </thead>
+                                 <tbody>
+                                    {% for q in common %}
+                                        <tr>
+                                            <td>{{q.id}}</td>
+                                            <td>{{ q.name }}</td>
+                                            <td>{{ q.markup|get_markup }}</td>
+                                            <td class="tx-right">
+                                                <a href=""  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                 </tbody>
+                              </table>
+
+
+
+                               <table class="table table-bordered table-hover">
+                                  <thead class="tx-10 tx-uppercase">
+
+                                    <span class="tx-10 tx-uppercase"> Клиентская наценка</span>
+
+                                     <tr>
+                                        <th>ID</th>
+                                        <th>Тип</th>
+                                        <th>Коэффициент</th>
+                                        <th class="tx-right">Действия</th>
+                                     </tr>
+                                  </thead>
+                                 <tbody>
+                                    {% for q in customers %}
+                                        <tr>
+                                            <td>{{q.id}}</td>
+                                            <td>{{ q.get_source_t_display }}</td>
+                                            <td>{{ q.markup|get_markup }}</td>
+                                            <td class="tx-right">
+                                                <a href="{% url 'markup:markup_customer_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                 </tbody>
+                              </table>
+                               <table class="table table-bordered table-hover">
+                                  <thead class="tx-10 tx-uppercase">
+
+                                    <span class="tx-10 tx-uppercase">Наценка на материал</span>
+
+                                     <tr>
+                                        <th>ID</th>
+                                        <th>Тип</th>
+                                        <th>Коэффициент</th>
+                                        <th class="tx-right">Действия</th>
+                                     </tr>
+                                  </thead>
+                                 <tbody>
+                                    {% for q in materials %}
+                                        <tr>
+                                            <td>{{q.id}}</td>
+                                            <td>{{ q.get_source_t_display }}</td>
+                                            <td>{{ q.markup|get_markup }}</td>
+                                            <td class="tx-right">
+                                                <a href="{% url 'markup:markup_material_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                 </tbody>
+                              </table>
+                               <table class="table table-bordered table-hover">
+                                  <thead class="tx-10 tx-uppercase">
+
+                                    <span class="tx-10 tx-uppercase">Наценка на работы</span>
+
+                                     <tr>
+                                        <th>ID</th>
+                                        <th>Тип</th>
+                                        <th>Коэффициент</th>
+                                        <th class="tx-right">Действия</th>
+                                     </tr>
+                                  </thead>
+                                 <tbody>
+                                    {% for q in works %}
+                                        <tr>
+                                            <td>{{q.id}}</td>
+                                            <td>{{ q.get_source_t_display }}</td>
+                                            <td>{{ q.markup|get_markup }}</td>
+                                            <td class="tx-right">
+                                                <a href="{% url 'markup:markup_work_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                 </tbody>
+                              </table>
+
+
+
+                           </div>
+                        </div>
+                     </div>
+                     <!--/ Filtering FooTable End -->
+{% endblock %}
+

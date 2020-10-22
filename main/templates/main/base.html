@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zxx">
+   <head>
+      <!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+      <meta charset="utf-8">
+      <meta http-equiv="x-ua-compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+      <meta name="keyword" content="">
+      <meta name="author"  content=""/>
+      <!-- Page Title -->
+      <title>IZIDecor|CRM {% block title %}{% endblock %}</title>
+      <!-- Datepicket CSS -->
+      {% include 'main/main_elements/connect.html' %}
+      {% block head %}{% endblock %}
+   </head>
+   <body>
+      <!--================================-->
+      <!-- Page Container Start -->
+      <!--================================-->
+      <div class="page-container">
+         <!--================================-->
+         <!-- Page Sidebar Start -->
+         <!--================================-->
+         <div class="page-sidebar">
+            <div class="logo">
+               <a class="logo-img" href="index.html">		
+               <img class="desktop-logo" src="/static/main/assets/images/header_logo_w.png" alt="">
+               <img class="small-logo" src="/static/main/assets/images/header__logo_small.png" alt="">
+               </a>			
+               <a id="sidebar-toggle-button-close"><i class="wd-20" data-feather="x"></i> </a>
+            </div>
+            <!--================================-->
+            <!-- Sidebar Menu Start -->
+            <!--================================-->
+            {% include 'main/main_elements/menu.html' %}
+            <!--/ Sidebar Menu End -->
+            <!--================================-->
+            <!-- Sidebar Footer Start -->
+            <!--================================-->
+            {% include 'main/main_elements/footer.html' %}
+            <!--/ Sidebar Footer End -->
+         </div>
+         <!--/ Page Sidebar End -->
+         <!--================================-->
+         <!-- Page Content Start -->
+         <!--================================-->
+         <div class="page-content">
+            <!--================================-->
+            <!-- Page Header Start -->
+            <!--================================-->
+            <div class="page-header">
+               {% include 'main/main_elements/search.html' %}
+               <nav class="navbar navbar-default">
+                  <!--================================-->
+                  <!-- Brand and Logo Start -->
+                  <!--================================-->
+                  <div class="navbar-header">
+                     <div class="navbar-brand">
+                        <ul class="list-inline">
+                           <!-- Mobile Toggle and Logo -->
+                           <li class="list-inline-item"><a class="hidden-md hidden-lg" href="#" id="sidebar-toggle-button"><i data-feather="menu" class="wd-20"></i></a></li>
+                           <!-- PC Toggle and Logo -->
+                           <li class="list-inline-item"><a class=" hidden-xs hidden-sm" href="#" id="collapsed-sidebar-toggle-button"><i data-feather="menu" class="wd-20"></i></a></li>
+                           <li class="list-inline-item mg-l-10"><a  href="#" id="search-button"><i data-feather="search" class="wd-20"></i></a></li>
+                        </ul>
+                     </div>
+                  </div>
+                  <!--/ Brand and Logo End -->
+                  <!--================================-->
+                  <!-- Header Right Start -->
+                  <!--================================-->
+                  {% include 'main/main_elements/notification.html' %}
+                  <!--/ Header Right End -->
+               </nav>
+            </div>
+            <!--/ Page Header End -->   
+            <!--================================-->
+            <!-- Page Inner Start -->
+            <!--================================-->
+            <div class="page-inner">
+               <!--================================-->
+               <!-- Breadcrumb Start -->
+               <!--================================-->
+               <div class="pageheader pd-t-25 pd-b-35">
+                  <div class="d-flex justify-content-between">
+                     <div class="clearfix">
+                        <div class="pd-t-5 pd-b-5">
+                           <div>
+                              <h1 class="pd-0 mg-0 tx-20 tx-dark">{% block title_h1 %}{% endblock %}</h1>
+                           </div>
+                        </div>
+                        <div class="breadcrumb pd-0 mg-0">
+                           <span class="breadcrumb-item active">{% block breadcrumb %}{% endblock %}</span>
+                        </div>
+                     </div>
+                     <div class="d-flex align-items-center">
+                        {% block breadcrumb_buttons %}{% endblock %}
+                     </div>
+
+                  </div>
+               </div>
+               <!--/ Breadcrumb End -->
+               <!--================================-->
+               <!--  Start -->
+               <!--================================-->
+               {% block body_content %}{% endblock %}
+
+            </div>
+            <!--/ Page Inner End -->
+            <!--================================-->
+            <!-- Page Footer Start -->	
+            <!--================================-->
+            {% include 'main/main_elements/footer_page.html' %}
+
+            <!--/ Page Footer End -->		
+         </div>
+         <!--/ Page Content End -->
+      </div>
+      <!--/ Page Container End -->
+      <!--================================-->
+
+
+      <!-- Scroll To Top Start-->
+      <!--================================-->	
+      <a href="" data-click="scroll-top" class="btn-scroll-top fade"><i class="fa fa-arrow-up"></i></a>
+      <!--/ Scroll To Top End -->
+      <!--================================-->
+
+
+      <!--================================-->
+      <!-- Footer Script -->
+      <!--================================-->
+      {% include 'main/main_elements/scripts.html' %}
+   </body>
+</html>

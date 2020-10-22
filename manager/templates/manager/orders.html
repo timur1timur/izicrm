@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<br>
+    <h1>Список заказов</h1>
+
+    {% for q in orders %}
+        <h3>{{ q.number }} <a href="{% url 'manager:order_view' q.id %}" class="btn">o</a></h3>
+        <h5>{{ q.get_status_display }}</h5></br>
+    {% endfor %}
+</body>
+</html>

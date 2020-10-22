@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zxx">
+   <head>
+      <!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+      <meta charset="utf-8">
+      <meta http-equiv="x-ua-compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+      <meta name="keyword" content="">
+      <meta name="author"  content=""/>
+      <!-- Page Title -->
+      <title>IZIDecor|CRM</title>
+      <!-- Main CSS -->	  
+      <link type="text/css" rel="stylesheet" href="/static/main/assets/css/style.css"/>
+      <!-- Favicon -->	
+      <link rel="icon" href="/static/main/assets/images/favicon.ico" type="image/x-icon">
+      <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+      <!-- WARNING: Respond.js doesn"t work if you view the page via file:// -->
+      <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+   </head>
+   <body>
+      <!--================================-->
+      <!-- Page Content Start -->
+      <!--================================-->
+      <div class="ht-100v text-center">
+         <div class="row pd-0 mg-0">
+            <div class="col-lg-6 bg-gradient hidden-sm">
+               <div class="ht-100v d-flex">
+                  <div class="align-self-center">
+                     <img src="/static/main/assets/images/header_logo_w.png" class="img-fluid" alt="">
+                     <h3 class="tx-20 tx-semibold tx-gray-100 pd-t-50">IZIDECOR CRM</h3>
+                     <p class="pd-y-15 pd-x-10 pd-md-x-100 tx-gray-200">Система для создания, отслеживания статусов заказов и учета продаж.</p>
+                  </div>
+               </div>
+            </div>
+
+            <div class="col-lg-6 bg-light">
+               <div class="ht-100v d-flex align-items-center justify-content-center">
+                  <div class="">
+                     <h3 class="tx-dark mg-b-5 tx-left">Вход</h3>
+                     <p class="tx-gray-500 tx-15 mg-b-40">Добро пожаловать! Войдите для продолжения.</p>
+                     <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="form-group tx-left">
+                           <label class="tx-gray-500 mg-b-5">Login</label>
+                           {{ form.username }}
+                           {{ form.username.errors }}
+                        </div>
+                        <div class="form-group">
+                           <div class="d-flex justify-content-between mg-b-5">
+                              <label class="tx-gray-500 mg-b-0">Password</label>
+
+                           </div>
+                           {{ form.password }}
+                           {{ form.password.errors }}
+                        </div>
+                        <input type="hidden" name="next" value="{% url 'main:orders' %}"/>
+                        <button type="submit">Login</button>
+                     </form>
+                  </div>
+               </div>
+            </div>
+
+         </div>
+      </div>
+      <!--/ Page Content End -->
+      <!-- jQuery  -->
+      <script src="/static/main/assets/plugins/jquery/jquery.min.js"></script>
+      <script src="/static/main/assets/plugins/bootstrap/bootstrap.bundle.min.js"></script>
+      <script src="/static/main/assets/plugins/feather-icon/feather.min.js"></script>
+      <script src="/static/main/assets/plugins/metisMenu/metisMenu.min.js"></script>
+      <script src="/static/main/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+      <!-- App JS -->
+      <script src="/static/main/assets/js/app.js"></script>
+   </body>
+</html>

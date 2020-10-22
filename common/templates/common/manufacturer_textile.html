@@ -1,0 +1,70 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Поставщики текстиля{% endblock %}
+{% block breadcrumb_buttons %}
+    <button onclick="location.href='{% url 'common:manufacturer_textile_add' %}'" type="button" class="btn btn-secondary mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force" >
+    <i data-feather="file-plus" class="wd-16 mr-2"></i>Добавить поставщика</button>
+{% endblock %}
+
+{% block body_content %}
+                     <!-- Filtering FooTable Start -->
+                     <!--================================-->
+                     <div class="col-md-12 col-lg-12">
+                        <div class="card mg-b-30">
+
+                           <div class="card-body pd-0">
+                              <div class="row">
+                                 <div class="mg-20 form-inline wd-100p">
+                                    <div class="col-sm-6">
+
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-group ft-right">
+                                          <input id="foo-search" type="text" placeholder="Поиск" class="form-control" autocomplete="off">
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="7">
+                                  <thead class="tx-10 tx-uppercase">
+                                     <tr>
+                                        <th>ID</th>
+                                        <th>Название</th>
+                                        <th>email</th>
+                                        <th>Коллекции</th>
+                                         <th>Ткани</th>
+                                        <th class="tx-right">Действия</th>
+                                     </tr>
+                                  </thead>
+                                 <tbody>
+                                    {% for q in qs %}
+                                        <tr class="odd gradeX">
+                                            <td>{{q.id}}</td>
+                                            <td>{{ q.name }}</td>
+                                            <td>{{ q.email }}</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td class="tx-right">
+                                                <a href=""  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                 </tbody>
+                                 <tfoot>
+                                    <tr>
+                                       <td colspan="5">
+                                          <div class="ft-right">
+                                             <ul class="pagination"></ul>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </tfoot>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                     <!--/ Filtering FooTable End -->
+{% endblock %}
+

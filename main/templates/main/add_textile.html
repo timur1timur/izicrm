@@ -1,0 +1,86 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Текстиль{% endblock %}
+
+{% block body_content %}
+                     <!-- Filtering FooTable Start -->
+                     <!--================================-->
+                     <div class="col-md-12 col-lg-12">
+                        <div class="card mg-b-30">
+
+                           <div class="card-body pd-0">
+                              <div class="row">
+                                 <div class="mg-20 form-inline wd-100p">
+                                    <div class="col-sm-6">
+                                       <div class="form-group">
+
+                                          <select id="foo-filter-status" class="form-control">
+                                             <option value="">Показать все</option>
+                                             <option value="Запланирован">Запланирован</option>
+                                             <option value="disabled">Disabled</option>
+                                             <option value="suspended">Suspended</option>
+                                          </select>
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-group ft-right">
+                                          <input id="foo-search" type="text" placeholder="Поиск" class="form-control" autocomplete="off">
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="50">
+                                  <thead class="tx-10 tx-uppercase">
+                                     <tr>
+                                        <th>ID</th>
+                                        <th>Коллекция</th>
+                                        <th>Модель</th>
+                                         <th>Высота</th>
+                                        <th>Цвет</th>
+                                         <th>Цена</th>
+                                        <th class="tx-center">Действия</th>
+                                     </tr>
+                                  </thead>
+                                 <tbody>
+                                    {% load mathfilters %}
+                                    {% for q in textile %}
+
+                                        <tr class="odd gradeX">
+                                            <td>{{ q.id }}</td>
+                                            <td>{{ q.collection.name }}</td>
+                                            <td>{{ q.model }}</td>
+                                            <td>{{ q.height }}</td>
+                                            <td>{{ q.color }}</td>
+                                            <td>{{ q.price_opt|mul:markup|floatformat }}</td>
+                                            <td class="tx-center">
+                                                <a href="{% url 'main:sp_add_textile' id=id prod_id=q.id%}"  title="" data-toggle="tooltip" data-original-title="Выбрать"><i data-feather="plus" class="wd-16 mr-2"></i></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                 </tbody>
+                                 <tfoot>
+                                    <tr>
+                                       <td colspan="5">
+                                          <div class="ft-right">
+                                             <ul class="pagination"></ul>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </tfoot>
+                              </table>
+                               <div class="row mg-t-30">
+                              <div class="col-sm-8">
+                                 <div class="form-layout-footer">
+                                     <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Назад</a>
+                                 </div>
+                                 <!-- form-layout-footer -->
+                              </div>
+                              <!-- col-8 -->
+                           </div>
+                           </div>
+                        </div>
+                     </div>
+                     <!--/ Filtering FooTable End -->
+{% endblock %}
+

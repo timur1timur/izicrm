@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="LayoutIt!">
+
+    <link href="/static/manager/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/manager/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+	<div class="row">
+        <div class="col-md-6">
+            <h1>Заказ {{ qs.number }}</h1>
+            <h3>Статус: {{ qs.get_status_display }}</h3>
+            <p>Ткани:</p>
+            {% for sp in textile %}
+                {{ sp.specification.room.name }} / {{ sp.item.article }} / {{ sp.quantity }} / {{ sp.total_price }} </br>
+                {% if sp.ordered == 0 %}
+                    {{ sp.get_ordered_display }} <a href="{{ sp.get_order }}" class="btn">Заказать</a></br>
+                {% else %}
+                    {{ sp.get_ordered_display }} {{ sp.payed }}<a href="{{ sp.get_pay }}" class="btn">Оплатить</a></br>
+                {% endif %}
+
+            {% endfor %}
+
+            <p>Карнизы:</p>
+            {% for sp in cornice %}
+                {{ sp.specification.room.name }} / {{ sp.item.article }} / {{ sp.quantity }} / {{ sp.total_price }}</br>
+            {% endfor %}
+
+            <p>Пошив:</p>
+            {% for sp in sewing %}
+                {{ sp.specification.room.name }} / {{ sp.item.article }} / {{ sp.quantity }} / {{ sp.total_price }}</br>
+            {% endfor %}
+
+            <p>Монтаж:</p>
+            {% for sp in assembly %}
+                {{ sp.specification.room.name }} / {{ sp.item.article }} / {{ sp.quantity }} / {{ sp.total_price }}</br>
+            {% endfor %}
+		</div>
+        <div class="col-md-6">
+            <h1>Заказ поставщику:</h1>
+                {% for supp in supplier_order %}
+                    {% if supp.status == 0 %}
+                        <p>{{ supp.supplier.name }}</p>
+                        {% for item in supp.materials.all %}
+                            <p>{{ item.item.article }} - {{item.quantity}}</p>
+                        {% endfor %}
+                        <a href="{{ supp.send_order }}" class="btn">Отправить</a>
+                    {% else %}
+                        <p>{{ supp.supplier.name }}</p>
+                        <p>{{ supp.get_status_display }}  <a href="{{ supp.send_check }}" class="btn">Проверить статус</a></p>
+                    {% endif %}
+                {% endfor %}
+		</div>
+    </div>
+    </div>
+
+
+    <script src="/static/manager/js/jquery.min.js"></script>
+    <script src="/static/manager/js/bootstrap.min.js"></script>
+    <script src="/static/manager/js/scripts.js"></script>
+</body>
+</html>

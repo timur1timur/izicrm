@@ -1,0 +1,45 @@
+{% extends "main/base.html" %}
+
+{% block title %}{% endblock %}
+{% block title_h1 %}Добавление помещения к заказу{% endblock %}
+
+
+
+{% block body_content %}
+
+<form method="POST" class="post-form">{% csrf_token %}
+    <div class="row">
+        <div class="col-xl-5">
+            <div class="form-layout form-layout-4">
+
+               <p class="mg-b-30 tx-gray-700">Введите название помещения.</p>
+                <div class="row" hidden="True">
+                     {{ form.order }}
+               </div>
+               <div class="row">
+                  <label class="col-sm-4 form-control-label"><span class="tx-danger">*</span> Название:</label>
+                  <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                     {{ form.name }}
+                  </div>
+               </div>
+               <!-- row -->
+
+               <!-- row -->
+               <div class="row mg-t-30">
+                  <div class="col-sm-8">
+                     <div class="form-layout-footer">
+                        <button type="Submit" class="btn btn-primary">Добавить</button>
+                         <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Отменить</a>
+                     </div>
+                     <!-- form-layout-footer -->
+                  </div>
+                  <!-- col-8 -->
+               </div>
+            </div>
+            <!-- form-layout -->
+         </div>
+
+    </div>
+ </form>
+</br>
+{% endblock %}

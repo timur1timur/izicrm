@@ -1,0 +1,56 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Заказ у поставщика {{ supplier }} {% endblock %}
+
+
+
+{% block body_content %}
+
+<form method="POST" class="post-form">{% csrf_token %}
+    <!-- Page Inner Start -->
+            <!--================================-->
+            <div class="page-inner pd-0-force mg-0-force ht-100vh bg-white">
+               <div class="row no-gutters wd-100p clearfix">
+
+                  <!--================================-->
+                  <!-- Start Right Sidebar -->
+                  <!--================================-->
+                  <div class="col-lg-9 email-right-sidebar">
+                     <div class="card bd-l-0-force bd-t-0-force bd-b-0-force">
+                        <div class="card-body">
+                           <form>
+                              <div class="form-group mb-3">
+                                 <label class="form-control-label">Кому</label>
+                                 <input type="email" name="email" class="form-control form-control-sm" placeholder="Кому" value="{{ supplier.email }}">
+                              </div>
+                              <div class="form-group mb-3">
+                                 <label class="form-control-label">Тема</label>
+                                 <input type="text" name="subject" class="form-control" placeholder="Тема" value="{{ order.number }} Заявка на заказ материала">
+                              </div>
+
+                              <div class="form-group mb-3">
+                                 <label class="form-control-label">Текст заявки</label>
+                                 <textarea rows="10" name="text" class="form-control" placeholder="Textarea">Добрый день! Хотим заказать: {% for m in materials%}&#10; - {{m}} {%endfor%}</textarea>
+                              </div>
+                              <br>
+                              <div class="btn-toolbar form-group mb-0">
+                                 <div class="pull-right">
+                                    <button class="btn btn-primary">
+                                    <span>Отправить</span> <i class="ti-location-arrow ml-2"></i>
+                                    </button>
+                                    <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Отменить</a>
+                                 </div>
+                              </div>
+                           </form>
+                        </div>
+                     </div>
+                  </div>
+                  <!--/ End email-rightbar -->
+               </div>
+            </div>
+            <!--/ Page Inner End -->
+</form>
+</br>
+
+
+{% endblock %}

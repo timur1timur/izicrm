@@ -1,0 +1,588 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Мониторинг заказов{% endblock %}
+{% block breadcrumb_buttons %}
+
+<button id="dashboardDate1" class="btn btn-default dropdown-toggle mr-2 d-none d-md-block pd-y-8-force"></button>
+
+{% endblock %}
+
+{% block body_content %}
+
+               <div class="row">
+                   <div class="d-flex align-items-center">
+                        <span id="startDateY" hidden> {{ startDate.0 }}</span>
+                        <span id="startDateM" hidden> {{ startDate.1 }}</span>
+                        <span id="startDateD" hidden> {{ startDate.2 }}</span>
+                        <span id="endDateY" hidden> {{ endDate.0 }}</span>
+                        <span id="endDateM" hidden> {{ endDate.1 }}</span>
+                        <span id="endDateD" hidden> {{ endDate.2 }}</span>
+                   </div>
+<!--                  &lt;!&ndash;================================&ndash;&gt;-->
+<!--                  &lt;!&ndash; 0 Start &ndash;&gt;-->
+<!--                  &lt;!&ndash;================================&ndash;&gt;-->
+<!--                   {% if orders.0.qs %}-->
+<!--                       <div class="col-2">-->
+<!--                         <div class="card mg-b-30 ">-->
+<!--                            <div class="card-header d-flex align-items-center justify-content-between">-->
+<!--                               <h6 class="tx-10 mb-0"> {{orders.0.name}}</h6>-->
+<!--                            </div>-->
+<!--                            <div class="card-body pd-y-20">-->
+<!--                               <ul class="list-unstyled mb-0">-->
+<!--                                   {% for q in orders.0.qs %}-->
+<!--                                      <li class="d-flex align-items-center mg-b-15">-->
+<!--                                        <div class="media-body pd-l-15 lh-2">-->
+<!--                                            <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>-->
+<!--                                            <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>-->
+<!--                                        </div>-->
+
+<!--                                      </li>-->
+<!--                                   {% endfor %}-->
+<!--                               </ul>-->
+<!--                            </div>-->
+<!--                         </div>-->
+<!--                      </div>-->
+<!--                   {% endif %}-->
+<!--                   &lt;!&ndash; 0 End &ndash;&gt;-->
+<!--                  &lt;!&ndash; 0 Start &ndash;&gt;-->
+<!--                  &lt;!&ndash;================================&ndash;&gt;-->
+<!--                   {% if orders.1.qs %}-->
+<!--                       <div class="col-2">-->
+<!--                         <div class="card mg-b-30 ">-->
+<!--                            <div class="card-header d-flex align-items-center justify-content-between">-->
+<!--                               <h6 class="tx-10 mb-0"> {{orders.1.name}}</h6>-->
+<!--                            </div>-->
+<!--                            <div class="card-body pd-y-20">-->
+<!--                               <ul class="list-unstyled mb-0">-->
+<!--                                   {% for q in orders.1.qs %}-->
+<!--                                      <li class="d-flex align-items-center mg-b-15">-->
+<!--                                        <div class="media-body pd-l-15 lh-2">-->
+<!--                                            <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>-->
+<!--                                            <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>-->
+<!--                                        </div>-->
+
+<!--                                      </li>-->
+<!--                                   {% endfor %}-->
+<!--                               </ul>-->
+<!--                            </div>-->
+<!--                         </div>-->
+<!--                      </div>-->
+<!--                   {% endif %}-->
+<!--                   &lt;!&ndash; 0 End &ndash;&gt;-->
+<!--                                     &lt;!&ndash; 0 Start &ndash;&gt;-->
+<!--                  &lt;!&ndash;================================&ndash;&gt;-->
+<!--                   {% if orders.2.qs %}-->
+<!--                       <div class="col-2">-->
+<!--                         <div class="card mg-b-30 ">-->
+<!--                            <div class="card-header d-flex align-items-center justify-content-between">-->
+<!--                               <h6 class="tx-10 mb-0"> {{orders.2.name}}</h6>-->
+<!--                            </div>-->
+<!--                            <div class="card-body pd-y-20">-->
+<!--                               <ul class="list-unstyled mb-0">-->
+<!--                                   {% for q in orders.2.qs %}-->
+<!--                                      <li class="d-flex align-items-center mg-b-15">-->
+<!--                                        <div class="media-body pd-l-15 lh-2">-->
+<!--                                            <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>-->
+<!--                                            <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>-->
+<!--                                        </div>-->
+
+<!--                                      </li>-->
+<!--                                   {% endfor %}-->
+<!--                               </ul>-->
+<!--                            </div>-->
+<!--                         </div>-->
+<!--                      </div>-->
+<!--                   {% endif %}-->
+<!--                   &lt;!&ndash; 0 End &ndash;&gt;-->
+<!--                                     &lt;!&ndash; 0 Start &ndash;&gt;-->
+<!--                  &lt;!&ndash;================================&ndash;&gt;-->
+<!--                   {% if orders.3.qs %}-->
+<!--                       <div class="col-2">-->
+<!--                         <div class="card mg-b-30 ">-->
+<!--                            <div class="card-header d-flex align-items-center justify-content-between">-->
+<!--                               <h6 class="tx-10 mb-0"> {{orders.3.name}}</h6>-->
+<!--                            </div>-->
+<!--                            <div class="card-body pd-y-20">-->
+<!--                               <ul class="list-unstyled mb-0">-->
+<!--                                   {% for q in orders.3.qs %}-->
+<!--                                      <li class="d-flex align-items-center mg-b-15">-->
+<!--                                        <div class="media-body pd-l-15 lh-2">-->
+<!--                                            <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>-->
+<!--                                            <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>-->
+<!--                                        </div>-->
+
+<!--                                      </li>-->
+<!--                                   {% endfor %}-->
+<!--                               </ul>-->
+<!--                            </div>-->
+<!--                         </div>-->
+<!--                      </div>-->
+<!--                   {% endif %}-->
+<!--                   &lt;!&ndash; 0 End &ndash;&gt;-->
+<!--                                     &lt;!&ndash; 0 Start &ndash;&gt;-->
+<!--                  &lt;!&ndash;================================&ndash;&gt;-->
+<!--                   {% if orders.4.qs %}-->
+<!--                       <div class="col-2">-->
+<!--                         <div class="card mg-b-30 ">-->
+<!--                            <div class="card-header d-flex align-items-center justify-content-between">-->
+<!--                               <h6 class="tx-10 mb-0"> {{orders.4.name}}</h6>-->
+<!--                            </div>-->
+<!--                            <div class="card-body pd-y-20">-->
+<!--                               <ul class="list-unstyled mb-0">-->
+<!--                                   {% for q in orders.4.qs %}-->
+<!--                                      <li class="d-flex align-items-center mg-b-15">-->
+<!--                                        <div class="media-body pd-l-15 lh-2">-->
+<!--                                            <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>-->
+<!--                                            <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>-->
+<!--                                        </div>-->
+
+<!--                                      </li>-->
+<!--                                   {% endfor %}-->
+<!--                               </ul>-->
+<!--                            </div>-->
+<!--                         </div>-->
+<!--                      </div>-->
+<!--                   {% endif %}-->
+<!--                   &lt;!&ndash; 0 End &ndash;&gt;-->
+<!--                                     &lt;!&ndash; 0 Start &ndash;&gt;-->
+<!--                  &lt;!&ndash;================================&ndash;&gt;-->
+<!--                   {% if orders.5.qs %}-->
+<!--                       <div class="col-2">-->
+<!--                         <div class="card mg-b-30 ">-->
+<!--                            <div class="card-header d-flex align-items-center justify-content-between">-->
+<!--                               <h6 class="tx-10 mb-0"> {{orders.5.name}}</h6>-->
+<!--                            </div>-->
+<!--                            <div class="card-body pd-y-20">-->
+<!--                               <ul class="list-unstyled mb-0">-->
+<!--                                   {% for q in orders.5.qs %}-->
+<!--                                      <li class="d-flex align-items-center mg-b-15">-->
+<!--                                        <div class="media-body pd-l-15 lh-2">-->
+<!--                                            <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>-->
+<!--                                            <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>-->
+<!--                                        </div>-->
+
+<!--                                      </li>-->
+<!--                                   {% endfor %}-->
+<!--                               </ul>-->
+<!--                            </div>-->
+<!--                         </div>-->
+<!--                      </div>-->
+<!--                   {% endif %}-->
+<!--                   &lt;!&ndash; 0 End &ndash;&gt;-->
+
+               <table class="table" >
+                                 <thead>
+                                    <tr>
+                                        <th class="tx-center">{{orders.0.name}}</th>
+                                        <th class="tx-center">{{orders.1.name}}</th>
+                                        <th class="tx-center">{{orders.2.name}}</th>
+                                        <th class="tx-center">{{orders.3.name}}</th>
+                                        <th class="tx-center">{{orders.4.name}}</th>
+                                        <th class="tx-center">{{orders.5.name}}</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    <tr>
+
+                                       <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.0.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+                                       <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.1.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+                                        <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.2.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+                                        <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.3.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+                                        <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.4.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+                                        <td class="tx-center align-top">
+                                           <ul class="list-unstyled mb-0">
+                                               {% for q in orders.5.qs %}
+                                                  <li class="d-flex align-items-center mg-b-15">
+                                                    <div class="media-body btn btn-light pd-l-15 lh-2">
+                                                        <p class="tx-12 mg-b-2"><a href="{{q.get_absolute_url}}">#{{q.number}}</a></p>
+                                                        <span class="tx-11 tx-gray-500">{{q.date_created|date:'d.m.Y'}}</span>
+                                                    </div>
+                                                  </li>
+                                               {% endfor %}
+                                           </ul>
+                                       </td>
+
+
+
+                                    </tr>
+
+                                 </tbody>
+                              </table>
+
+               </div>
+
+
+               <!--================================-->
+               <!-- Sales Details Start -->
+               <!--================================-->
+               <div class="row clearfix">
+                  <div class="col-lg-6">
+                     <div class="card mg-b-30">
+                        <div class="card-body">
+                           <div class="row">
+                              <div class="col-md-5 col-lg-4 col-xl-6 order-1 order-sm-0 mg-t-20 mg-sm-t-0">
+                                 <div class="clearfix">
+                                    <div id="flotBarRecentOrders" style="height: 100px"></div>
+                                 </div>
+                              </div>
+                              <div class="col-md-7 col-lg-8 col-xl-6">
+                                 <div class="pd-0">
+                                    <div class="d-flex align-items-baseline mg-b-5">
+                                       <h1 class="tx-20 tx-sm-18 tx-md-24 mg-b-0 tx-rubik tx-dark tx-normal">{{qs_count1}}</h1>
+                                       <span class="d-flex align-items-center tx-success mg-l-2 tx-10"><i class="ti-arrow-up tx-8 tx-success tx-8 mr-1"></i>11.24%</span>
+                                    </div>
+                                    <h6 class="tx-11 tx-primary tx-uppercase">Созданных заказов</h6>
+                                    <p class="tx-11 tx-sm-12 mg-b-0 tx-gray-500">За период<span class="d-none d-sm-inline"> {{ period }}</span></p>
+                                 </div>
+                              </div>
+                           </div>
+                           <!-- row -->
+                        </div>
+                     </div>
+                     <!-- card -->
+                  </div>
+                  <div class="col-lg-6">
+                     <div class="card mg-b-30">
+                        <div class="card-body">
+                           <div class="row">
+                              <div class="col-md-5 col-lg-4 col-xl-6 order-1 order-sm-0 mg-t-20 mg-sm-t-0">
+                                 <div class="clearfix">
+                                    <div id="flotBarCompleteOrders" style="height: 100px"></div>
+                                 </div>
+                              </div>
+                              <div class="col-md-7 col-lg-8 col-xl-6">
+                                 <div class="pd-0">
+                                    <div class="d-flex align-items-baseline mg-b-5">
+                                       <h1 class="tx-20 tx-sm-18 tx-md-24 mg-b-0 tx-rubik tx-dark tx-normal">{{qs_count2}}</h1>
+                                       <span class="d-flex align-items-center tx-danger mg-l-2 tx-10"><i class="ti-arrow-down tx-8 tx-danger tx-8 mr-1"></i>10.9%</span>
+                                    </div>
+                                    <h6 class="tx-11 tx-pink tx-uppercase">Выполненных заказов</h6>
+                                    <p class="tx-12 mg-b-0 tx-gray-500">За период<span class="d-none d-sm-inline"> {{ period }}</span></p>
+                                 </div>
+                              </div>
+                           </div>
+                           <!-- row -->
+                        </div>
+                     </div>
+                     <!-- card -->
+                  </div>
+               </div>
+               <!--/ Sales Details End -->
+
+
+               <div class="row">
+                  <!--================================-->
+                  <!-- New Customers Start -->
+                  <!--================================-->
+                  <div class="col-lg-6 col-xl-4">
+                     <div class="card mg-b-30">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-13 mb-0">Новые покупатели</h6>
+                        </div>
+                        <div class="card-body pd-y-20">
+                           <ul class="list-unstyled mb-0">
+                               {% for c in customers %}
+                                   <li class="d-flex align-items-center mg-b-15">
+                                     <a href="">
+                                        <div class="avatar avatar-online"><span class="avatar-initial rounded-circle bg-gray-800"><i data-feather="user"></i></span></div>
+                                     </a>
+                                     <div class="media-body pd-l-15 lh-2">
+                                        <p class="tx-medium mg-b-2"><a href="">{{c.name|get_short_name}}</a></p>
+                                        <span class="tx-12 tx-gray-500">Создан: {{c.date_created|date:'d.m.Y'}}</span>
+                                     </div>
+                                     <div class="mg-l-auto d-flex align-self-center action-icon">
+                                        <nav class="nav nav-icon-only">
+                                           <a href="" data-toggle="tooltip" class="mr-2 tx-gray-500" title="" data-placement="top" data-original-title="Send Message"><i data-feather="mail" class="wd-16"></i></a>
+                                           <a href="" data-toggle="tooltip" class="mr-2 tx-gray-500" title="" data-placement="top" data-original-title="Add to Fiend"><i data-feather="user-plus" class="wd-16"></i></a>
+                                        </nav>
+                                     </div>
+                                   </li>
+                               {% endfor %}
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+                  <!--/ New Customers End -->
+                  <!--================================-->
+                  <!-- Transaction History Start -->
+                  <!--================================-->
+                  <div class="col-lg-6 col-xl-4">
+                     <div class="card mg-b-30">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-13 mb-0">История платежей</h6>
+                        </div>
+                        <div class="card-body pd-0 pd-y-15">
+                           <ul class="list-group list-group-flush tx-13">
+                               {% for p in payments %}
+                                  <li class="list-group-item d-flex pd-y-9 pd-sm-x-20">
+                                     <div class="d-none d-sm-block"><span class="wd-40 ht-40 mg-r-10 d-flex align-items-center justify-content-center rounded bg-primary tx-white"><i class="ti-money"></i></span></div>
+                                     <div class="pd-sm-l-10">
+                                        <p class="mg-b-0">{{ p.category.name }} к заказу <a href="{{p.order.get_absolute_url}}" class="tx-dark mg-b-0 tx-semibold">#{{p.order.number}}</a></p>
+                                        <span class="tx-12 mg-b-0 tx-gray-500">ID транзакции: #{{p.id}}</span>
+                                     </div>
+                                     <div class="mg-l-auto text-right">
+                                        <p class="mg-b-0 tx-rubik">{{p.price}}<small class="tx-8">руб.</small></p>
+                                        <span class="tx-success tx-12">Completed</span>
+                                     </div>
+                                  </li>
+                               {% endfor %}
+
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+                  <!--/ Transaction History End -->
+                  <!--================================-->
+                  <!-- Customer Satisfaction Start -->
+                  <!--================================-->
+                  <div class="col-xl-4">
+                     <div class="card mg-b-30">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-13 mb-0">Источник заказов</h6>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="myChart9" height="280"></canvas>
+                        </div>
+                     </div>
+                  </div>
+                  <!--/ Customer Satisfaction End -->
+               </div>
+
+
+<script src="/static/main/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/main/assets/plugins/jquery-ui/jquery-ui.js"></script>
+<script src="/static/main/assets/plugins/moment/moment.min.js"></script>
+
+
+  <!-- Dashboard Script -->
+<script src="/static/main/assets/plugins/daterangepicker/daterangepicker.js"></script>
+  <script src="/static/main/assets/plugins/flot/jquery.flot.js"></script>
+  <script src="/static/main/assets/plugins/flot/jquery.flot.pie.js"></script>
+  <script src="/static/main/assets/plugins/flot/jquery.flot.resize.js"></script>
+  <script src="/static/main/assets/plugins/flot/sampledata.js"></script>
+<!--  <script src="/static/main/assets/js/dashboard/sales-dashboard-init2.js"></script>-->
+
+
+
+<script>
+! function (e) {
+	"use strict";
+
+    function xAxisLabelGenerator(x){
+    return xAxisLabels[x];
+    }
+
+	// Float Bar Chat
+	var flotChartOption1 = {
+		series: {
+			shadowSize: 0,
+			bars: {
+				show: true,
+				lineWidth: 0,
+				barWidth: .5,
+				fill: 1
+			}
+		},
+		grid: {
+			aboveData: true,
+			color: '#e5e9f2',
+			borderWidth: 0,
+			labelMargin: 0
+		},
+		yaxis: {
+			show: false,
+			min: 0,
+			max: 15
+		},
+		xaxis: {
+			show: false,
+			mode: 'Categories',
+		}
+	};
+
+	$.plot('#flotBarRecentOrders', [{
+
+		data: {{data1|safe}},
+		color: '#66a4fb'
+	}], flotChartOption1);
+
+
+	$.plot('#flotBarCompleteOrders', [{
+
+		data: {{data2|safe}},
+		color: '#e83e8c'
+	}], flotChartOption1);
+
+}(jQuery);
+
+
+</script>
+
+
+
+ <script src="/static/main/assets/plugins/chartjs/chartjs.js"></script>
+ <script src="/static/main/assets/plugins/chartjs/chartjs-active.js"></script>
+
+ <script>
+    var ctx = document.getElementById('myChart9').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',// bar, horizontalBar, pie, line, doughnut, radar, polarArea
+
+        data: {
+            labels: {{ cus_label|safe }},
+            datasets: [{
+                data: {{ cus_data|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ]
+            }]
+        },
+        options: {
+            legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                    fontColor: '#000'
+                }
+            }
+
+        }
+
+
+    });
+
+  </script>
+
+  <!-- Javascript -->
+<script>
+
+     // Dashboard DateTimePicker
+     $(function() {
+     var isRtl = $('body').attr('dir') === 'rtl' || $('html').attr('dir') === 'rtl';
+
+     // Button
+     var startY = document.getElementById( 'startDateY' );
+     var startM = document.getElementById( 'startDateM' );
+     var startD = document.getElementById( 'startDateD' );
+     var endY = document.getElementById( 'endDateY' );
+     var endM = document.getElementById( 'endDateM' );
+     var endD = document.getElementById( 'endDateD' );
+
+
+     var start = moment([Number(startY.textContent), Number(startM.textContent), Number(startD.textContent)]);
+     var end = moment([Number(endY.textContent), Number(endM.textContent), Number(endD.textContent)]);
+
+
+     function cb(start, end) {
+     $('#dashboardDate1').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+     }
+     $('#dashboardDate1').daterangepicker({
+     startDate: start,
+     endDate: end,
+     ranges: {
+     'Сегодня': [moment(), moment()],
+     'Вчера': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+     'Последние 7 дней': [moment().subtract(6, 'days'), moment()],
+     'Последние 30 дней': [moment().subtract(29, 'days'), moment()],
+     'Это месяц': [moment().startOf('month'), moment().endOf('month')],
+     'Предыдущий месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+     },
+     opens: (isRtl ? 'left' : 'right')
+     }, cb);
+     cb(start, end);
+
+     // Replace icons
+     $('#dashboardDate1').each(function() {
+     var obj = $(this).data('daterangepicker');
+     var _updateCalendars = obj.updateCalendars;
+     obj.updateCalendars = function() {
+     // Call original function
+     _updateCalendars.call(obj)
+     // Replace icons
+     obj.container.find('.prev > i').each(function() { this.className = 'ion ion-ios-arrow-back' });
+     obj.container.find('.next > i').each(function() { this.className = 'ion ion-ios-arrow-forward' });
+     obj.container.find('.daterangepicker_input > i').each(function() { this.className = 'ion ion-md-calendar' });
+     obj.container.find('.calendar-time > i').each(function() { this.className = 'ion ion-md-time' });
+
+     };
+     });
+
+      $('#dashboardDate1').on('apply.daterangepicker', function(ev, picker) {
+
+        var start = (picker.startDate.format('YYYY-MM-DD'));
+        var end = (picker.endDate.format('YYYY-MM-DD'));
+
+        var link = '{% url 'common:dashboard_designer_date' 'val1' 'val2' %}';
+        link = link.replace('val1', start);
+        link = link.replace('val2', end);
+        window.location.href = link;
+      });
+     });
+</script>
+
+
+
+
+
+{% endblock %}
+

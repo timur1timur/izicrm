@@ -1,0 +1,57 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Сотрудники{% endblock %}
+{% block breadcrumb_buttons %}
+    <button onclick="location.href='{% url 'director:user_create' %}'" type="button" class="btn btn-secondary mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force" >
+    <i data-feather="file-plus" class="wd-16 mr-2"></i>Добавить сотрудника</button>
+{% endblock %}
+
+{% block body_content %}
+<div class="col-12">
+                     <!--================================-->
+                     <!-- Support Status Start -->
+                     <!--================================-->
+                     <div class="card mg-b-30">
+                        <div class="card-body pd-0">
+                           <div class="table-responsive">
+                              <table class="table table-hover mg-0">
+                                 <thead class="tx-10 tx-uppercase bd-t">
+                                    <tr>
+                                       <th>Сотрудник</th>
+                                       <th>ФИО</th>
+                                       <th>Роль</th>
+                                       <th>email</th>
+                                       <th>Действия</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% for q in orders %}
+                                       <tr>
+                                          <td>
+                                             <div class="d-flex align-items-center">
+                                                <div class="avatar mr-2">
+                                                   <img src="/static/main/assets/images/users-face/admin_users_icon.jpg" class="img-fluid wd-40 ht-40 rounded-circle" alt="">
+                                                </div>
+                                                <span class="tx-semibold d-none d-xl-inline-block">{{ q }}</span>
+                                             </div>
+                                          </td>
+                                          <td>{{ q.get_full_name }}</td>
+                                          <td><span class="badge badge-outline-primary">{{ q.groups.all.0 }}</span></td>
+                                          <td>{{ q.email }}</td>
+                                          <td>
+                                             <a href=""  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                             <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                          </td>
+                                       </tr>
+                                    {% endfor %}
+                                 </tbody>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                     <!--/ Support Status End -->
+                  </div>
+               </div>
+            </div>
+{% endblock %}
+

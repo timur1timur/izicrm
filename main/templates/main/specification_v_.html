@@ -1,0 +1,262 @@
+{% extends "main/base.html" %}
+
+{% block title %} Заказы{% endblock %}
+{% block title_h1 %}Детализация заказа{% endblock %}
+{% block breadcrumb %}Заказы{% endblock %}
+{% block breadcrumb_buttons %}{% endblock %}
+
+{% block body_content %}
+            <div class="page-inner pd-0-force">
+               <div class="col-md-6 col-lg-6 col-xl-3">
+                  <div class="card mg-b-30">
+                        <div class="card-body">
+
+                           <div class="d-flex justify-content-between align-items-center">
+                              <h2 class="tx-20 tx-sm-18 tx-md-24 mg-b-0 tx-rubik tx-dark tx-normal">{{qs.room.name}} : {{qs.version}}</h2>
+                           </div>
+                           {% if summ > 0 %}
+                              <div class="d-flex align-items-center tx-gray-700 tx-15">{{summ}} руб.</div>
+                           {% endif %}
+
+                        </div>
+                  </div>
+               </div>
+
+               <div class="row clearfix">
+                  <div class="col">
+                     <!-- BEGIN -->
+                     <div class="card mg-b-30">
+                        {% if textile %}
+                              <div class="card-header d-flex align-items-center justify-content-between">
+                                 <h6 class="tx-15 tx-semibold mg-b-0">Текстиль</h6>
+                              </div>
+                              <div class="card-body pd-25">
+                                 <div class="col-md-6 col-lg-6">
+                                    <table class="table">
+                                       <tbody>
+                                          {% for t in textile %}
+                                             <tr>
+                                                <td>{{t.item.collection}} {{t.item.model}} {{t.item.color}}</td>
+                                                <td>{{ t.quantity }} шт.</td>
+                                                <td>{{ t.total_price }} руб.</td>
+                                                <td><a href="{{ t.remove_textile }}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
+                                             </tr>
+                                          {% endfor %}
+                                             <tr>
+                                                <td>ИТОГ ТЕКСТИЛЬ: {{summ_t}}</td>
+                                             </tr>
+                                       </tbody>
+                                    </table>
+                                 </div>
+                              </div>
+                        {% endif %}
+
+                        <div class="card-footer bg-transparent">
+                           <nav class="nav nav-with-icon tx-13">
+                              <a href="{{ qs.review_textile }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить текстиль</a>
+                           </nav>
+                        </div>
+                        <!-- card-footer -->
+                     </div>
+                     <!-- END -->
+
+                     <!-- BEGIN -->
+                     <div class="card mg-b-30">
+                        {% if cornice %}
+                              <div class="card-header d-flex align-items-center justify-content-between">
+                                 <h6 class="tx-15 tx-semibold mg-b-0">Карнизы</h6>
+                              </div>
+                              <div class="card-body pd-25">
+                                 <div class="col-md-6 col-lg-6">
+                                    <table class="table">
+                                       <tbody>
+                                          {% for t in cornice %}
+                                             <tr>
+                                                <td>{{t.item.model}} {{t.item.long}}</td>
+                                                <td>{{ t.quantity }} шт.</td>
+                                                <td>{{ t.total_price }} руб.</td>
+                                                <td><a href="{{ t.remove_cornice }}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
+                                             </tr>
+                                          {% endfor %}
+                                          <tr>
+                                             <td>ИТОГ КАРНИЗЫ: {{summ_c}}</td>
+                                          </tr>
+                                       </tbody>
+                                    </table>
+                                 </div>
+                              </div>
+                        {% endif %}
+
+                        <div class="card-footer bg-transparent">
+                           <nav class="nav nav-with-icon tx-13">
+                              <a href="{{ qs.review_cornice }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить карнизы</a>
+                           </nav>
+                        </div>
+                        <!-- card-footer -->
+                     </div>
+                     <!-- END -->
+
+                     <!-- BEGIN -->
+                     <div class="card mg-b-30">
+                        {% if sewing %}
+                              <div class="card-header d-flex align-items-center justify-content-between">
+                                 <h6 class="tx-15 tx-semibold mg-b-0">Пошив</h6>
+                              </div>
+                              <div class="card-body pd-25">
+                                 <div class="col-md-6 col-lg-6">
+                                    <table class="table">
+                                       <tbody>
+                                          {% for t in sewing %}
+                                             <tr>
+                                                <td>{{t.item}}</td>
+                                                <td>{{ t.quantity }} шт.</td>
+                                                <td>{{ t.total_price }} руб.</td>
+                                                <td><a href="{{ t.remove_sewing }}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
+                                             </tr>
+                                          {% endfor %}
+                                          <tr>
+                                             <td>ИТОГ ПОШИВ: {{summ_s}}</td>
+                                          </tr>
+                                       </tbody>
+                                    </table>
+                                 </div>
+                              </div>
+                        {% endif %}
+
+                        <div class="card-footer bg-transparent">
+                           <nav class="nav nav-with-icon tx-13">
+                              <a href="{{ qs.add_sewing }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить пошив</a>
+                           </nav>
+                        </div>
+                        <!-- card-footer -->
+                     </div>
+                     <!-- END -->
+
+                     <!-- BEGIN -->
+                     <div class="card mg-b-30">
+                        {% if assembly %}
+                              <div class="card-header d-flex align-items-center justify-content-between">
+                                 <h6 class="tx-15 tx-semibold mg-b-0">Монтаж</h6>
+                              </div>
+                              <div class="card-body pd-25">
+                                 <div class="col-md-6 col-lg-6">
+                                    <table class="table">
+                                       <tbody>
+                                          {% for t in assembly %}
+                                             <tr>
+                                                <td>{{t.item}}</td>
+                                                <td>{{ t.quantity }} шт.</td>
+                                                <td>{{ t.total_price }} руб.</td>
+                                                <td><a href="{{ t.remove_assembly }}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
+                                             </tr>
+                                          {% endfor %}
+                                          <tr>
+                                             <td>ИТОГ МОНТАЖ: {{summ_a}}</td>
+                                          </tr>
+                                       </tbody>
+                                    </table>
+                                 </div>
+                              </div>
+                        {% endif %}
+
+                        <div class="card-footer bg-transparent">
+                           <nav class="nav nav-with-icon tx-13">
+                              <a href="{{ qs.add_assembly }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить монтаж</a>
+                           </nav>
+                        </div>
+                        <!-- card-footer -->
+                     </div>
+                     <!-- END -->
+
+                     <!-- BEGIN -->
+                     <div class="card mg-b-30">
+                        {% if hanging %}
+                              <div class="card-header d-flex align-items-center justify-content-between">
+                                 <h6 class="tx-15 tx-semibold mg-b-0">Развеска штор</h6>
+                              </div>
+                              <div class="card-body pd-25">
+                                 <div class="col-md-6 col-lg-6">
+                                    <table class="table">
+                                       <tbody>
+                                          {% for t in hanging %}
+                                             <tr>
+                                                <td>{{t.item}}</td>
+                                                <td>{{ t.quantity }} шт.</td>
+                                                <td>{{ t.total_price }} руб.</td>
+                                                <td><a href="{{ t.remove_hanging }}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
+                                             </tr>
+                                          {% endfor %}
+                                          <tr>
+                                             <td>ИТОГ РАЗВЕСКА: {{summ_h}}</td>
+                                          </tr>
+                                       </tbody>
+                                    </table>
+                                 </div>
+                              </div>
+                        {% endif %}
+
+                        <div class="card-footer bg-transparent">
+                           <nav class="nav nav-with-icon tx-13">
+                              <a href="{{ qs.add_hanging }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить развеску штор</a>
+                           </nav>
+                        </div>
+                        <!-- card-footer -->
+                     </div>
+                     <!-- END -->
+                     <!-- BEGIN -->
+                     <div class="card mg-b-30">
+                        {% if delivery %}
+                              <div class="card-header d-flex align-items-center justify-content-between">
+                                 <h6 class="tx-15 tx-semibold mg-b-0">Доставка</h6>
+                              </div>
+                              <div class="card-body pd-25">
+                                 <div class="col-md-6 col-lg-6">
+                                    <table class="table">
+                                       <tbody>
+                                          {% for t in delivery %}
+                                             <tr>
+                                                <td>{{t.item}}</td>
+                                                <td>{{ t.quantity }} шт.</td>
+                                                <td>{{ t.total_price }} руб.</td>
+                                                <td><a href="{{ t.remove_hanging }}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
+                                             </tr>
+                                          {% endfor %}
+                                          <tr>
+                                             <td>ИТОГ ДОСТАВКА: {{summ_d}}</td>
+                                          </tr>
+                                       </tbody>
+                                    </table>
+                                 </div>
+                              </div>
+                        {% endif %}
+
+                        <div class="card-footer bg-transparent">
+                           <nav class="nav nav-with-icon tx-13">
+                              <a href="{{ qs.add_delivery }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить доставку</a>
+                           </nav>
+                        </div>
+                        <!-- card-footer -->
+                     </div>
+                     <!-- END -->
+
+
+                  <div class="row mg-t-30">
+                     <div class="col-sm-8">
+                        <div class="form-layout-footer">
+                           {% if qs.status == 0 %}
+                              <a href="{{ qs.change_status}}" class="btn btn-primary">Утвердить</a>
+                           {% else %}
+                              <a href="{{ qs.change_status}}" class="btn btn-danger">Разутвердить</a>
+                           {% endif %}
+                           <a href="{{ qs.ready}}" class="btn btn-secondary">Отменить</a>
+                        </div>
+                        <!-- form-layout-footer -->
+                     </div>
+                     <!-- col-8 -->
+                  </div>
+
+                  </div>
+
+               </div>
+            </div>
+{% endblock %}

@@ -1,0 +1,422 @@
+{% extends "main/base.html" %}
+{% load mathfilters %}
+
+{% block title %} Заказы{% endblock %}
+{% block title_h1 %}Детализация заказа {{ qs.number }} от {{qs.date_created|date:'d.m.Y'}} {% endblock %}
+{% block breadcrumb %}<span class="badge badge-{{qs.get_status_css_display}}">{{qs.get_status_display}}</span>{% endblock %}
+{% block breadcrumb_buttons %}
+
+{% endblock %}
+
+{% block body_content %}
+            <div class="page-inner pd-0-force">
+
+               <div class="container">
+                 <div class="row">
+
+                       <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Заказчик</span>
+                                       </div>
+                                    </div>
+
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">
+                                            {% for cus in customer %}
+                                              {% for ord in cus.order.all %}
+                                                  {% if qs.number == ord.number %}
+                                                      <span class="float-left tx-11 tx-gray-500">{{cus.name}}</span>
+                                                  {% endif %}
+                                              {% endfor %}
+                                          {% endfor %}
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">
+                                            {% for cus in customer %}
+                                              {% for ord in cus.order.all %}
+                                                  {% if qs.number == ord.number %}
+                                                      <span class="float-left tx-11 tx-gray-500">{{cus.phone}}</span>
+                                                  {% endif %}
+                                              {% endfor %}
+                                          {% endfor %}
+                                        </span>
+                                    </div>
+
+
+                                 </div>
+                          </div>
+                       </div>
+
+                     <div class="col-md-6 col-lg-6 col-xl-3" {% if state.textile.ordered < 1 %} hidden {% endif %}>
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Заказаны
+                                              {% if state.textile.ordered == textile.count and state.cornice.ordered == cornice.count and state.work.ordered == state.work.quantity %}
+                                                <i data-feather="check" class="wd-16 mr-2 "></i>
+                                              {% endif %}
+                                          </span>
+
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Текстиль</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ state.textile.ordered }}/{{ textile.count }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Карнизы</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ state.cornice.ordered }}/{{ cornice.count }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Работы</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ state.work.ordered }}/{{ state.work.quantity }}</span>
+                                        </span>
+                                    </div>
+                                 </div>
+                          </div>
+                     </div>
+                     <div class="col-md-6 col-lg-6 col-xl-3" {% if state.textile.payed < 1 %} hidden {% endif %}>
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Оплачены
+                                              {% if state.textile.payed == textile.count and state.cornice.payed == cornice.count %}
+                                                <i data-feather="check" class="wd-16 mr-2 "></i>
+                                              {% endif %}
+                                          </span>
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Текстиль</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ state.textile.payed }}/{{ textile.count }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Карнизы</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ state.cornice.payed }}/{{ cornice.count }}</span>
+                                        </span>
+                                    </div>
+                                 </div>
+                          </div>
+                     </div>
+                     <div class="col-md-6 col-lg-6 col-xl-3" {% if state.textile.shipped < 1 %} hidden {% endif %}>
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Отгружены
+                                              {% if state.textile.shipped == textile.count %}
+                                                <i data-feather="check" class="wd-16 mr-2 "></i>
+                                              {% endif %}
+                                          </span>
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Текстиль</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ state.textile.shipped }}/{{ textile.count }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Карнизы</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ state.cornice.shipped }}/{{ cornice.count }}</span>
+                                        </span>
+                                    </div>
+                                 </div>
+                          </div>
+                     </div>
+
+
+                 </div>
+               </div>
+
+               <div class="row clearfix">
+                  <div class="col">
+                     <!-- Info -->
+
+                     <!-- / Info -->
+                     <div class="card mg-b-30">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-14 tx-semibold mg-b-0">Текстиль</h6>
+                        </div>
+
+                              <table class="table table-separated">
+
+                                 <thead>
+                                    <tr>
+                                       <th class="text-center w-100px">Статус</th>
+                                       <th>Помещение</th>
+                                       <th>Наименование</th>
+                                       <th class="text-center">Цена</th>
+                                       <th class="text-center">Количество</th>
+                                       <th class="text-center">Стоимость</th>
+                                       <th class="text-center w-100px">Действия</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% for t in textile %}
+                                       <tr>
+                                          <td class="text-center w-100px"><span class="wd-30 ht-30 tx-gray-450">{{t.get_ordered_display}}</span></td>
+                                          <td>{{ t.specification.room.name }}</td>
+                                          <td>{{t.item.collection}} {{t.item.model}}</td>
+                                          <td class="text-center">{{ t.item.price_opt }}</td>
+                                          <td class="text-center">{{ t.quantity }}</td>
+                                          <td class="text-center">{{ t.item.price_opt|mul:t.quantity|floatformat:2 }}</td>
+                                          <td class="text-center table-actions">
+                                              {% if t.ordered < 1 %}
+                                                <a href="{{ t.get_order }}"  title="" data-toggle="tooltip" data-original-title="Заказать"><i data-feather="target" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 1 %}
+                                                <a href="{{ t.get_ordered }}"  title="" data-toggle="tooltip" data-original-title="Заказан"><i data-feather="disc" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 1 %}
+                                                <a href="{{ t.get_stay_out }}"  title="" data-toggle="tooltip" data-original-title="Отсутствует"><i data-feather="alert-circle" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 2 %}
+                                                <a href="{{ t.get_payed }}"  title="" data-toggle="tooltip" data-original-title="Оплачен"><i data-feather="dollar-sign" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 3 %}
+                                                <a href="{{ t.get_shipped }}"  title="" data-toggle="tooltip" data-original-title="Отгружен"><i data-feather="arrow-down-circle" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered < 1 %}
+                                                <a href="{{ t.get_stock }}"  title="" data-toggle="tooltip" data-original-title="В наличии"><i data-feather="check-circle" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                          </td>
+                                       </tr>
+                                    {% endfor %}
+                                 </tbody>
+                              </table>
+                     </div>
+
+                      <div class="card mg-b-30">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-14 tx-semibold mg-b-0">Карнизы</h6>
+                        </div>
+
+                              <table class="table table-separated">
+
+                                 <thead>
+                                    <tr>
+                                       <th class="text-center w-100px">Статус</th>
+                                       <th>Помещение</th>
+                                       <th>Наименование</th>
+                                       <th class="text-center">Цена</th>
+                                       <th class="text-center">Количество</th>
+                                       <th class="text-center">Стоимость</th>
+                                       <th class="text-center w-100px">Действия</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% for t in cornice %}
+                                       <tr>
+                                          <td class="text-center w-100px"><span class="wd-30 ht-30 tx-gray-450">{{t.get_ordered_display}}</span></td>
+                                          <td>{{ t.specification.room.name }}</td>
+                                          <td>{{t.item.model}} {{t.item.long}}</td>
+                                          <td class="text-center">{{ t.item.price_opt }}</td>
+                                          <td class="text-center">{{ t.quantity }}</td>
+                                          <td class="text-center">{{ t.item.price_opt|mul:t.quantity|floatformat:2 }}</td>
+                                          <td class="text-center table-actions">
+                                              {% if t.ordered < 1 %}
+                                                <a href="{{ t.get_order }}"  title="" data-toggle="tooltip" data-original-title="Заказать"><i data-feather="target" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 1 %}
+                                                <a href="{{ t.get_ordered }}"  title="" data-toggle="tooltip" data-original-title="Заказан"><i data-feather="disc" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 1 %}
+                                                <a href="{{ t.get_stay_out }}"  title="" data-toggle="tooltip" data-original-title="Отсутствует"><i data-feather="alert-circle" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 2 %}
+                                                <a href="{{ t.get_payed }}"  title="" data-toggle="tooltip" data-original-title="Оплачен"><i data-feather="dollar-sign" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 3 %}
+                                                <a href="{{ t.get_shipped }}"  title="" data-toggle="tooltip" data-original-title="Отгружен"><i data-feather="arrow-down-circle" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered < 1 %}
+                                                <a href="{{ t.get_stock }}"  title="" data-toggle="tooltip" data-original-title="В наличии"><i data-feather="check-circle" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                          </td>
+                                       </tr>
+                                    {% endfor %}
+                                 </tbody>
+                              </table>
+
+
+                     </div>
+
+                      <!--BEGIN-->
+                      <div class="card mg-b-30" {% if state.work.quantity != 0 %}{%else%} hidden {%endif%}>
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-14 tx-semibold mg-b-0">Работы</h6>
+                        </div>
+
+                              <table class="table table-separated">
+
+                                 <thead>
+                                    <tr>
+                                       <th class="text-center w-100px">Статус</th>
+                                       <th>Помещение</th>
+                                       <th>Тип</th>
+                                        <th>Наименование</th>
+                                       <th class="text-center">Цена</th>
+                                       <th class="text-center">Количество</th>
+                                       <th class="text-center">Стоимость</th>
+                                       <th class="text-center w-100px">Действия</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+
+                                    {% for t in sewing %}
+                                       <tr>
+                                          <td class="text-center w-100px"><span class="wd-30 ht-30 tx-gray-450">{{t.get_ordered_display}}</span></td>
+                                          <td>{{ t.specification.room.name }}</td>
+                                          <td>{{t.item.type_work.name}}</td>
+                                           <td>{{t.item.name}}</td>
+                                          <td class="text-center">{{ t.item.price }}</td>
+                                          <td class="text-center">{{ t.quantity }}</td>
+                                          <td class="text-center">{{ t.item.price|mul:t.quantity|floatformat:2 }}</td>
+                                          <td class="text-center table-actions">
+                                              {% if t.ordered < 1 %}
+                                                <a href="{{ t.get_ordered }}"  title="" data-toggle="tooltip" data-original-title="Заказан"><i data-feather="disc" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                          </td>
+                                       </tr>
+                                    {% endfor %}
+                                    {% for t in assembly %}
+                                       <tr>
+                                          <td class="text-center w-100px"><span class="wd-30 ht-30 tx-gray-450">{{t.get_ordered_display}}</span></td>
+                                          <td>{{ t.specification.room.name }}</td>
+                                           <td>{{t.item.type_work.name}}</td>
+                                          <td>{{t.item.name}}</td>
+                                          <td class="text-center">{{ t.item.price }}</td>
+                                          <td class="text-center">{{ t.quantity }}</td>
+                                          <td class="text-center">{{ t.item.price|mul:t.quantity|floatformat:2 }}</td>
+                                          <td class="text-center table-actions">
+                                              {% if t.ordered < 1 %}
+                                                <a href="{{ t.get_ordered }}"  title="" data-toggle="tooltip" data-original-title="Заказан"><i data-feather="disc" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                          </td>
+                                       </tr>
+                                    {% endfor %}
+                                    {% for t in hanging %}
+                                       <tr>
+                                          <td class="text-center w-100px"><span class="wd-30 ht-30 tx-gray-450">{{t.get_ordered_display}}</span></td>
+                                          <td>{{ t.specification.room.name }}</td>
+                                           <td>{{t.item.type_work.name}}</td>
+                                          <td>{{t.item.name}}</td>
+                                          <td class="text-center">{{ t.item.price }}</td>
+                                          <td class="text-center">{{ t.quantity }}</td>
+                                          <td class="text-center">{{ t.item.price|mul:t.quantity|floatformat:2 }}</td>
+                                          <td class="text-center table-actions">
+                                              {% if t.ordered < 1 %}
+                                                <a href="{{ t.get_ordered }}"  title="" data-toggle="tooltip" data-original-title="Заказан"><i data-feather="disc" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                          </td>
+                                       </tr>
+                                    {% endfor %}
+                                    {% for t in delivery %}
+                                       <tr>
+                                          <td class="text-center w-100px"><span class="wd-30 ht-30 tx-gray-450">{{t.get_ordered_display}}</span></td>
+                                          <td>{{ t.specification.room.name }}</td>
+                                           <td>{{t.item.type_work.name}}</td>
+                                          <td>{{t.item.name}}</td>
+                                          <td class="text-center">{{ t.item.price }}</td>
+                                          <td class="text-center">{{ t.quantity }}</td>
+                                          <td class="text-center">{{ t.item.price|mul:t.quantity|floatformat:2 }}</td>
+                                          <td class="text-center table-actions">
+                                              {% if t.ordered < 1 %}
+                                                <a href="{{ t.get_ordered }}"  title="" data-toggle="tooltip" data-original-title="Заказан"><i data-feather="disc" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                          </td>
+                                       </tr>
+                                    {% endfor %}
+
+                                 </tbody>
+                              </table>
+                     </div>
+                    <!--END-->
+
+                  </div>
+                  <div class="col-xl-4">
+                     <!-- Skills -->
+                     <div class="card mg-b-30">
+                        <div class="card-header tx-14 tx-semibold">Заказ поставщику</div>
+                        <div class="card-body">
+                           {% for supp in supplier_order %}
+                              {% if supp.status == 0 %}
+                                 <div>
+                                    <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10">{{ supp.supplier }}</span>
+                                 </div>
+
+                                 <table class="table table-separated">
+
+                                    <tbody>
+                                        {% for item in supp.materials.all %}
+                                              <tr>
+
+                                                    <td>{{item.item.collection}} {{item.item.model}}</td>
+                                                    <td class="text-center">{{item.quantity}}</td>
+
+                                              </tr>
+                                        {% endfor %}
+                                        <tr>
+                                             <td class="text-right">ИТОГ:</td>
+                                             <td class="text-center">294</td>
+                                        </tr>
+                                    </tbody>
+                                 </table>
+                                 <a href="{{ supp.send_order }}" class="card-footer d-block text-center small tx-semibold">ОТПРАВИТЬ</a>
+                              {% endif %}
+                           {% endfor %}
+                            {% for supp in supplier_order_cornice %}
+                              {% if supp.status == 0 %}
+                                 <div>
+                                    <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10">{{ supp.supplier }}</span>
+                                 </div>
+
+                                 <table class="table table-separated">
+
+                                    <tbody>
+                                        {% for item in supp.materials.all %}
+                                              <tr>
+
+                                                    <td>{{item.item.model}} {{item.item.long}}</td>
+                                                    <td class="text-center">{{item.quantity}}</td>
+
+                                              </tr>
+                                        {% endfor %}
+                                        <tr>
+                                             <td class="text-right">ИТОГ:</td>
+                                             <td class="text-center">294</td>
+                                        </tr>
+                                    </tbody>
+                                 </table>
+                                 <a href="{{ supp.send_order }}" class="card-footer d-block text-center small tx-semibold">ОТПРАВИТЬ</a>
+                              {% endif %}
+                           {% endfor %}
+
+
+                        </div>
+                     </div>
+                     <!-- / Skills -->
+
+
+
+                  </div>
+               </div>
+
+            </div>
+{% endblock %}

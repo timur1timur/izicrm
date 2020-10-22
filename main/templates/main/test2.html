@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Помещение "{{ qs.room.name }}"</h1>
+    <h3>Версия: {{ qs.version }}</h3>
+    <h3>Статус:
+        {% if qs.status %}
+            Утвержден
+        {% else %}
+            Черновик
+        {% endif %}
+
+    </h3></br>
+
+    {% if qs.status %}
+    {% else %}
+        <a href="{{ qs.add_textile}}" class="btn">Добавить "Текстиль"</a></br>
+    {% endif %}
+
+    {% if textile %}
+        <p>Текстиль:</p>
+        {% for t in textile %}
+            {{ t.item }} <a href="{{ t.remove_textile}}" class="btn">х</a></br>
+            {{ t.quantity }} </br>
+            {{ t.total_price }} </br>
+        {% endfor %}
+        </br>
+        <p> Итого материалы: {{summ_t}}</p>
+            </br>
+    {% endif %}
+    {% if qs.status %}
+    {% else %}
+        <a href="{{ qs.add_cornice}}" class="btn">Добавить "Карнизы"</a></br>
+    {% endif %}
+
+    {% if cornice %}
+        <p>Карнизы:</p>
+        {% for t in cornice %}
+            {{ t.item }} <a href="{{ t.remove_cornice}}" class="btn">х</a> </br>
+            {{ t.quantity }} </br>
+            {{ t.total_price }} </br>
+        {% endfor %}
+        </br>
+        <p> Итого карнизы: {{summ_c}}</p>
+                </br>
+    {% endif %}
+    {% if qs.status %}
+    {% else %}
+        <a href="{{ qs.add_sewing}}" class="btn">Добавить "Пошив"</a></br>
+    {% endif %}
+
+    {% if sewing %}
+        <p>Пошив:</p>
+        {% for t in sewing %}
+            {{ t.item }} <a href="{{ t.remove_sewing}}" class="btn">х</a> </br>
+            {{ t.quantity }} </br>
+            {{ t.total_price }} </br>
+        {% endfor %}
+        <p> Итого пошив: {{summ_s}}</p>
+            </br>
+    {% endif %}
+    {% if qs.status %}
+    {% else %}
+        <a href="{{ qs.add_assembly}}" class="btn">Добавить "Монтаж"</a></br>
+    {% endif %}
+
+    {% if assembly %}
+        <p>Монтаж:</p>
+        {% for t in assembly %}
+            {{ t.item }} <a href="{{ t.remove_assembly}}" class="btn">х</a> </br>
+            {{ t.quantity }} </br>
+            {{ t.total_price }} </br>
+        {% endfor %}
+        <p> Итого монтаж: {{summ_a}}</p>
+            </br>
+    {% endif %}
+
+    </br>
+    {% if sewing or cornice or textile or assembly %}
+        <h3>ИТОГО: {{ summ }}</h3>
+    {% endif %}
+    </br>
+    {% if qs.status %}
+        <a href="{{ qs.change_status}}" class="btn">Разутвердить</a>
+        <a href="{{ qs.ready}}" class="btn">Готово</a>
+    {% else %}
+        {% if sewing or cornice or textile or assembly %}
+            <a href="{{ qs.change_status}}" class="btn">Утвердить</a>
+        {% endif %}
+        <a href="{{ qs.ready}}" class="btn">Назад</a>
+    {% endif %}
+
+
+</body>
+</html>

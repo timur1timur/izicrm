@@ -1,0 +1,92 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Поставки{% endblock %}
+
+{% block body_content %}
+                     <!-- Filtering FooTable Start -->
+                     <!--================================-->
+                     <div class="col-md-12 col-lg-12">
+                        <div class="card mg-b-30">
+
+                           <div class="card-body pd-0">
+
+
+                                           <div class="row">
+                                             <div class="mg-20 form-inline wd-100p">
+                                                <div class="col-sm-6">
+                                                   <div class="form-group">
+
+                                                      <select id="foo-filter-status" class="custom-select">
+                                                         <option value="">Показать все</option>
+                                                         <option value="Доход">Доход</option>
+                                                         <option value="Расход">Расход</option>
+
+                                                      </select>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="form-group ft-right">
+                                                      <input id="foo-search" type="text" placeholder="Поиск" class="form-control" autocomplete="off">
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="50">
+                                              <thead class="tx-10 tx-uppercase">
+                                                 <tr>
+                                                    <th>Заказ</th>
+                                                     <th>Дата</th>
+                                                     <th>Поставщик</th>
+                                                    <th>Тип</th>
+                                                    <th>Материал</th>
+                                                     <th>Количество</th>
+                                                     <th>Цена план</th>
+                                                     <th>Цена поставки</th>
+                                                     <th>Счет-фактура</th>
+                                                     <th>Статус</th>
+
+                                                 </tr>
+                                              </thead>
+                                             <tbody>
+
+                                                {% for q in orders %}
+                                                    <tr class="table table-bordered table-hover">
+
+                                                        <td><a href="{% url 'manager:order_view' q.order.id %}">{{q.order.number}}</a></td>
+                                                        <td>{{q.date_created|date:'d.m.Y H:i'}}</td>
+                                                        <td>{{q.item.item.manufacturer.name}}</td>
+                                                        <td><span class="badge badge-dark">{{ q.type }}</span></td>
+                                                        <td>{{ q.item.item.collection }} {{ q.item.item.model }} {{ q.item.item.color }}</td>
+                                                        <td>{{ q.item.quantity }}</td>
+                                                        <td>{{ q.item.item.price_opt }}</td>
+                                                        <td>{{ q.price }}</td>
+                                                        <td>{{ q.receipt }}</td>
+                                                        <td>
+                                                            {% if q.item.ordered == 2 %}
+                                                                <span class="badge badge-secondary">{{ q.item.get_ordered_display }}</span>
+                                                            {% elif q.item.ordered == 3 %}
+                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }}</span>
+                                                            {% elif q.item.ordered == 4 %}
+                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }}</span>
+                                                            {% endif %}
+                                                        </td>
+
+                                                    </tr>
+                                                {% endfor %}
+
+
+                                             </tbody>
+
+                                          </table>
+
+
+                           </div>
+                        </div>
+                     </div>
+                     <!--/ Filtering FooTable End -->
+
+
+
+
+{% endblock %}
+

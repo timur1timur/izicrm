@@ -1,0 +1,288 @@
+{% extends "main/base.html" %}
+{% load mathfilters %}
+{% block title %} Заказы{% endblock %}
+{% block title_h1 %}Детализация заказа {{ qs.number }} от {{qs.date_created|date:'d.m.Y'}} {% endblock %}
+{% block breadcrumb %}<span class="badge badge-{{qs.get_status_css_display}}">{{qs.get_status_display}}</span>{% endblock %}
+{% block breadcrumb_buttons %}
+   {% if qs.status < 2 %}
+      <form method="POST" class="post-form">{% csrf_token %}
+         <div class="row">
+               {% if state.discount_s == 1 %}
+                  <div class="col-sm-4">
+                     <span class="badge badge-secondary">Скидка ({{state.discount|mul:100}} %) на согласовании</span>
+                 </div>
+               {% endif %}
+               {% if state.discount_s == 2 %}
+                  <div class="col-sm-4">
+                     <span class="badge badge-success">Скидка ({{state.discount|mul:100}} %) согласована</span>
+                 </div>
+               {% endif %}
+               {% if state.discount_s == 3 %}
+                  <div class="col-sm-4">
+                     <span class="badge badge-danger">Скидка не согласована</span>
+                 </div>
+               {% endif %}
+               {% if state.discount_s == 0 or state.discount_s == 3 %}
+                 <div class="col-sm-4">
+                     <input type="text" class="form-control form-control" name="discount" placeholder="Скидка">
+                 </div>
+                  <div class="col-sm-3">
+                     <button type="Submit" class="btn btn-secondary ">Применить</button>
+                 </div>
+               {% endif %}
+
+         </div>
+      </form>
+   {% endif %}
+{% endblock %}
+
+{% block body_content %}
+            <div class="page-inner pd-0-force">
+
+               <div class="container">
+                 <div class="row">
+                    {% if state.room_ready %}
+                       <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          {% if qs.status > 1 %}
+                                             <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Коммерческое предложение <i data-feather="check" class="wd-16 mr-2 "></i></span>
+                                          {% else %}
+                                             <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Коммерческое предложение</span>
+                                          {% endif %}
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+                                       {% if qs.status == 0 %}
+                                          <a href="{{ qs.create_offer }}" class="badge badge-dark">Сформировать</a>
+                                       {% endif %}
+                                    </div>
+                                    <div class="clearfix">
+                                       {% if state.kp_select %}
+                                          <a href="{{ qs.create_kp}}" class="badge badge-dark">Скачать</a>
+                                          {% if qs.status == 1 %}
+                                             <a href="#" class="badge badge-dark">Выбрать</a>
+                                          {% endif %}
+                                       {% endif %}
+                                    </div>
+
+
+                                 </div>
+                          </div>
+                       </div>
+                    {% endif %}
+
+                    {% if state.kp_ready %}
+                       <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          {% if state.contract_ready %}
+                                             <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Договор <i data-feather="check" class="wd-16 mr-2 "></i></span>
+                                          {% else %}
+                                             <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Договор</span>
+                                          {% endif %}
+                                       </div>
+                                    </div>
+                                    {% if qs.status == 2 %}
+                                       <div class="clearfix">
+                                          <a href="{{ qs.create_customer }}" class="badge badge-dark">Оформить договор</a>
+                                       </div>
+                                    {% endif %}
+                                    {% if state.contract_create %}
+                                       <div class="clearfix">
+                                          <a href="{{ qs.get_doc}}" class="badge badge-dark">Скачать</a>
+                                          {% if qs.status == 3 %}
+                                             <a href="{{qs.ready_contract}}" class="badge badge-dark">Подписать</a>
+                                          {% endif %}
+                                       </div>
+                                    {% endif %}
+                                 </div>
+                          </div>
+                       </div>
+                    {% endif %}
+                    {% if state.contract_ready %}
+                       <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          {% if state.prepay_ready %}
+                                             <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Аванс <i data-feather="check" class="wd-16 mr-2 "></i></span>
+                                          {% else %}
+                                             <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Аванс</span>
+                                          {% endif %}
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+                                       {% if state.prepay_ready %}
+                                          <a href="{{qs.create_prepay}}" class="badge badge-dark">Внести платеж</a>
+                                       {% else %}
+                                          <a href="{{qs.create_prepay}}" class="badge badge-dark">Внести аванс</a>
+                                       {% endif %}
+                                    </div>
+
+                                 </div>
+                          </div>
+                       </div>
+                    {% endif %}
+
+
+
+                 </div>
+               </div>
+
+
+
+
+
+
+               <div class="row clearfix">
+                  <div class="col">
+                     <div class="card mg-b-30">
+
+
+                              <div class="card-header d-flex align-items-center justify-content-between">
+                                 <h6 class="tx-15 tx-semibold mg-b-0">Помещения</h6>
+                              </div>
+                              {% for t in sp %}
+                                 <div class="card-body pd-25">
+                                    <div class="media d-block d-flex mg-b-10">
+                                       {% if t.status %}
+                                          <div class="wd-40 ht-40 bg-success rounded d-flex align-items-center justify-content-center hidden-xs">
+                                             <span data-feather="codepen" class="wd-20 ht-20 tx-gray-200"></span>
+                                          </div>
+                                       {% else %}
+                                          <div class="wd-40 ht-40 bg-secondary rounded d-flex align-items-center justify-content-center hidden-xs">
+                                             <span data-feather="codepen" class="wd-20 ht-20 tx-gray-200"></span>
+                                          </div>
+                                       {% endif %}
+                                       <div class="media-body pd-l-0 pd-sm-l-20">
+                                          <h5 class="tx-15 mg-b-5">{{ t.name }}</h5>
+                                          <p>
+                                             {% if t.status %}
+                                                <a href="{{ t.change_status}}"  title="" data-toggle="tooltip" data-original-title="Разутвердить"><i data-feather="user" class="wd-16 mr-2"></i></a>
+                                             {% else %}
+                                                <a href="{{ t.change_status}}"  title="" data-toggle="tooltip" data-original-title="Утвердить"><i data-feather="user-check" class="wd-16 mr-2"></i></a>
+                                             {% endif %}
+                                             <a href="{{ t.remove_room}}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                          </p>
+                                       </div>
+                                       <div class="row clearfix">
+                                             <div class="col-center">
+                                                <label class="tx-16 tx-uppercase tx-gray-500 mb-0">+</label>
+                                             </div>
+                                             <div class="col-sm bd-r bd-gray-200">
+                                                <a href="{{ t.create_sp}}" class="tx-10 tx-uppercase tx-gray-500 mb-0">Добавить вариант</a>
+                                             </div>
+                                             {% for sp in spec %}
+                                                {% if sp.room == t %}
+                                                   <div class="col-sm bd-r bd-gray-200">
+                                                      <div class="d-flex align-items-baseline">
+                                                         <h5 class="tx-16 tx-sm-14 tx-md-16 mg-b-0 tx-rubik tx-dark tx-normal">{{sp.total}}</h5>
+                                                      </div>
+                                                      <label class="tx-10 tx-uppercase tx-gray-500 mb-0">
+                                                         {% if sp.status %}
+                                                            <a href="{{ sp.get_absolute_url }}">{{ sp.version }} <i data-feather="check" class="wd-16 mr-2"></i></a>
+                                                         {% else %}
+                                                            <a href="{{ sp.get_absolute_url }}">{{ sp.version }}</a>
+                                                         {% endif %}
+                                                      </label>
+                                                      <p>
+                                                         {% if sp.status %}
+                                                            <a href="{{ sp.change_status}}"  title="" data-toggle="tooltip" data-original-title="Разутвердить"><i data-feather="user" class="wd-16 mr-2"></i></a>
+                                                         {% else %}
+                                                            <a href="{{ sp.change_status}}"  title="" data-toggle="tooltip" data-original-title="Утвердить"><i data-feather="user-check" class="wd-16 mr-2"></i></a>
+                                                         {% endif %}
+                                                         <a href="{{ sp.get_absolute_url}}"  title="" data-toggle="tooltip" data-original-title="Редактировать"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                         <a href="{{ sp.copy_sp}}"  title="" data-toggle="tooltip" data-original-title="Копировать"><i data-feather="copy" class="wd-16 mr-2"></i></a>
+                                                         <a href="{{ sp.remove_sp}}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                      </p>
+                                                   </div>
+                                                {% endif %}
+                                             {% endfor %}
+                                       </div>
+
+                                    </div>
+                                    <hr class="m-0">
+                                 </div>
+                              {% endfor %}
+
+
+
+                           <div class="card-footer bg-transparent">
+                              <nav class="nav nav-with-icon tx-13">
+                                 <a href="{{ qs.create_room }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить помещение</a>
+                              </nav>
+                           </div>
+
+                        <!-- card-footer -->
+                     </div>
+                           <div class="card mg-b-30">
+                              {% if offers %}
+                                 <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h6 class="tx-15 tx-semibold mg-b-0">Варианты из КП</h6>
+                                 </div>
+                                 {% for offer in offers %}
+                                    <div class="card-body pd-25">
+                                       <div class="media d-block d-flex mg-b-10">
+                                          <div class="wd-40 ht-40 bg-secondary rounded d-flex align-items-center justify-content-center hidden-xs">
+                                             <span data-feather="file-text" class="wd-20 ht-20 tx-gray-200"></span>
+                                          </div>
+                                          <div class="media-body pd-l-0 pd-sm-l-20">
+                                             <h5 class="tx-15 mg-b-5"><a href="{{ offer.select_offer}}">{{ offer.version }}</a></h5>
+                                             <h6 class="tx-15 mg-b-5">{{ offer.total }}</h6>
+                                          </div>
+
+
+                                       </div>
+                                       <hr class="m-0">
+                                    </div>
+                                 {% endfor %}
+                              {% endif %}
+
+                              <!-- card-footer -->
+                           </div>
+
+
+
+                        {% if prepay %}
+                           <div class="card mg-b-30">
+
+                              <div class="card-header d-flex align-items-center justify-content-between">
+                                 <h6 class="tx-15 tx-semibold mg-b-0">Платежи</h6>
+                              </div>
+                              {% for pr in prepay %}
+                                 <div class="card-body pd-25">
+                                    <div class="media d-block d-flex mg-b-10">
+                                       <div class="wd-40 ht-40 bg-secondary rounded d-flex align-items-center justify-content-center hidden-xs">
+                                          <span data-feather="file-text" class="wd-20 ht-20 tx-gray-200"></span>
+                                       </div>
+                                       <div class="media-body pd-l-0 pd-sm-l-20">
+                                          <h5 class="tx-15 mg-b-5"><a href="{{ offer.select_offer}}">{{ pr.get_type_pay_display }}</a></h5>
+                                          <h6 class="tx-15 mg-b-5">{{ pr.price }}</h6>
+                                       </div>
+
+
+                                    </div>
+                                    <hr class="m-0">
+                                 </div>
+
+
+                              {% endfor %}
+                           </div>
+                        {% endif %}
+
+                           <!-- card-footer -->
+
+
+
+
+                  </div>
+
+               </div>
+            </div>
+{% endblock %}

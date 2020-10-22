@@ -1,0 +1,222 @@
+  <script src="/static/main/assets/plugins/jquery/jquery.min.js"></script>
+  <script src="/static/main/assets/plugins/jquery-ui/jquery-ui.js"></script>
+  <script src="/static/main/assets/plugins/moment/moment.min.js"></script>
+  <script src="/static/main/assets/plugins/popper/popper.js"></script>
+  <script src="/static/main/assets/plugins/feather/feather.min.js"></script>
+  <script src="/static/main/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/static/main/assets/plugins/typeahead/typeahead.js"></script>
+  <script src="/static/main/assets/plugins/typeahead/typeahead-active.js"></script>
+  <script src="/static/main/assets/plugins/pace/pace.min.js"></script>
+  <script src="/static/main/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+  <script src="/static/main/assets/plugins/highlight/highlight.min.js"></script>
+
+  <!-- Dashboard Script -->
+  <script src="/static/main/assets/plugins/daterangepicker/daterangepicker.js"></script>
+  <script src="/static/main/assets/plugins/jqvmap/jquery-jvectormap-2.0.2.min.js"></script>
+  <script src="/static/main/assets/plugins/jqvmap/gdp-data.js"></script>
+  <script src="/static/main/assets/plugins/jqvmap/maps/jquery-jvectormap-world-mill-en.js"></script>
+  <script src="/static/main/assets/plugins/chartist/chartist.js"></script>
+  <script src="/static/main/assets/plugins/apex-chart/apexcharts.min.js"></script>
+  <script src="/static/main/assets/plugins/apex-chart/irregular-data-series.js"></script>
+
+  <script src="/static/main/assets/plugins/chartjs/chartjs.js"></script>
+  <script src="/static/main/assets/plugins/chartjs/chartjs-active.js"></script>
+  <!-- Required Script -->
+  <script src="/static/main/assets/js/app.js"></script>
+  <script src="/static/main/assets/js/avesta.js"></script>
+  <script src="/static/main/assets/js/avesta-customizer.js"></script>
+
+  <script src="/static/main/assets/plugins/smartWizard/js/jquery.smartWizard.min.js"></script>
+
+
+  <!-- Javascript -->
+  <script>
+     //World Map
+     "use strict";
+     $(document).ready(function () {
+        // World Map
+        $('#world-map').vectorMap({
+            map: 'world_mill_en',
+            backgroundColor: 'transparent',
+            markerStyle: {
+                initial: {
+                    fill: '#2e2e2e',
+                    stroke: '#2e2e2e',
+                    "fill-opacity": 1,
+                    "stroke-width": 15,
+                    "stroke-opacity": 0.2
+                }
+            },
+            markers: [{
+                    latLng: [37.18, -93.35],
+                    name: 'United States'
+                },
+                {
+                    latLng: [20.59, 78.96],
+                    name: 'India'
+                },
+                {
+                    latLng: [-25.27, 133.77],
+                    name: 'Australia'
+                },
+                {
+                    latLng: [-38.41, -63.61],
+                    name: 'Argentina'
+                },
+                {
+                    latLng: [61.52, 105.31],
+                    name: 'Russia'
+                },
+                {
+                    latLng: [-30.55, 22.93],
+                    name: 'South Africa'
+                },
+            ],
+            focusOn: {
+                x: 0,
+                y: 0,
+                scale: 1
+            },
+            series: {
+                regions: [{
+                    values: {
+                        US: 'rgba(148, 77, 255, 0.3)',
+                        AU: 'rgba(255, 228, 17, 0.3)',
+                        IN: 'rgba(8, 210, 111, 0.3)',
+                        AR: 'rgba(252, 79, 104, 0.3)',
+                        RU: 'rgba(129, 206, 246, 0.3)',
+                        ZA: 'rgba(252, 79, 104, 0.3)',
+                    }
+                }]
+            },
+            regionStyle: {
+                initial: {
+                    fill: '#e9eff9'
+                }
+            }
+        });
+
+     });
+
+     // Dashboard DateTimePicker
+     $(function() {
+     var isRtl = $('body').attr('dir') === 'rtl' || $('html').attr('dir') === 'rtl';
+
+     // Button
+     var startY = document.getElementById( 'startDateY' );
+     var startM = document.getElementById( 'startDateM' );
+     var startD = document.getElementById( 'startDateD' );
+     var endY = document.getElementById( 'endDateY' );
+     var endM = document.getElementById( 'endDateM' );
+     var endD = document.getElementById( 'endDateD' );
+
+
+     var start = moment([Number(startY.textContent), Number(startM.textContent), Number(startD.textContent)]);
+     var end = moment([Number(endY.textContent), Number(endM.textContent), Number(endD.textContent)]);
+
+
+     function cb(start, end) {
+     $('#dashboardDate').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+     }
+     $('#dashboardDate').daterangepicker({
+     startDate: start,
+     endDate: end,
+     ranges: {
+     'Сегодня': [moment(), moment()],
+     'Вчера': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+     'Последние 7 дней': [moment().subtract(6, 'days'), moment()],
+     'Последние 30 дней': [moment().subtract(29, 'days'), moment()],
+     'Это месяц': [moment().startOf('month'), moment().endOf('month')],
+     'Предыдущий месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+     },
+     opens: (isRtl ? 'left' : 'right')
+     }, cb);
+     cb(start, end);
+
+     // Replace icons
+     $('#dashboardDate').each(function() {
+     var obj = $(this).data('daterangepicker');
+     var _updateCalendars = obj.updateCalendars;
+     obj.updateCalendars = function() {
+     // Call original function
+     _updateCalendars.call(obj)
+     // Replace icons
+     obj.container.find('.prev > i').each(function() { this.className = 'ion ion-ios-arrow-back' });
+     obj.container.find('.next > i').each(function() { this.className = 'ion ion-ios-arrow-forward' });
+     obj.container.find('.daterangepicker_input > i').each(function() { this.className = 'ion ion-md-calendar' });
+     obj.container.find('.calendar-time > i').each(function() { this.className = 'ion ion-md-time' });
+
+     };
+     });
+
+      $('#dashboardDate').on('apply.daterangepicker', function(ev, picker) {
+
+        var start = (picker.startDate.format('YYYY-MM-DD'));
+        var end = (picker.endDate.format('YYYY-MM-DD'));
+
+        var link = '{% url 'director:payments_list_date' 'val1' 'val2' %}';
+        link = link.replace('val1', start);
+        link = link.replace('val2', end);
+        window.location.href = link;
+      });
+     });
+  </script>
+
+
+  <script>
+    $("#button-choice").click(function() {
+        var link = '{% url 'main:order_cust_id' 'NEWVALUESTUB' %}';
+        link = link.replace('NEWVALUESTUB', $("#id_customer").val());
+        window.location.href = link;
+    });
+  </script>
+
+
+  <!-- footable Script -->
+  <script src="/static/main/assets/plugins/footable/footable.all.min.js"></script>
+
+  <script>
+     // Row Toggler
+     $('#foo-row-toggler').footable();
+
+     // Accordion
+     $('#foo-accordion').footable().on('footable_row_expanded', function(e) {
+        $('#foo-accordion tbody tr.footable-detail-show').not(e.row).each(function() {
+            $('#foo-accordion').data('footable').toggleDetail(this);
+        });
+     });
+     // Filtering
+     var filtering = $('#foo-filtering');
+     filtering.footable().on('footable_filtering', function (e) {
+        var selected = $('#foo-filter-status').find(':selected').val();
+        e.filter += (e.filter && e.filter.length > 0) ? ' ' + selected : selected;
+        e.clear = !e.filter;
+     });
+
+     // Filter status
+     $('#foo-filter-status').change(function (e) {
+        e.preventDefault();
+        filtering.trigger('footable_filter', {filter: $(this).val()});
+     });
+
+     // Search input
+     $('#foo-search').on('input', function (e) {
+        e.preventDefault();
+        filtering.trigger('footable_filter', {filter: $(this).val()});
+     });
+
+  </script>
+
+  <script src="/static/main/assets/plugins/summernote/summernote-bs4.min.js"></script>
+
+  <script>jQuery(document).ready(function(){
+     $('.summernote').summernote({
+         height: 320,                 // set editor height
+         minHeight: null,             // set minimum height of editor
+         maxHeight: null,             // set maximum height of editor
+         focus: false                 // set focus to editable area after initializing summernote
+     });
+
+     });
+  </script>
+  <!-- / Javascript -->

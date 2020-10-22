@@ -1,0 +1,340 @@
+{% extends "main/base.html" %}
+{% load mathfilters %}
+
+{% block title_h1 %}Бюджет заказа {{ qs.number }} от {{qs.date_created|date:'d.m.Y'}} {% endblock %}
+
+{% block body_content %}
+            <div class="page-inner pd-0-force">
+
+               <div class="container">
+                 <div class="row">
+
+                     <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Заказчик</span>
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+
+                                        <span>
+                                            <span class="small mg-b-0">
+                                                {% for cus in customer %}
+                                                  {% for ord in cus.order.all %}
+                                                      {% if qs.number == ord.number %}
+                                                          {{cus.name}}
+                                                      {% endif %}
+                                                  {% endfor %}
+                                                {% endfor %}
+                                            </span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span>
+                                            <span class="small mg-b-0">
+                                                {% for cus in customer %}
+                                                  {% for ord in cus.order.all %}
+                                                      {% if qs.number == ord.number %}
+                                                          {{cus.phone}}
+                                                      {% endif %}
+                                                  {% endfor %}
+                                                {% endfor %}
+                                            </span>
+                                        </span>
+                                    </div>
+                                 </div>
+                          </div>
+                     </div>
+                     <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Договор</span>
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Номер:</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ qs.number }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Сумма:</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ contract.price }}</span>
+                                        </span>
+                                    </div>
+                                     {% for p in payments_arrival %}
+                                         <div class="clearfix">
+                                            <span class="float-left tx-11 tx-gray-500">{{p.category.name}}:</span>
+                                            <span class="float-right">
+                                                <span class="small mg-b-0">{{ p.price }}</span>
+                                            </span>
+                                        </div>
+                                     {% endfor %}
+                                 </div>
+                          </div>
+                     </div>
+                     <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Бюджет (План)</span>
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Приход:</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ budget_plane.total.arrival }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Расход:</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ budget_plane.total.expense }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Доход:</span>
+                                        <span class="float-right">
+                                            <span class="tx-success small mg-b-0">{{ budget_plane.total.profit }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Маржинальность:</span>
+                                        <span class="float-right">
+                                            <small class="tx-success">+{{ budget_plane.total.change }}%</small>
+                                        </span>
+                                    </div>
+                                 </div>
+                          </div>
+                     </div>
+                     <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Бюджет (Факт)</span>
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Приход:</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ budget_fact.total.arrival }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Расход:</span>
+                                        <span class="float-right">
+                                            <span class="small mg-b-0">{{ budget_fact.total.expense }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Доход:</span>
+                                        <span class="float-right">
+                                            <span class="tx-success small mg-b-0">{{ budget_fact.total.profit }}</span>
+                                        </span>
+                                    </div>
+                                     <div class="clearfix">
+                                        <span class="float-left tx-11 tx-gray-500">Маржинальность:</span>
+                                        <span class="float-right">
+                                            <small class="tx-success">+{{ budget_fact.total.change }}%</small>
+                                        </span>
+                                    </div>
+                                 </div>
+                          </div>
+                     </div>
+
+                 </div>
+               </div>
+
+               <div class="row clearfix">
+                  <div class="col">
+                     <!-- Info -->
+
+                     <!-- / Info -->
+                     <div class="card mg-b-30">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-14 tx-semibold mg-b-0">Детализация бюджета по материалам</h6>
+                        </div>
+
+                              <table class="table table-separated">
+
+                                 <thead>
+                                    <tr>
+                                        <th class="text-center w-100px">Тип</th>
+                                        <th>Наименование</th>
+                                        <th class="text-center">Цена (каталог)</th>
+                                        <th class="text-center">Цена (продажа)</th>
+                                        <th class="text-center">Цена (поставщик)</th>
+                                        <th class="text-center">Количество</th>
+                                        <th class="text-center">Сумма (каталог)</th>
+                                        <th class="text-center">Сумма (продажа)</th>
+                                        <th class="text-center">Сумма (поставщик)</th>
+                                        <th class="text-center">Доход</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% for t in textile %}
+                                       <tr>
+                                            <td class="text-center w-100px">Текстиль</td>
+                                            <td>{{t.item.collection}} {{t.item.model}}</td>
+                                            <td class="text-center">{{ t.item.price_opt }}</td>
+                                            <td class="text-center">{{ t.total_price|div:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">
+                                                {% for q in supp_textile %}
+                                                    {% if q.item == t %}
+                                                        {{ q.price }}
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                            <td class="text-center">{{ t.quantity }}</td>
+                                            <td class="text-center">{{ t.item.price_opt|mul:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.total_price|floatformat:2 }}</td>
+                                            <td class="text-center">
+                                                {% for q in supp_textile %}
+                                                    {% if q.item == t %}
+                                                        {{ q.price|mul:t.quantity|floatformat:2 }}
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                            <td class="text-center">
+                                                {% for q in supp_textile %}
+                                                    {% if q.item == t %}
+                                                        {{ q.price|mul:t.quantity|sub:t.total_price|abs|floatformat:2 }}
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                       </tr>
+                                    {% endfor %}
+                                    {% for t in cornice %}
+                                       <tr>
+                                            <td class="text-center w-100px">Карнизы</td>
+                                            <td>{{t.item.collection}} {{t.item.model}}</td>
+                                            <td class="text-center">{{ t.item.price_opt }}</td>
+                                            <td class="text-center">{{ t.total_price|div:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">
+                                                {% for q in supp_cornice %}
+                                                    {% if q.item == t %}
+                                                        {{ q.price }}
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                            <td class="text-center">{{ t.quantity }}</td>
+                                            <td class="text-center">{{ t.item.price_opt|mul:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.total_price|floatformat:2 }}</td>
+                                            <td class="text-center">
+                                                {% for q in supp_cornice %}
+                                                    {% if q.item == t %}
+                                                        {{ q.price|mul:t.quantity|floatformat:2 }}
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                            <td class="text-center">
+                                                {% for q in supp_cornice %}
+                                                    {% if q.item == t %}
+                                                        {{ q.price|mul:t.quantity|sub:t.total_price|abs|floatformat:2 }}
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                       </tr>
+                                    {% endfor %}
+                                 </tbody>
+                              </table>
+                     </div>
+                      <div class="card-header d-flex align-items-center justify-content-between">
+                           <h6 class="tx-14 tx-semibold mg-b-0">Детализация бюджета по работам</h6>
+                        </div>
+
+                              <table class="table table-separated">
+
+                                 <thead>
+                                    <tr>
+                                        <th class="text-center w-100px">Тип</th>
+                                        <th>Наименование</th>
+                                        <th class="text-center">Цена (закуп)</th>
+                                        <th class="text-center">Цена (продажа)</th>
+                                        <th class="text-center">Количество</th>
+                                        <th class="text-center">Сумма (закуп)</th>
+                                        <th class="text-center">Сумма (продажа)</th>
+                                        <th class="text-center">Доход</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% for t in sewing %}
+                                       <tr>
+                                            <td class="text-center w-100px">Пошив</td>
+                                            <td>{{t.item.name}}</td>
+                                            <td class="text-center">{{ t.item.price }}</td>
+                                            <td class="text-center">{{ t.total_price|div:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.quantity }}</td>
+                                            <td class="text-center">{{ t.item.price|mul:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.total_price|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.item.price|mul:t.quantity|sub:t.total_price|abs|floatformat:2 }}</td>
+                                       </tr>
+                                    {% endfor %}
+                                    {% for t in assembly %}
+                                       <tr>
+                                            <td class="text-center w-100px">Монтаж</td>
+                                            <td>{{t.item.name}}</td>
+                                            <td class="text-center">{{ t.item.price }}</td>
+                                            <td class="text-center">{{ t.total_price|div:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.quantity }}</td>
+                                            <td class="text-center">{{ t.item.price|mul:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.total_price|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.item.price|mul:t.quantity|sub:t.total_price|abs|floatformat:2 }}</td>
+                                       </tr>
+                                    {% endfor %}
+                                    {% for t in hanging %}
+                                       <tr>
+                                            <td class="text-center w-100px">Развеска</td>
+                                            <td>{{t.item.name}}</td>
+                                            <td class="text-center">{{ t.item.price }}</td>
+                                            <td class="text-center">{{ t.total_price|div:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.quantity }}</td>
+                                            <td class="text-center">{{ t.item.price|mul:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.total_price|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.item.price|mul:t.quantity|sub:t.total_price|abs|floatformat:2 }}</td>
+                                       </tr>
+                                    {% endfor %}
+                                    {% for t in delivery %}
+                                       <tr>
+                                            <td class="text-center w-100px">Доставка</td>
+                                            <td>{{t.item.name}}</td>
+                                            <td class="text-center">{{ t.item.price }}</td>
+                                            <td class="text-center">{{ t.total_price|div:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.quantity }}</td>
+                                            <td class="text-center">{{ t.item.price|mul:t.quantity|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.total_price|floatformat:2 }}</td>
+                                            <td class="text-center">{{ t.item.price|mul:t.quantity|sub:t.total_price|abs|floatformat:2 }}</td>
+                                       </tr>
+                                    {% endfor %}
+
+                                 </tbody>
+                              </table>
+                     </div>
+
+
+
+                  </div>
+
+
+
+            </div>
+{% endblock %}
