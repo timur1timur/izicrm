@@ -4,10 +4,13 @@ from orders.models import Order, Offer, Room, Specification, OrderItemTextile1, 
     OrderItemWorkDelivery, Payment, PaymentCategory, TrackedOrder
 from .forms import SupplierOrderedTextileForm, PaymentFormManager, SupplierForm, SupplierOrderedCorniceForm
 from .models import SupplierOrderedTextile, SupplierOrderedCornice
-from .utils import SendTo, mailanalytics, M_StatusMaterialsCheck, M_ChangeOrderState, M_GetStatusMaterialOrder, M_ChangeWorkOrderState
+from .utils import SendTo, mailanalytics, M_StatusMaterialsCheck, M_ChangeOrderState, M_GetStatusMaterialOrder, \
+    M_ChangeWorkOrderState, CheckDiscountState
+from django.contrib.auth.decorators import login_required
 
 
 
+@login_required(login_url='login')
 def M_OrderView(request):
     qs = Order.objects.filter(status__gte=5, status__lte=10).order_by('-date_created')
     customer = Customer.objects.all()
@@ -17,7 +20,7 @@ def M_OrderView(request):
     }
     return render(request, 'manager/orders_.html', context)
 
-
+@login_required(login_url='login')
 def M_OrderViewD(request, id):
     qs = Order.objects.get(pk=id)
     offer = Offer.objects.filter(order=qs)[0]
@@ -90,7 +93,7 @@ def M_OrderViewD(request, id):
     }
     return render(request, 'manager/order_v_.html', context)
 
-
+@login_required(login_url='login')
 def M_OrderViewD_Budget(request, id):
     qs = Order.objects.get(pk=id)
     payments_arrival = Payment.objects.filter(order=qs, category__type_p=0)
@@ -226,7 +229,7 @@ def M_OrderViewD_Budget(request, id):
     }
     return render(request, 'manager/order_v_budget.html', context)
 
-
+@login_required(login_url='login')
 def SupplierOrderView(request, id):
     item = OrderItemTextile1.objects.get(pk=id)
     order = item.order
@@ -244,7 +247,7 @@ def SupplierOrderView(request, id):
     # render(request, 'manager/index.html', context={})
     return redirect('manager:order_view', id=order.pk)
 
-
+@login_required(login_url='login')
 def SupplierOrderSend(request, id):
     order = SupplierOrder.objects.get(pk=id)
     materials = order.materials.all()
@@ -265,6 +268,7 @@ def SupplierOrderSend(request, id):
             mat.save(update_fields=['ordered', 'ordered_icon'])
     return redirect('manager:order_view', id=order.order.pk)
 
+@login_required(login_url='login')
 def SupplierOrderCorniceSend(request, id):
     order = SupplierOrderCornice.objects.get(pk=id)
     materials = order.materials.all()
@@ -285,7 +289,7 @@ def SupplierOrderCorniceSend(request, id):
             mat.save(update_fields=['ordered', 'ordered_icon'])
     return redirect('manager:order_view', id=order.order.pk)
 
-
+@login_required(login_url='login')
 def M_TextileOrder(request, id):
     qs = OrderItemTextile1.objects.get(pk=id)
     curr_state = qs.ordered
@@ -296,7 +300,7 @@ def M_TextileOrder(request, id):
 
     return redirect('manager:order_view', id=qs.order.pk)
 
-
+@login_required(login_url='login')
 def M_TextileOrdered(request, id):
     qs = OrderItemTextile1.objects.get(pk=id)
     curr_state = qs.ordered
@@ -321,7 +325,7 @@ def M_TextileOrdered(request, id):
 
     return redirect('manager:order_view', id=qs.order.pk)
 
-
+@login_required(login_url='login')
 def M_TextilePayed(request, id):
     qs = OrderItemTextile1.objects.get(pk=id)
     curr_state = qs.ordered
@@ -346,6 +350,7 @@ def M_TextilePayed(request, id):
 
     return redirect('manager:order_view', id=qs.order.pk)
 
+@login_required(login_url='login')
 def M_TextileShipped(request, id):
     qs = OrderItemTextile1.objects.get(pk=id)
     curr_state = qs.ordered
@@ -370,6 +375,7 @@ def M_TextileShipped(request, id):
 
     return redirect('manager:order_view', id=qs.order.pk)
 
+@login_required(login_url='login')
 def M_TextileStock(request, id):
     qs = OrderItemTextile1.objects.get(pk=id)
     curr_state = qs.ordered
@@ -379,7 +385,7 @@ def M_TextileStock(request, id):
         qs.save(update_fields=['ordered', 'ordered_icon'])
     return redirect('manager:order_view', id=qs.order.pk)
 
-
+@login_required(login_url='login')
 def M_TextileStayOut(request, id):
     qs = OrderItemTextile1.objects.get(pk=id)
     curr_state = qs.ordered
@@ -389,7 +395,7 @@ def M_TextileStayOut(request, id):
         qs.save(update_fields=['ordered', 'ordered_icon'])
     return redirect('manager:order_view', id=qs.order.pk)
 
-
+@login_required(login_url='login')
 def SupplierCornice(request, id):
     item = OrderItemCornice.objects.get(pk=id)
     order = item.order
@@ -407,7 +413,7 @@ def SupplierCornice(request, id):
     # render(request, 'manager/index.html', context={})
     return redirect('manager:order_view', id=order.pk)
 
-
+@login_required(login_url='login')
 def M_CorniceOrder(request, id):
     qs = OrderItemCornice.objects.get(pk=id)
     curr_state = qs.ordered
@@ -418,7 +424,7 @@ def M_CorniceOrder(request, id):
 
     return redirect('manager:order_view', id=qs.order.pk)
 
-
+@login_required(login_url='login')
 def M_CorniceOrdered(request, id):
     qs = OrderItemCornice.objects.get(pk=id)
     curr_state = qs.ordered
@@ -442,6 +448,7 @@ def M_CorniceOrdered(request, id):
 
     return redirect('manager:order_view', id=qs.order.pk)
 
+@login_required(login_url='login')
 def M_CornicePayed(request, id):
     qs = OrderItemCornice.objects.get(pk=id)
     curr_state = qs.ordered
@@ -466,6 +473,8 @@ def M_CornicePayed(request, id):
 
     return redirect('manager:order_view', id=qs.order.pk)
 
+
+@login_required(login_url='login')
 def M_CorniceShipped(request, id):
     qs = OrderItemCornice.objects.get(pk=id)
     curr_state = qs.ordered
@@ -489,6 +498,8 @@ def M_CorniceShipped(request, id):
 
     return redirect('manager:order_view', id=qs.order.pk)
 
+
+@login_required(login_url='login')
 def M_CorniceStock(request, id):
     qs = OrderItemCornice.objects.get(pk=id)
     curr_state = qs.ordered
@@ -498,7 +509,7 @@ def M_CorniceStock(request, id):
         qs.save(update_fields=['ordered', 'ordered_icon'])
     return redirect('manager:order_view', id=qs.order.pk)
 
-
+@login_required(login_url='login')
 def M_CorniceStayOut(request, id):
     qs = OrderItemCornice.objects.get(pk=id)
     curr_state = qs.ordered
@@ -508,7 +519,7 @@ def M_CorniceStayOut(request, id):
         qs.save(update_fields=['ordered', 'ordered_icon'])
     return redirect('manager:order_view', id=qs.order.pk)
 
-
+@login_required(login_url='login')
 def M_SewingOrder(request, id):
     qs = OrderItemWorkSewing.objects.get(pk=id)
     curr_state = qs.ordered
@@ -520,6 +531,7 @@ def M_SewingOrder(request, id):
     M_ChangeWorkOrderState(qs.order)
     return redirect('manager:order_view', id=qs.order.pk)
 
+@login_required(login_url='login')
 def M_AssemblyOrder(request, id):
     qs = OrderItemWorkAssembly.objects.get(pk=id)
     curr_state = qs.ordered
@@ -531,6 +543,7 @@ def M_AssemblyOrder(request, id):
     M_ChangeWorkOrderState(qs.order)
     return redirect('manager:order_view', id=qs.order.pk)
 
+@login_required(login_url='login')
 def M_HangingOrder(request, id):
     qs = OrderItemWorkHanging.objects.get(pk=id)
     curr_state = qs.ordered
@@ -542,6 +555,7 @@ def M_HangingOrder(request, id):
     M_ChangeWorkOrderState(qs.order)
     return redirect('manager:order_view', id=qs.order.pk)
 
+@login_required(login_url='login')
 def M_DeliveryOrder(request, id):
     qs = OrderItemWorkDelivery.objects.get(pk=id)
     curr_state = qs.ordered
@@ -555,6 +569,7 @@ def M_DeliveryOrder(request, id):
 
 import datetime
 
+@login_required(login_url='login')
 def M_OrderReady(request, id):
     qs = Order.objects.get(pk=id)
     curr_state = qs.status
@@ -570,7 +585,7 @@ def M_OrderReady(request, id):
 from itertools import chain
 from operator import attrgetter
 
-
+@login_required(login_url='login')
 def M_SupplierOrders(request):
     qs = SupplierOrderedTextile.objects.all()
     qc = SupplierOrderedCornice.objects.all()
@@ -580,7 +595,7 @@ def M_SupplierOrders(request):
     return render(request, 'manager/supplier_orders.html', context={'orders': result_list})
 
 
-
+@login_required(login_url='login')
 def SupplierOrderSend2(request, id):
 
     if request.method == 'GET':
@@ -615,7 +630,7 @@ def SupplierOrderSend2(request, id):
         return redirect('manager:order_view', id=order.order.pk)
     return render(request, 'manager/supplier_send.html')
 
-
+@login_required(login_url='login')
 def M_TextileOrderedF(request, id):
 
     if request.method == 'GET':
@@ -668,7 +683,7 @@ def M_TextileOrderedF(request, id):
             return redirect('manager:order_view', id=order_id.pk)
         return render(request, 'manager/add_textile_ordered.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def M_TextilePayedF(request, id):
 
     if request.method == 'GET':
@@ -720,7 +735,7 @@ def M_TextilePayedF(request, id):
             return redirect('manager:order_view', id=item.order.pk)
         return render(request, 'manager/payment_create.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def SupplierOrderSend3(request, id):
 
     if request.method == 'GET':
@@ -755,7 +770,7 @@ def SupplierOrderSend3(request, id):
         return redirect('manager:order_view', id=order.order.pk)
     return render(request, 'manager/supplier_send.html')
 
-
+@login_required(login_url='login')
 def M_CorniceOrderedF(request, id):
 
     if request.method == 'GET':
@@ -808,6 +823,8 @@ def M_CorniceOrderedF(request, id):
             return redirect('manager:order_view', id=order_id.pk)
         return render(request, 'manager/add_textile_ordered.html', context={'form': form})
 
+
+@login_required(login_url='login')
 def M_CornicePayedF(request, id):
 
     if request.method == 'GET':
@@ -859,7 +876,7 @@ def M_CornicePayedF(request, id):
             return redirect('manager:order_view', id=item.order.pk)
         return render(request, 'manager/payment_create.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def M_SewingPayedF(request, id):
 
     if request.method == 'GET':
@@ -899,7 +916,7 @@ def M_SewingPayedF(request, id):
             return redirect('manager:order_view', id=qs.order.pk)
         return render(request, 'manager/payment_create_work.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def M_AssemblyPayedF(request, id):
 
     if request.method == 'GET':
@@ -939,7 +956,7 @@ def M_AssemblyPayedF(request, id):
             return redirect('manager:order_view', id=qs.order.pk)
         return render(request, 'manager/payment_create_work.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def M_HangingPayedF(request, id):
 
     if request.method == 'GET':
@@ -979,7 +996,7 @@ def M_HangingPayedF(request, id):
             return redirect('manager:order_view', id=qs.order.pk)
         return render(request, 'manager/payment_create_work.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def M_DeliveryPayedF(request, id):
 
     if request.method == 'GET':
@@ -1019,9 +1036,9 @@ def M_DeliveryPayedF(request, id):
             return redirect('manager:order_view', id=qs.order.pk)
         return render(request, 'manager/payment_create_work.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def M_Sogl(request):
-    qs = Order.objects.filter(discount_s__gte=1).order_by('-date_created')
+    qs = Order.objects.filter(discount_status=1).order_by('-date_created')
     customer = Customer.objects.all()
     context = {
         'orders': qs,
@@ -1029,21 +1046,162 @@ def M_Sogl(request):
     }
     return render(request, 'manager/sogl.html', context)
 
-
-def M_SoglSuccess(request, id):
+@login_required(login_url='login')
+def M_SoglView(request, id):
     qs = Order.objects.get(pk=id)
-    curr_state = qs.discount_s
-    if curr_state == 1:
-        qs.discount_s = 2
-        qs.save(update_fields=['discount_s'])
-    return redirect('manager:sogl_list')
+    curr_state = qs.discount_view
+    if curr_state == 0:
+        qs.discount_view = 1
+        qs.save(update_fields=['discount_view'])
+
+    sp = Room.objects.filter(order=qs, status=True)
+    mass_dict = {}
+
+    for q in sp:
+        spec = Specification.objects.filter(room=q)
+        sp_dict = {}
+        for s in spec:
+            spec_dict = {}
+            textile_dict = []
+            cornice_dict = []
+            work_dict = []
+            textile = OrderItemTextile1.objects.filter(specification=s)
+            cornice = OrderItemCornice.objects.filter(specification=s)
+            sewing = OrderItemWorkSewing.objects.filter(specification=s)
+            assembly = OrderItemWorkAssembly.objects.filter(specification=s)
+            hanging = OrderItemWorkHanging.objects.filter(specification=s)
+            delivery = OrderItemWorkDelivery.objects.filter(specification=s)
+
+            for t in textile:
+                textile_mass = {
+                    'item': f'{t.item.collection.name} {t.item.model} {t.item.color}',
+                    'quantity': t.quantity,
+                    'total': t.total_price(),
+                    'discount_total': round(t.total_price() * qs.discount_t, 2),
+                    'discount': round(t.total_price() - t.total_price() * qs.discount_t, 2),
+                    'profit': round(t.total_price()-t.item.price_opt*t.quantity, 2),
+                    'profit_d': round(t.total_price() * qs.discount_t - t.item.price_opt * t.quantity, 2),
+                }
+                textile_dict.append(textile_mass)
+            for c in cornice:
+                cornice_mass = {
+                    'item': f'{c.item.collection.name} {c.item.model} {c.item.long}',
+                    'quantity': c.quantity,
+                    'total': c.total_price(),
+                    'discount_total': round(c.total_price() * qs.discount_c, 2),
+                    'discount': round(c.total_price() - c.total_price() * qs.discount_c, 2),
+                    'profit': round(c.total_price()-c.item.price_opt*c.quantity, 2),
+                    'profit_d': round(c.total_price() * qs.discount_c - c.item.price_opt * c.quantity, 2),
+                }
+                cornice_dict.append(cornice_mass)
+            for sew in sewing:
+                work_mass = {
+                    'item': f'{sew.item.type_work.name}: {sew.item.name}',
+                    'quantity': sew.quantity,
+                    'total': sew.total_price(),
+                    'discount_total': round(sew.total_price() * qs.discount_w, 2),
+                    'discount': round(sew.total_price() - sew.total_price() * qs.discount_w, 2),
+                    'profit': round(sew.total_price()-sew.item.price * sew.quantity, 2),
+                    'profit_d': round(sew.total_price() * qs.discount_w - sew.item.price * sew.quantity, 2),
+                }
+                work_dict.append(work_mass)
+            for ass in assembly:
+                work_mass = {
+                    'item': f'{ass.item.type_work.name}: {ass.item.name}',
+                    'quantity': ass.quantity,
+                    'total': ass.total_price(),
+                    'discount_total': round(ass.total_price() * qs.discount_w, 2),
+                    'discount': round(ass.total_price() - ass.total_price() * qs.discount_w, 2),
+                    'profit': round(ass.total_price()-ass.item.price * ass.quantity, 2),
+                    'profit_d': round(ass.total_price() * qs.discount_w - ass.item.price * ass.quantity, 2),
+                }
+                work_dict.append(work_mass)
+            for han in hanging:
+                work_mass = {
+                    'item': f'{han.item.type_work.name}: {han.item.name}',
+                    'quantity': han.quantity,
+                    'total': han.total_price(),
+                    'discount_total': round(han.total_price() * qs.discount_w, 2),
+                    'discount': round(han.total_price() - han.total_price() * qs.discount_w, 2),
+                    'profit': round(han.total_price()-han.item.price * han.quantity, 2),
+                    'profit_d': round(han.total_price() * qs.discount_w - han.item.price * han.quantity, 2),
+                }
+                work_dict.append(work_mass)
+            for han in delivery:
+                work_mass = {
+                    'item': f'{han.item.type_work.name}: {han.item.name}',
+                    'quantity': han.quantity,
+                    'total': han.total_price(),
+                    'discount_total': round(han.total_price() * qs.discount_w, 2),
+                    'discount': round(han.total_price() - han.total_price() * qs.discount_w, 2),
+                    'profit': round(han.total_price()-han.item.price * han.quantity, 2),
+                    'profit_d': round(han.total_price() * qs.discount_w - han.item.price * han.quantity, 2),
+                }
+                work_dict.append(work_mass)
 
 
-def M_SoglDeny(request, id):
+            spec_dict[f'текстиль {s}'] = textile_dict
+            spec_dict[f'карнизы {s}'] = cornice_dict
+            spec_dict[f'работы {s}'] = work_dict
+
+            sp_dict[s.get_version_display()] = spec_dict
+        mass_dict[q.name] = sp_dict
+
+    print(mass_dict)
+
+    context = {
+        'qs': qs,
+        'room': sp,
+        'mass': mass_dict
+    }
+
+    return render(request, 'manager/sogl_v.html', context)
+
+@login_required(login_url='login')
+def M_SoglSuccess(request, type_m, id):
     qs = Order.objects.get(pk=id)
-    curr_state = qs.discount_s
-    if curr_state == 1:
-        qs.discount_s = 3
-        qs.discount = 1
-        qs.save(update_fields=['discount_s', 'discount'])
-    return redirect('manager:sogl_list')
+    if type_m == '1':
+        curr_state = qs.discount_t_s
+        if curr_state == 1:
+            qs.discount_t_s = 2
+            qs.save(update_fields=['discount_t_s'])
+    if type_m == '2':
+        curr_state = qs.discount_c_s
+        if curr_state == 1:
+            qs.discount_c_s = 2
+            qs.save(update_fields=['discount_c_s'])
+    if type_m == '3':
+        curr_state = qs.discount_w_s
+        if curr_state == 1:
+            qs.discount_w_s = 2
+            qs.save(update_fields=['discount_w_s'])
+
+    CheckDiscountState(id)
+
+    return redirect('manager:sogl_view', id=qs.pk)
+
+@login_required(login_url='login')
+def M_SoglDeny(request,type_m, id):
+    qs = Order.objects.get(pk=id)
+    if type_m == '1':
+        curr_state = qs.discount_t_s
+        if curr_state == 1:
+            qs.discount_t_s = 3
+            qs.discount_t = 1
+            qs.save(update_fields=['discount_t_s', 'discount_t'])
+    if type_m == '2':
+        curr_state = qs.discount_c_s
+        if curr_state == 1:
+            qs.discount_c_s = 3
+            qs.discount_c = 1
+            qs.save(update_fields=['discount_c_s', 'discount_c'])
+    if type_m == '3':
+        curr_state = qs.discount_w_s
+        if curr_state == 1:
+            qs.discount_w_s = 3
+            qs.discount_w = 1
+            qs.save(update_fields=['discount_w_s', 'discount_w'])
+
+    CheckDiscountState(id)
+
+    return redirect('manager:sogl_view', id=qs.pk)

@@ -55,7 +55,7 @@
                                                 <span class="badge badge-pill badge-danger">new</span>
                                             {% endif %}
                                             </a></td>
-                                            <td><a href="">
+                                            <td>
                                                 {% for cus in customer %}
                                                     {% for ord in cus.order.all %}
                                                         {% if q.number == ord.number %}
@@ -63,7 +63,7 @@
                                                         {% endif %}
                                                     {% endfor %}
                                                 {% endfor %}
-                                            </a></td>
+                                            </td>
                                             <td>
                                                 {% for cus in customer %}
                                                     {% for ord in cus.order.all %}

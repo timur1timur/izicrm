@@ -1,0 +1,145 @@
+{% extends "main/base.html" %}
+{% load mathfilters %}
+
+
+{% block title_h1 %}Согласование скидки для заказа {{ qs }} ({{ qs.get_discount_status_display }}){% endblock %}
+{% block breadcrumb_buttons %}{% endblock %}
+
+{% block body_content %}
+            <div class="page-inner pd-0-force">
+
+
+               <div class="row clearfix">
+                     <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-12 mg-b-2">Текстиль {{ 1|sub:qs.discount_t|mul:100|floatformat:0 }}%</span>
+                                       </div>
+                                    </div>
+                                     {% if qs.discount_t_s == 1 %}
+                                        <div class="clearfix">
+                                              <a href="{% url 'manager:sogl_success' type_m=1 id=qs.id %}" class="badge badge-success">Согласовать</a>
+                                              <a href="{% url 'manager:sogl_deny' type_m=1 id=qs.id %}" class="badge badge-danger">Отказать</a>
+                                        </div>
+                                     {% endif %}
+                                 </div>
+                          </div>
+                     </div>
+                     <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-12 mg-b-2">Карнизы {{ 1|sub:qs.discount_c|mul:100|floatformat:0 }}%</span>
+                                       </div>
+                                    </div>
+                                     {% if qs.discount_c_s == 1 %}
+                                        <div class="clearfix">
+                                              <a href="{% url 'manager:sogl_success' type_m=2 id=qs.id %}" class="badge badge-success">Согласовать</a>
+                                              <a href="{% url 'manager:sogl_deny' type_m=2 id=qs.id %}" class="badge badge-danger">Отказать</a>
+                                        </div>
+                                     {% endif %}
+                                 </div>
+                          </div>
+                     </div>
+                     <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                          <span class="tx-uppercase tx-spacing-1 tx-semibold tx-12 mg-b-2">Работы {{ 1|sub:qs.discount_w|mul:100|floatformat:0 }}%</span>
+                                       </div>
+                                    </div>
+                                     {% if qs.discount_w_s == 1 %}
+                                        <div class="clearfix">
+                                              <a href="{% url 'manager:sogl_success' type_m=3 id=qs.id %}" class="badge badge-success">Согласовать</a>
+                                              <a href="{% url 'manager:sogl_deny' type_m=3 id=qs.id %}" class="badge badge-danger">Отказать</a>
+                                        </div>
+                                     {% endif %}
+                                 </div>
+                          </div>
+                     </div>
+
+
+
+                  <div class="col">
+                     <!-- BEGIN -->
+                     <div class="card mg-b-30">
+                        {% for q in mass %}
+                              <div class="card-header d-flex align-items-center justify-content-between">
+                                 <h6 class="tx-15 tx-semibold mg-b-0">{{ q }}</h6>
+                                 <h6 class="tx-12  mg-b-0">Текстиль (- {{ 1|sub:qs.discount_t|mul:100|floatformat:0 }}%), Карнизы (- {{ 1|sub:qs.discount_c|mul:100|floatformat:0 }}%), Работы (- {{ 1|sub:qs.discount_w|mul:100|floatformat:0 }}%)</h6>
+                              </div>
+                              <div class="card-body pd-25">
+                                 <div class="col-md-12 col-lg-12">
+                                    {% for s in mass|get_item:q %}
+                                       <h5 class="tx-15 tx-semibold mg-b-0">{{ s }}</h5><br>
+                                       <table class="table">
+                                          <thead class="tx-10 tx-uppercase">
+                                             <tr>
+                                                <th colspan="11">Расчет скидки</th>
+                                                <th colspan="2">Доходность (план)</th>
+                                             </tr>
+                                             <tr>
+                                                <th>Тип</th>
+                                                <th>Наименование</th>
+                                                <th>Количество</th>
+                                                <th>Стоимость</th>
+                                                <th>Скидка</th>
+                                                <th>Итого</th>
+                                                <th colspan="5"></th>
+                                                <th>Доход ДО скидки</th>
+                                                <th>Доход ПОСЛЕ скидки</th>
+                                             </tr>
+                                          </thead>
+                                          <tbody>
+                                             {% for p in mass|get_item:q|get_item:s %}
+                                                {% for g in mass|get_item:q|get_item:s|get_item:p %}
+                                                   <tr>
+                                                      <td>{{p}}</td>
+                                                      <td>{{ g|get_item:'item' }}</td>
+                                                      <td>{{ g|get_item:'quantity' }}</td>
+                                                      <td class="text-secondary">{{ g|get_item:'total' }}</td>
+                                                      <td class="tx-danger">-{{ g|get_item:'discount' }}</td>
+                                                      <td class="tx-secondary">{{ g|get_item:'discount_total' }}</td>
+                                                      <td colspan="5"></td>
+                                                      <td class="text-secondary">{{ g|get_item:'profit' }}</td>
+                                                      <td class="text-secondary">{{ g|get_item:'profit_d' }}</td>
+                                                   </tr>
+                                                {% endfor %}
+
+                                             {% endfor %}
+
+
+                                          </tbody>
+                                       </table>
+                                    {% endfor %}
+                                 </div>
+
+                              </div>
+
+                        {% endfor %}
+
+
+                     </div>
+                     <!-- END -->
+
+
+
+                  <div class="row mg-t-30">
+                     <div class="col-sm-8">
+                        <div class="form-layout-footer">
+                           <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Назад</a>
+                        </div>
+                        <!-- form-layout-footer -->
+                     </div>
+                     <!-- col-8 -->
+                  </div>
+
+                  <br>
+
+               </div>
+            </div>
+{% endblock %}

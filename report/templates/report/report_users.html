@@ -1,0 +1,303 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Отчет: Сотрудники (Заказы/Выручка){% endblock %}
+{% block breadcrumb_buttons %}
+<button id="dashboardDate3" name="DatePick" class="btn btn-default dropdown-toggle mr-2 d-none d-md-block pd-y-8-force"></button>
+{% endblock %}
+
+{% block body_content %}
+                     <!-- Filtering FooTable Start -->
+                     <!--================================-->
+                     <div class="col-md-12 col-lg-12">
+
+
+
+
+
+
+                           <div class="card-body pd-0">
+
+                               <div class="row">
+                                 <div class="mg-20 form-inline wd-100p">
+
+                                    <div class="col-sm-6">
+                                       <div class="form-group">
+                                           <div class="d-flex align-items-center">
+
+                                                <span id="startDateY" hidden> {{ startDate.0 }}</span>
+                                                <span id="startDateM" hidden> {{ startDate.1 }}</span>
+                                                <span id="startDateD" hidden> {{ startDate.2 }}</span>
+                                                <span id="endDateY" hidden> {{ endDate.0 }}</span>
+                                                <span id="endDateM" hidden> {{ endDate.1 }}</span>
+                                                <span id="endDateD" hidden> {{ endDate.2 }}</span>
+                                           </div>
+
+                                       </div>
+                                    </div>
+
+                                 </div>
+                         </div>
+
+                              <table class="table table-hover mg-0">
+                                  <thead class="tx-10 tx-uppercase">
+                                     <tr>
+                                        <th>Сотрудник</th>
+                                         <th>Созданные заказы</th>
+                                        <th>Выполненные заказы</th>
+                                        <th>Незавершенные заказы</th>
+                                         <th>Выручка</th>
+
+                                     </tr>
+                                  </thead>
+                                 <tbody>
+                                    {% for q in user_mass %}
+
+                                        <tr>
+
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar mr-2">
+                                                       <img src="/static/main/assets/images/users-face/admin_users_icon.jpg" class="img-fluid wd-40 ht-40 rounded-circle" alt="">
+                                                    </div>
+                                                    <span class="tx-semibold d-none d-xl-inline-block">{{ q }}</span>
+                                                </div>
+
+                                            </td>
+                                            <td>
+                                                {% if user_mass|get_item:q|get_item:"count_finish" %}
+                                                    {{ user_mass|get_item:q|get_item:"count" }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if user_mass|get_item:q|get_item:"count_finish" %}
+                                                    <span class="tx-success">{{ user_mass|get_item:q|get_item:"count_finish" }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if user_mass|get_item:q|get_item:"count_not_ready" %}
+                                                    <span class="tx-danger">{{ user_mass|get_item:q|get_item:"count_not_ready" }}</span>
+                                                    <span class="tx-danger mg-l-2 tx-10">({{ user_mass|get_item:q|get_item:"percent_not_ready" }}%)</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if user_mass|get_item:q|get_item:"count_finish" %}
+                                                    {{ user_mass|get_item:q|get_item:"arrival" }} руб.
+                                                {% endif %}
+                                            </td>
+
+                                        </tr>
+                                    {% endfor %}
+
+                                 </tbody>
+                                 <tfoot>
+                                    <tr>
+                                       <td colspan="5">
+                                          <div class="ft-right">
+                                             <ul class="pagination"></ul>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </tfoot>
+                              </table>
+                           </div>
+
+                     </div>
+                     <!--/ Filtering FooTable End -->
+<script src="/static/main/assets/plugins/chartjs/chartjs.js"></script>
+ <script src="/static/main/assets/plugins/chartjs/chartjs-active.js"></script>
+
+ <script>
+    var ctx = document.getElementById('myChart9').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',// bar, horizontalBar, pie, line, doughnut, radar, polarArea
+
+        data: {
+            labels: {{ cus_label|safe }},
+            datasets: [{
+                data: {{ cus_data|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ]
+            }]
+        },
+        options: {
+            legend: {
+                display: true,
+                position: 'right',
+                labels: {
+                    fontColor: '#000'
+                }
+            }
+
+        }
+
+
+    });
+
+    var ctx = document.getElementById('myChart10').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',// bar, horizontalBar, pie, line, doughnut, radar, polarArea
+
+        data: {
+            labels: {{ cus_label2|safe }},
+            datasets: [{
+                data: {{ cus_data2|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ]
+            }]
+        },
+        options: {
+            legend: {
+                display: true,
+                position: 'right',
+                labels: {
+                    fontColor: '#000'
+                }
+            }
+
+        }
+
+
+    });
+  </script>
+<script src="/static/main/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/main/assets/plugins/jquery-ui/jquery-ui.js"></script>
+<script src="/static/main/assets/plugins/flot/jquery.flot.js"></script>
+<script src="/static/main/assets/plugins/flot/jquery.flot.pie.js"></script>
+<script src="/static/main/assets/plugins/flot/jquery.flot.resize.js"></script>
+<script src="/static/main/assets/plugins/flot/sampledata.js"></script>
+
+<script>
+! function (e) {
+	"use strict";
+
+    function xAxisLabelGenerator(x){
+    return xAxisLabels[x];
+    }
+
+	// Float Bar Chat
+	var flotChartOption1 = {
+		series: {
+			shadowSize: 0,
+			bars: {
+				show: true,
+				lineWidth: 0,
+				barWidth: .5,
+				fill: 1
+			}
+		},
+		grid: {
+			aboveData: true,
+			color: '#e5e9f2',
+			borderWidth: 0,
+			labelMargin: 0
+		},
+		yaxis: {
+			show: false,
+			min: 0,
+			max: 15
+		},
+		xaxis: {
+			show: false,
+			mode: 'Categories',
+		}
+	};
+
+	$.plot('#flotBarRecentOrders', [{
+
+		data: {{data1|safe}},
+		color: '#66a4fb'
+	}], flotChartOption1);
+
+
+	$.plot('#flotBarCompleteOrders', [{
+
+		data: {{data2|safe}},
+		color: '#e83e8c'
+	}], flotChartOption1);
+
+}(jQuery);
+
+
+</script>
+
+<script>
+
+     // Dashboard DateTimePicker
+     $(function() {
+     var isRtl = $('body').attr('dir') === 'rtl' || $('html').attr('dir') === 'rtl';
+
+     // Button
+     var startY = document.getElementById( 'startDateY' );
+     var startM = document.getElementById( 'startDateM' );
+     var startD = document.getElementById( 'startDateD' );
+     var endY = document.getElementById( 'endDateY' );
+     var endM = document.getElementById( 'endDateM' );
+     var endD = document.getElementById( 'endDateD' );
+
+
+     var start = moment([Number(startY.textContent), Number(startM.textContent), Number(startD.textContent)]);
+     var end = moment([Number(endY.textContent), Number(endM.textContent), Number(endD.textContent)]);
+
+
+     function cb(start, end) {
+     $('#dashboardDate3').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+     }
+     $('#dashboardDate3').daterangepicker({
+     startDate: start,
+     endDate: end,
+     ranges: {
+     'Сегодня': [moment(), moment()],
+     'Вчера': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+     'Последние 7 дней': [moment().subtract(6, 'days'), moment()],
+     'Последние 30 дней': [moment().subtract(29, 'days'), moment()],
+     'Это месяц': [moment().startOf('month'), moment().endOf('month')],
+     'Предыдущий месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+     },
+     opens: (isRtl ? 'left' : 'right')
+     }, cb);
+     cb(start, end);
+
+     // Replace icons
+     $('#dashboardDate3').each(function() {
+     var obj = $(this).data('daterangepicker');
+     var _updateCalendars = obj.updateCalendars;
+     obj.updateCalendars = function() {
+     // Call original function
+     _updateCalendars.call(obj)
+     // Replace icons
+     obj.container.find('.prev > i').each(function() { this.className = 'ion ion-ios-arrow-back' });
+     obj.container.find('.next > i').each(function() { this.className = 'ion ion-ios-arrow-forward' });
+     obj.container.find('.daterangepicker_input > i').each(function() { this.className = 'ion ion-md-calendar' });
+     obj.container.find('.calendar-time > i').each(function() { this.className = 'ion ion-md-time' });
+
+     };
+     });
+
+      $('#dashboardDate3').on('apply.daterangepicker', function(ev, picker) {
+
+        var start = (picker.startDate.format('YYYY-MM-DD'));
+        var end = (picker.endDate.format('YYYY-MM-DD'));
+
+        var link = '{% url 'report:users_date' 'val1' 'val2' %}';
+        link = link.replace('val1', start);
+        link = link.replace('val2', end);
+        window.location.href = link;
+      });
+     });
+</script>
+
+
+{% endblock %}
+

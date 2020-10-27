@@ -1,0 +1,50 @@
+<li class="mg-l-20-force mg-t-25-force menu-extras">Дизайнер</li>
+
+<li>
+   <a href=""><i data-feather="align-justify"></i>
+   <span>Меню</span><i class="accordion-icon fa fa-angle-left"></i></a>
+   <ul class="sub-menu">
+      <li><a href="{% url 'common:dashboard_designer' %}">Дашборд</a></li>
+      <li><a href="{% url 'main:orders' %}">Заказы</a></li>
+      <li><a href="{% url 'common:customers_list' %}">Заказчики</a></li>
+      <li><a href="{% url 'common:payments_list' %}">Платежи</a></li>
+   </ul>
+</li>
+
+<li class="mg-l-20-force mg-t-25-force menu-extras">Менеджер</li>
+<li>
+   <a href=""><i data-feather="align-justify"></i>
+   <span>Меню</span><i class="accordion-icon fa fa-angle-left"></i></a>
+   <ul class="sub-menu">
+      <li><a href="{% url 'common:dashboard_manager' %}">Дашборд</a></li>
+      <li><a href="{% url 'manager:orders' %}">Заказы</a></li>
+      <li><a href="{% url 'manager:sogl_list' %}">Согласования</a></li>
+      <li><a href="{% url 'common:customers_list' %}">Заказчики</a></li>
+      <li><a href="{% url 'manager:supplier_orders' %}">Поставки</a></li>
+   </ul>
+</li>
+
+
+<li class="mg-l-20-force mg-t-25-force menu-extras">Директор</li>
+<li>
+   <a href="{% url 'director:payments_list' %}"><i data-feather="dollar-sign"></i>
+   <span>Контроль расходов</span></a>
+</li>
+<li>
+   <a href="{% url 'director:user_list' %}"><i data-feather="user"></i>
+   <span>Сотрудники</span></a>
+</li>
+<li>
+   <a href="{% url 'markup:markup_list' %}"><i data-feather="dollar-sign"></i>
+   <span>Наценка</span></a>
+</li>
+<li>
+   <a href=""><i data-feather="codepen"></i>
+   <span>Отчеты</span><i class="accordion-icon fa fa-angle-left"></i></a>
+   <ul class="sub-menu">
+      <li><a href="{% url 'report:orders' %}">Заказы</a></li>
+      <li><a href="{% url 'report:budget' %}">Продажи</a></li>
+      <li><a href="{% url 'report:users' %}">Сотрудники</a></li>
+      <li><a href="{% url 'report:suppliers' %}">Поставщики</a></li>
+   </ul>
+</li>

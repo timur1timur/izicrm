@@ -20,7 +20,7 @@ def get_new_orders():
 
 @register.simple_tag()
 def get_discount():
-    result = Order.objects.filter(discount_s=1, user_view=0).count()
+    result = Order.objects.filter(status__lte=3, discount_status=1, discount_view=0).count()
     return result
 
 @register.simple_tag()
@@ -46,3 +46,10 @@ def get_short_name(name):
 def get_markup(markup):
     markup_p = markup*100 - 100
     return f'{round(markup_p,2)} %'
+
+
+
+@register.simple_tag()
+def get_profit_position(total, price, quantity):
+    result = float(total) - (float(price)*int(quantity))
+    return round(result, 2)

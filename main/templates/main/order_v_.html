@@ -4,36 +4,30 @@
 {% block title_h1 %}Детализация заказа {{ qs.number }} от {{qs.date_created|date:'d.m.Y'}} {% endblock %}
 {% block breadcrumb %}<span class="badge badge-{{qs.get_status_css_display}}">{{qs.get_status_display}}</span>{% endblock %}
 {% block breadcrumb_buttons %}
-   {% if qs.status < 2 %}
-      <form method="POST" class="post-form">{% csrf_token %}
-         <div class="row">
-               {% if state.discount_s == 1 %}
-                  <div class="col-sm-4">
-                     <span class="badge badge-secondary">Скидка ({{state.discount|mul:100}} %) на согласовании</span>
-                 </div>
-               {% endif %}
-               {% if state.discount_s == 2 %}
-                  <div class="col-sm-4">
-                     <span class="badge badge-success">Скидка ({{state.discount|mul:100}} %) согласована</span>
-                 </div>
-               {% endif %}
-               {% if state.discount_s == 3 %}
-                  <div class="col-sm-4">
-                     <span class="badge badge-danger">Скидка не согласована</span>
-                 </div>
-               {% endif %}
-               {% if state.discount_s == 0 or state.discount_s == 3 %}
-                 <div class="col-sm-4">
-                     <input type="text" class="form-control form-control" name="discount" placeholder="Скидка">
-                 </div>
-                  <div class="col-sm-3">
-                     <button type="Submit" class="btn btn-secondary ">Применить</button>
-                 </div>
-               {% endif %}
-
-         </div>
-      </form>
+{% if qs.status == 1 %}
+   {% if qs.discount_status == 0 %}
+      <a href="{% url 'main:discount' qs.id %}" title="" data-toggle="tooltip" data-original-title="Сделать скидку"><i data-feather="dollar-sign" class="wd-20"></i></a>
    {% endif %}
+
+   {% if qs.discount_status == 1 %}
+      <span class="badge badge-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">Скидка: {{qs.get_discount_status_display}}</span>
+   {% endif %}
+
+   {% if qs.discount_status == 2 %}
+      <span class="badge badge-success mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">Скидка: {{qs.get_discount_status_display}}</span>
+      <a href="{% url 'main:discount_refresh' qs.id %}" title="" data-toggle="tooltip" data-original-title="Пересчитать"><i data-feather="refresh-cw" class="wd-20"></i></a>
+   {% endif %}
+
+   {% if qs.discount_status == 3 %}
+      <span class="badge badge-danger mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">Скидка: {{qs.get_discount_status_display}}</span>
+      <a href="{% url 'main:discount' qs.id %}" title="" data-toggle="tooltip" data-original-title="Сделать скидку"><i data-feather="dollar-sign" class="wd-20"></i></a>
+   {% endif %}
+
+   {% if qs.discount_status == 4 %}
+      <span class="badge badge-warning mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">Скидка: {{qs.get_discount_status_display}}</span>
+      <a href="{% url 'main:discount_refresh' qs.id %}" title="" data-toggle="tooltip" data-original-title="Пересчитать"><i data-feather="refresh-cw" class="wd-20"></i></a>
+   {% endif %}
+{% endif %}
 {% endblock %}
 
 {% block body_content %}
@@ -142,85 +136,145 @@
 
                <div class="row clearfix">
                   <div class="col">
-                     <div class="card mg-b-30">
+                     {% if qs.status < 2 %}
+                        <div class="card mg-b-30">
 
 
-                              <div class="card-header d-flex align-items-center justify-content-between">
-                                 <h6 class="tx-15 tx-semibold mg-b-0">Помещения</h6>
-                              </div>
-                              {% for t in sp %}
-                                 <div class="card-body pd-25">
-                                    <div class="media d-block d-flex mg-b-10">
-                                       {% if t.status %}
-                                          <div class="wd-40 ht-40 bg-success rounded d-flex align-items-center justify-content-center hidden-xs">
-                                             <span data-feather="codepen" class="wd-20 ht-20 tx-gray-200"></span>
-                                          </div>
-                                       {% else %}
-                                          <div class="wd-40 ht-40 bg-secondary rounded d-flex align-items-center justify-content-center hidden-xs">
-                                             <span data-feather="codepen" class="wd-20 ht-20 tx-gray-200"></span>
-                                          </div>
-                                       {% endif %}
-                                       <div class="media-body pd-l-0 pd-sm-l-20">
-                                          <h5 class="tx-15 mg-b-5">{{ t.name }}</h5>
-                                          <p>
-                                             {% if t.status %}
-                                                <a href="{{ t.change_status}}"  title="" data-toggle="tooltip" data-original-title="Разутвердить"><i data-feather="user" class="wd-16 mr-2"></i></a>
-                                             {% else %}
-                                                <a href="{{ t.change_status}}"  title="" data-toggle="tooltip" data-original-title="Утвердить"><i data-feather="user-check" class="wd-16 mr-2"></i></a>
-                                             {% endif %}
-                                             <a href="{{ t.remove_room}}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
-                                          </p>
-                                       </div>
-                                       <div class="row clearfix">
-                                             <div class="col-center">
-                                                <label class="tx-16 tx-uppercase tx-gray-500 mb-0">+</label>
-                                             </div>
-                                             <div class="col-sm bd-r bd-gray-200">
-                                                <a href="{{ t.create_sp}}" class="tx-10 tx-uppercase tx-gray-500 mb-0">Добавить вариант</a>
-                                             </div>
-                                             {% for sp in spec %}
-                                                {% if sp.room == t %}
-                                                   <div class="col-sm bd-r bd-gray-200">
-                                                      <div class="d-flex align-items-baseline">
-                                                         <h5 class="tx-16 tx-sm-14 tx-md-16 mg-b-0 tx-rubik tx-dark tx-normal">{{sp.total}}</h5>
-                                                      </div>
-                                                      <label class="tx-10 tx-uppercase tx-gray-500 mb-0">
-                                                         {% if sp.status %}
-                                                            <a href="{{ sp.get_absolute_url }}">{{ sp.version }} <i data-feather="check" class="wd-16 mr-2"></i></a>
-                                                         {% else %}
-                                                            <a href="{{ sp.get_absolute_url }}">{{ sp.version }}</a>
-                                                         {% endif %}
-                                                      </label>
-                                                      <p>
-                                                         {% if sp.status %}
-                                                            <a href="{{ sp.change_status}}"  title="" data-toggle="tooltip" data-original-title="Разутвердить"><i data-feather="user" class="wd-16 mr-2"></i></a>
-                                                         {% else %}
-                                                            <a href="{{ sp.change_status}}"  title="" data-toggle="tooltip" data-original-title="Утвердить"><i data-feather="user-check" class="wd-16 mr-2"></i></a>
-                                                         {% endif %}
-                                                         <a href="{{ sp.get_absolute_url}}"  title="" data-toggle="tooltip" data-original-title="Редактировать"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
-                                                         <a href="{{ sp.copy_sp}}"  title="" data-toggle="tooltip" data-original-title="Копировать"><i data-feather="copy" class="wd-16 mr-2"></i></a>
-                                                         <a href="{{ sp.remove_sp}}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
-                                                      </p>
-                                                   </div>
-                                                {% endif %}
-                                             {% endfor %}
-                                       </div>
-
-                                    </div>
-                                    <hr class="m-0">
+                                 <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h6 class="tx-15 tx-semibold mg-b-0">Помещения</h6>
                                  </div>
-                              {% endfor %}
+                                 {% for t in sp %}
+                                    <div class="card-body pd-25">
+                                       <div class="media d-block d-flex mg-b-10">
+                                          {% if t.status %}
+                                             <div class="wd-40 ht-40 bg-success rounded d-flex align-items-center justify-content-center hidden-xs">
+                                                <span data-feather="codepen" class="wd-20 ht-20 tx-gray-200"></span>
+                                             </div>
+                                          {% else %}
+                                             <div class="wd-40 ht-40 bg-secondary rounded d-flex align-items-center justify-content-center hidden-xs">
+                                                <span data-feather="codepen" class="wd-20 ht-20 tx-gray-200"></span>
+                                             </div>
+                                          {% endif %}
+                                          <div class="media-body pd-l-0 pd-sm-l-20">
+                                             <h5 class="tx-15 mg-b-5">{{ t.name }}</h5>
+                                             <p>
+                                                {% if t.status %}
+                                                   <a href="{{ t.change_status}}"  title="" data-toggle="tooltip" data-original-title="Разутвердить"><i data-feather="user" class="wd-16 mr-2"></i></a>
+                                                {% else %}
+                                                   <a href="{{ t.change_status}}"  title="" data-toggle="tooltip" data-original-title="Утвердить"><i data-feather="user-check" class="wd-16 mr-2"></i></a>
+                                                {% endif %}
+                                                <a href="{{ t.remove_room}}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                             </p>
+                                          </div>
+                                          <div class="row clearfix">
+                                                <div class="col-center">
+                                                   <label class="tx-16 tx-uppercase tx-gray-500 mb-0">+</label>
+                                                </div>
+                                                <div class="col-sm bd-r bd-gray-200">
+                                                   <a href="{{ t.create_sp}}" class="tx-10 tx-uppercase tx-gray-500 mb-0">Добавить вариант</a>
+                                                </div>
+                                                {% for sp in spec %}
+                                                   {% if sp.room == t %}
+                                                      <div class="col-sm bd-r bd-gray-200">
+                                                         <div class="d-flex align-items-baseline">
+                                                            <h5 class="tx-16 tx-sm-14 tx-md-16 mg-b-0 tx-rubik tx-dark tx-normal">{{sp.total}}</h5>
+                                                         </div>
+                                                         <label class="tx-10 tx-uppercase tx-gray-500 mb-0">
+                                                            {% if sp.status %}
+                                                               <a href="{{ sp.get_absolute_url }}">{{ sp.version }} <i data-feather="check" class="wd-16 mr-2"></i></a>
+                                                            {% else %}
+                                                               <a href="{{ sp.get_absolute_url }}">{{ sp.version }}</a>
+                                                            {% endif %}
+                                                         </label>
+                                                         <p>
+                                                            {% if sp.status %}
+                                                               <a href="{{ sp.change_status}}"  title="" data-toggle="tooltip" data-original-title="Разутвердить"><i data-feather="user" class="wd-16 mr-2"></i></a>
+                                                            {% else %}
+                                                               <a href="{{ sp.change_status}}"  title="" data-toggle="tooltip" data-original-title="Утвердить"><i data-feather="user-check" class="wd-16 mr-2"></i></a>
+                                                            {% endif %}
+                                                            <a href="{{ sp.get_absolute_url}}"  title="" data-toggle="tooltip" data-original-title="Редактировать"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                            <a href="{{ sp.copy_sp}}"  title="" data-toggle="tooltip" data-original-title="Копировать"><i data-feather="copy" class="wd-16 mr-2"></i></a>
+                                                            <a href="{{ sp.remove_sp}}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                         </p>
+                                                      </div>
+                                                   {% endif %}
+                                                {% endfor %}
+                                          </div>
+
+                                       </div>
+                                       <hr class="m-0">
+                                    </div>
+                                 {% endfor %}
+
+                              <div class="card-footer bg-transparent">
+                                 <nav class="nav nav-with-icon tx-13">
+                                    <a href="{{ qs.create_room }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить помещение</a>
+                                 </nav>
+                              </div>
+
+                           <!-- card-footer -->
+                        </div>
+
+                     {% else %}
+                        <div class="card mg-b-30">
+
+
+                                 <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h6 class="tx-15 tx-semibold mg-b-0">Помещения</h6>
+                                 </div>
+                                 {% for t in sp %}
+                                    <div class="card-body pd-25">
+                                       <div class="media d-block d-flex mg-b-10">
+                                          {% if t.status %}
+                                             <div class="wd-40 ht-40 bg-success rounded d-flex align-items-center justify-content-center hidden-xs">
+                                                <span data-feather="codepen" class="wd-20 ht-20 tx-gray-200"></span>
+                                             </div>
+                                          {% else %}
+                                             <div class="wd-40 ht-40 bg-secondary rounded d-flex align-items-center justify-content-center hidden-xs">
+                                                <span data-feather="codepen" class="wd-20 ht-20 tx-gray-200"></span>
+                                             </div>
+                                          {% endif %}
+                                          <div class="media-body pd-l-0 pd-sm-l-20">
+                                             <h5 class="tx-15 mg-b-5">{{ t.name }}</h5>
+
+                                          </div>
+                                          <div class="row clearfix">
+
+                                                {% for sp in spec %}
+                                                   {% if sp.room == t %}
+                                                      <div class="col-sm bd-r bd-gray-200">
+                                                         <div class="d-flex align-items-baseline">
+                                                            <h5 class="tx-16 tx-sm-14 tx-md-16 mg-b-0 tx-rubik tx-dark tx-normal">{{sp.total}}</h5>
+                                                         </div>
+                                                         <label class="tx-10 tx-uppercase tx-gray-500 mb-0">
+
+                                                            <a href="{{ sp.get_absolute_url }}">{{ sp.version }}</a>
+
+                                                         </label>
+
+                                                      </div>
+                                                   {% endif %}
+                                                {% endfor %}
+                                          </div>
+
+                                       </div>
+                                       <hr class="m-0">
+                                    </div>
+                                 {% endfor %}
 
 
 
-                           <div class="card-footer bg-transparent">
-                              <nav class="nav nav-with-icon tx-13">
-                                 <a href="{{ qs.create_room }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить помещение</a>
-                              </nav>
-                           </div>
+                           <!-- card-footer -->
+                        </div>
 
-                        <!-- card-footer -->
-                     </div>
+
+                     {% endif %}
+
+
+
+
+
+                        {% if qs.status < 2 %}
                            <div class="card mg-b-30">
                               {% if offers %}
                                  <div class="card-header d-flex align-items-center justify-content-between">
@@ -246,7 +300,7 @@
 
                               <!-- card-footer -->
                            </div>
-
+                        {% endif %}
 
 
                         {% if prepay %}

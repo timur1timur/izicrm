@@ -10,7 +10,7 @@ from email.mime.image import MIMEImage
 from email.mime.audio import MIMEAudio
 from email.mime.multipart import MIMEMultipart
 import datetime
-from orders.models import SupplierOrder
+from orders.models import SupplierOrder, Order
 
 
 
@@ -340,3 +340,104 @@ def M_ChangeWorkOrderState(order):
                 order.progress = 9
                 order.save(update_fields=['status', 'status_css', 'progress'])
     return print(f'Change status {order} in 9')
+
+
+def CheckDiscountState(order):
+    qs = Order.objects.get(pk=order)
+
+    textile = qs.discount_t_s
+    cornice = qs.discount_c_s
+    work = qs.discount_w_s
+
+    if textile > 0 and cornice > 0 and work > 0:
+        if textile == 2 and cornice == 2 and work == 2:
+            qs.discount_status = 2
+            qs.save(update_fields=['discount_status'])
+        if textile == 3 and cornice == 3 and work == 3:
+            qs.discount_status = 3
+            qs.discount_view = 0
+            qs.save(update_fields=['discount_status'])
+        if textile == 2 and cornice == 3 and work == 3:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+        if textile == 3 and cornice == 2 and work == 3:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+        if textile == 3 and cornice == 3 and work == 2:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+        if textile == 3 and cornice == 2 and work == 2:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+        if textile == 2 and cornice == 3 and work == 2:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+        if textile == 2 and cornice == 2 and work == 3:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+    elif textile == 0 and cornice > 0 and work > 0:
+        if cornice == 2 and work == 2:
+            qs.discount_status = 2
+            qs.save(update_fields=['discount_status'])
+        if cornice == 3 and work == 3:
+            qs.discount_status = 3
+            qs.discount_view = 0
+            qs.save(update_fields=['discount_status'])
+        if cornice == 2 and work == 3:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+        if cornice == 3 and work == 2:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+    elif textile > 0 and cornice == 0 and work > 0:
+        if textile == 2 and work == 2:
+            qs.discount_status = 2
+            qs.save(update_fields=['discount_status'])
+        if textile == 3 and work == 3:
+            qs.discount_status = 3
+            qs.discount_view = 0
+            qs.save(update_fields=['discount_status'])
+        if textile == 2 and work == 3:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+        if textile == 3 and work == 2:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+    elif textile > 0 and cornice > 0 and work == 0:
+        if textile == 2 and cornice == 2:
+            qs.discount_status = 2
+            qs.save(update_fields=['discount_status'])
+        if textile == 3 and cornice == 3:
+            qs.discount_status = 3
+            qs.discount_view = 0
+            qs.save(update_fields=['discount_status'])
+        if textile == 2 and cornice == 3:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+        if textile == 3 and cornice == 2:
+            qs.discount_status = 4
+            qs.save(update_fields=['discount_status'])
+    elif textile > 0 and cornice == 0 and work == 0:
+        if textile == 2:
+            qs.discount_status = 2
+            qs.save(update_fields=['discount_status'])
+        if textile == 3:
+            qs.discount_status = 3
+            qs.discount_view = 0
+            qs.save(update_fields=['discount_status'])
+    elif textile == 0 and cornice > 0 and work == 0:
+        if cornice == 2:
+            qs.discount_status = 2
+            qs.save(update_fields=['discount_status'])
+        if cornice == 3:
+            qs.discount_status = 3
+            qs.discount_view = 0
+            qs.save(update_fields=['discount_status'])
+    elif textile == 0 and cornice == 0 and work > 0:
+        if work == 2:
+            qs.discount_status = 2
+            qs.save(update_fields=['discount_status'])
+        if work == 3:
+            qs.discount_status = 3
+            qs.discount_view = 0
+            qs.save(update_fields=['discount_status'])

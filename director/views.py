@@ -3,8 +3,9 @@ from orders.models import Payment, PaymentCategory
 from orders.forms import PaymentFormDirector
 import datetime
 from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
 
-
+@login_required(login_url='login')
 def ControlPayments(request):
     end_n = datetime.datetime.now() + datetime.timedelta(days=1)
     end = end_n.strftime("%Y-%m-%d")
@@ -40,6 +41,7 @@ def ControlPayments(request):
                            'cat_price': cat_price,
                            'category': qc})
 
+@login_required(login_url='login')
 def ControlPaymentsDate(request, start, end):
     start_s = start.split('-')
     start = datetime.date(int(start_s[0]), int(start_s[1]), int(start_s[2]))
@@ -69,6 +71,7 @@ def ControlPaymentsDate(request, start, end):
                            'cat_price': cat_price
                            })
 
+@login_required(login_url='login')
 def PaymentCreate(request):
 
     if request.method == 'GET':
@@ -97,11 +100,16 @@ def PaymentCreate(request):
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
+
+
+@login_required(login_url='login')
 def UserList(request):
     User = get_user_model()
     qs = User.objects.all()
     return render(request, 'director/user_list.html', context={'orders': qs})
 
+
+@login_required(login_url='login')
 def UserCreate(request):
     if request.method == 'POST':
         userName = request.POST.get('username', None)

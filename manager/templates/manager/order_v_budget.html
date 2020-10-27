@@ -136,13 +136,22 @@
                                      <div class="clearfix">
                                         <span class="float-left tx-11 tx-gray-500">Доход:</span>
                                         <span class="float-right">
-                                            <span class="tx-success small mg-b-0">{{ budget_fact.total.profit }}</span>
+                                            {% if budget_fact.total.profit > 0 %}
+                                                <span class="tx-success small mg-b-0">+ {{ budget_fact.total.profit }}</span>
+                                            {% else %}
+                                                <span class="tx-danger small mg-b-0">{{ budget_fact.total.profit }}</span>
+                                            {% endif %}
+
                                         </span>
                                     </div>
                                      <div class="clearfix">
                                         <span class="float-left tx-11 tx-gray-500">Маржинальность:</span>
                                         <span class="float-right">
-                                            <small class="tx-success">+{{ budget_fact.total.change }}%</small>
+                                            {% if budget_fact.total.change > 0 %}
+                                                <small class="tx-success">+{{ budget_fact.total.change }}%</small>
+                                            {% else %}
+                                                <small class="tx-danger">{{ budget_fact.total.change }}%</small>
+                                            {% endif %}
                                         </span>
                                     </div>
                                  </div>
@@ -189,8 +198,7 @@
                                                 {% for q in supp_textile %}
                                                     {% if q.item == t %}
                                                         {{ q.price }}
-                                                    {% else %}
-                                                        -
+
                                                     {% endif %}
                                                 {% endfor %}
                                             </td>
@@ -201,17 +209,19 @@
                                                 {% for q in supp_textile %}
                                                     {% if q.item == t %}
                                                         {{ q.price|mul:t.quantity|floatformat:2 }}
-                                                    {% else %}
-                                                        -
+
                                                     {% endif %}
                                                 {% endfor %}
                                             </td>
                                             <td class="text-center">
                                                 {% for q in supp_textile %}
                                                     {% if q.item == t %}
-                                                        {{ q.price|mul:t.quantity|sub:t.total_price|abs|floatformat:2 }}
-                                                    {% else %}
-                                                        -
+                                                        {% get_profit_position t.total_price q.price t.quantity as profit_pos %}
+                                                        {% if profit_pos > 0 %}
+                                                            <span class="tx-success">{{ profit_pos }}</span>
+                                                        {% else %}
+                                                             <span class="tx-danger">{{ profit_pos }}</span>
+                                                        {% endif%}
                                                     {% endif %}
                                                 {% endfor %}
                                             </td>
@@ -227,8 +237,7 @@
                                                 {% for q in supp_cornice %}
                                                     {% if q.item == t %}
                                                         {{ q.price }}
-                                                    {% else %}
-                                                        -
+
                                                     {% endif %}
                                                 {% endfor %}
                                             </td>
@@ -239,17 +248,19 @@
                                                 {% for q in supp_cornice %}
                                                     {% if q.item == t %}
                                                         {{ q.price|mul:t.quantity|floatformat:2 }}
-                                                    {% else %}
-                                                        -
+
                                                     {% endif %}
                                                 {% endfor %}
                                             </td>
                                             <td class="text-center">
                                                 {% for q in supp_cornice %}
                                                     {% if q.item == t %}
-                                                        {{ q.price|mul:t.quantity|sub:t.total_price|abs|floatformat:2 }}
-                                                    {% else %}
-                                                        -
+                                                        {% get_profit_position t.total_price q.price t.quantity as profit_pos %}
+                                                        {% if profit_pos > 0 %}
+                                                            <span class="tx-success">{{ profit_pos }}</span>
+                                                        {% else %}
+                                                             <span class="tx-danger">{{ profit_pos }}</span>
+                                                        {% endif%}
                                                     {% endif %}
                                                 {% endfor %}
                                             </td>

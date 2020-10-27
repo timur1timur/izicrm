@@ -178,8 +178,17 @@
                                                 {% endif %}
                                             </td>
                                             <td class="tx-right">
-                                                <a href="{% url 'manager:order_view' q.id %}"  title="" data-toggle="tooltip" data-original-title="Заказать"><i data-feather="crosshair" class="wd-16 mr-2"></i></a>
-                                                <a href="{% url 'manager:order_budget_view' q.id %}"  title="" data-toggle="tooltip" data-original-title="Бюджет"><i data-feather="dollar-sign" class="wd-16 mr-2"></i></a>
+                                                {% if q.status > 4 %}
+                                                    {% if q.status == 10 %}
+                                                        <a href="{% url 'manager:order_budget_view' q.id %}"  title="" data-toggle="tooltip" data-original-title="Бюджет"><i data-feather="dollar-sign" class="wd-16 mr-2"></i></a>
+                                                    {% else %}
+                                                        <a href="{% url 'manager:order_view' q.id %}"  title="" data-toggle="tooltip" data-original-title="Заказать"><i data-feather="crosshair" class="wd-16 mr-2"></i></a>
+                                                        <a href="{% url 'manager:order_budget_view' q.id %}"  title="" data-toggle="tooltip" data-original-title="Бюджет"><i data-feather="dollar-sign" class="wd-16 mr-2"></i></a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <a href="{{ q.get_absolute_url}}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                    <a href="{{ q.archive}}" title="" data-toggle="tooltip" data-original-title="В архив"><i data-feather="archive" class="wd-16"></i></a>
+                                                {% endif %}
 
                                             </td>
                                         </tr>

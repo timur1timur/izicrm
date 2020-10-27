@@ -6,12 +6,13 @@ from .views import  SpecificationTextileAdd, SpecificationViewD, \
     OrderCreateKp, RoomAdd, RoomRemove, RoomChangeStatus, RoomReady, ContractCreateXls, CustomerCreate, \
     ContractCreate, OfferCreate, OfferSelect, ContractCreateWord, GetContract, PaymentCreate, ContractReady, TestTemplate,\
     OrderCreateCustomer, SpecificationCopy, TextileReview, CorniceReview, SpecificationHangingAdd, SpecificationDeliveryAdd, \
-    SpecificationHangingRemove, SpecificationDeliveryRemove, OrderArchive
+    SpecificationHangingRemove, SpecificationDeliveryRemove, OrderArchive, GetDiscount, RefreshDiscount, home
 
 
 app_name = 'main'
 
 urlpatterns = [
+    path('home/', home, name="home"),
     path('specification/add/<id>/', SpecificationAdd, name="specification_add"),
     path('room/add/<id>/', RoomAdd, name="room_add"),
     path('room/remove/<id>/', RoomRemove, name="room_remove"),
@@ -60,4 +61,7 @@ urlpatterns = [
     path('offer/select/<id>/', OfferSelect, name="offer_select"),
     path('payment/create/<id>/', PaymentCreate, name="prepay_create"),
     path('test_template/', TestTemplate),
+
+    path('discount/<id>/', GetDiscount, name="discount"),
+    path('discount/refresh/<id>/', RefreshDiscount, name="discount_refresh"),
 ]

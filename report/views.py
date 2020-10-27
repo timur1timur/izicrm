@@ -3,12 +3,15 @@ from orders.models import Order, Room, Customer, Contract, Payment
 from common.utils import GetCusPay, GetStatOrderPeriod, GetStatOrderFinishPeriod
 from django.db.models import Sum, Count
 import datetime
+from .utils import *
 from django.db.models.functions import ExtractDay, ExtractMonth, ExtractYear
 from itertools import chain
 from operator import attrgetter
+from django.contrib.auth.decorators import login_required
 
 
 
+@login_required(login_url='login')
 def ReportOrders(request):
     qs = Order.objects.all().order_by('-date_created')
     rooms = Room.objects.all()
@@ -95,7 +98,7 @@ def ReportOrders(request):
     }
     return render(request, 'report/report_orders.html', context)
 
-
+@login_required(login_url='login')
 def ReportOrdersDate(request, start, end):
     start_s = start.split('-')
     start = datetime.date(int(start_s[0]), int(start_s[1]), int(start_s[2]))
@@ -179,7 +182,7 @@ def ReportOrdersDate(request, start, end):
     }
     return render(request, 'report/report_orders.html', context)
 
-
+@login_required(login_url='login')
 def ReportBudget(request):
 
     end_n = datetime.datetime.now() + datetime.timedelta(days=1)
@@ -297,7 +300,7 @@ month_dict = {
     '12': 'Декабрь',
 }
 
-
+@login_required(login_url='login')
 def ReportBudgetMonth(request):
 
     end_n = datetime.datetime.now() + datetime.timedelta(days=1)
@@ -378,28 +381,138 @@ User = get_user_model()
 
 
 
-
+@login_required(login_url='login')
 def ReportUser(request):
+    end_n = datetime.datetime.now() + datetime.timedelta(days=1)
+    end = end_n.strftime("%Y-%m-%d")
+    end_s = end.split('-')
+    start_n = end_n - datetime.timedelta(days=30)
+    start = start_n.strftime("%Y-%m-%d")
+    start_s = start.split('-')
+
     qs = User.objects.all()
 
     user_mass = {}
 
     for q in qs:
-        orders = Order.objects.filter(user=q).all()
+        orders = Order.objects.filter(user=q, date_created__gte=start, date_created__lte=end).all()
         orders_count = orders.count()
+        orders_count_finish = orders.filter(status=10).count()
+        orders_count_not_ready = orders.filter(status__lt=10).count()
         contract_sum = 0
         if orders_count > 0:
             for ord in orders:
                 if ord.status > 3:
                     contract = Contract.objects.get(order=ord)
-                    print(contract)
                     contract_sum += contract.price
+
+        if orders != 0 and orders_count_not_ready != 0:
+            percent_not_ready = round(orders_count_not_ready * 100 / orders_count, 2)
+        else:
+            percent_not_ready = ''
 
         user_mass[q.get_full_name()] = {
             'count': orders_count,
+            'count_finish': orders_count_finish,
+            'count_not_ready': orders_count_not_ready,
+            'percent_not_ready': percent_not_ready,
             'arrival': contract_sum,
         }
     print(user_mass)
     context = {
+        'user_mass': user_mass,
+        'startDate': [int(start_s[0]),
+                      int(start_s[1]) - 1,
+                      int(start_s[2])],
+        'endDate': [int(end_s[0]), int(end_s[1]) - 1,
+                    int(end_s[2])],
     }
-    return render(request, 'report/report_orders.html', context)
+    return render(request, 'report/report_users.html', context)
+
+@login_required(login_url='login')
+def ReportUserDate(request, start, end):
+    start_s = start.split('-')
+    start = datetime.date(int(start_s[0]), int(start_s[1]), int(start_s[2]))
+    end_s = end.split('-')
+    end = datetime.date(int(end_s[0]), int(end_s[1]), int(end_s[2])) + datetime.timedelta(days=1)
+
+    qs = User.objects.all()
+
+    user_mass = {}
+
+    for q in qs:
+        orders = Order.objects.filter(user=q, date_created__gte=start, date_created__lte=end).all()
+        orders_count = orders.count()
+        orders_count_finish = orders.filter(status=10).count()
+        orders_count_not_ready = orders.filter(status__lt=10).count()
+        contract_sum = 0
+        if orders_count > 0:
+            for ord in orders:
+                if ord.status > 3:
+                    contract = Contract.objects.get(order=ord)
+                    contract_sum += contract.price
+
+        if orders != 0 and orders_count_not_ready != 0:
+            percent_not_ready = round(orders_count_not_ready * 100 / orders_count, 2)
+        else:
+            percent_not_ready = ''
+
+        user_mass[q.get_full_name()] = {
+            'count': orders_count,
+            'count_finish': orders_count_finish,
+            'count_not_ready': orders_count_not_ready,
+            'percent_not_ready': percent_not_ready,
+            'arrival': contract_sum,
+        }
+    print(user_mass)
+    context = {
+        'user_mass': user_mass,
+        'startDate': [int(start_s[0]),
+                      int(start_s[1]) - 1,
+                      int(start_s[2])],
+        'endDate': [int(end_s[0]), int(end_s[1]) - 1,
+                    int(end_s[2])],
+    }
+    return render(request, 'report/report_users.html', context)
+
+
+
+@login_required(login_url='login')
+def ReportSupplier(request):
+    end_n = datetime.datetime.now() + datetime.timedelta(days=1)
+    end = end_n.strftime("%Y-%m-%d")
+    end_s = end.split('-')
+    start_n = end_n - datetime.timedelta(days=30)
+    start = start_n.strftime("%Y-%m-%d")
+    start_s = start.split('-')
+
+    context = {
+        'textile': GetTextileQuantity(start, end),
+        'cornice': GetCorniceQuantity(start, end),
+        'startDate': [int(start_s[0]),
+                      int(start_s[1]) - 1,
+                      int(start_s[2])],
+        'endDate': [int(end_s[0]), int(end_s[1]) - 1,
+                    int(end_s[2])],
+    }
+
+    return render(request, 'report/report_supplier.html', context)
+
+@login_required(login_url='login')
+def ReportSupplierDate(request, start, end):
+    start_s = start.split('-')
+    start = datetime.date(int(start_s[0]), int(start_s[1]), int(start_s[2]))
+    end_s = end.split('-')
+    end = datetime.date(int(end_s[0]), int(end_s[1]), int(end_s[2])) + datetime.timedelta(days=1)
+
+    context = {
+        'textile': GetTextileQuantity(start, end),
+        'cornice': GetCorniceQuantity(start, end),
+        'startDate': [int(start_s[0]),
+                      int(start_s[1]) - 1,
+                      int(start_s[2])],
+        'endDate': [int(end_s[0]), int(end_s[1]) - 1,
+                    int(end_s[2])],
+    }
+    print(GetTextileQuantity(start, end))
+    return render(request, 'report/report_supplier.html', context)

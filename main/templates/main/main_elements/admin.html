@@ -1,0 +1,111 @@
+<li class="mg-l-20-force mg-t-25-force menu-extras">Дизайнер</li>
+<li>
+   <a href="{% url 'common:dashboard_designer' %}"><i data-feather="home"></i>
+   <span>Дашборд</span><i class="accordion-icon "></i></a>
+</li>
+<li>
+   {% get_finish_orders as finish_order %}
+   <a href="{% url 'main:orders' %}"><i data-feather="clipboard"></i>
+   <span>Заказы
+      {% if finish_order > 0 %}
+         <span class="badge badge-pill badge-danger">{{ finish_order }}</span>
+      {% endif %}
+   </span></a>
+</li>
+<li>
+   <a href="{% url 'common:customers_list' %}"><i data-feather="users"></i>
+   <span>Заказчики</span></a>
+</li>
+<li>
+   <a href="{% url 'common:payments_list' %}"><i data-feather="dollar-sign"></i>
+   <span>Платежи</span></a>
+</li>
+
+
+
+<li class="mg-l-20-force mg-t-25-force menu-extras">Менеджер</li>
+
+<li>
+   <a href="{% url 'common:dashboard_manager' %}"><i data-feather="home"></i>
+   <span>Дашборд</span><i class="accordion-icon "></i></a>
+</li>
+
+
+<li>
+   {% get_new_orders as count_order %}
+   <a href="{% url 'manager:orders' %}"><i data-feather="clipboard"></i>
+   <span>Заказы (M)
+      {% if count_order > 0 %}
+         <span class="badge badge-pill badge-danger">{{ count_order }}</span>
+      {% endif %}
+   </span></a>
+</li>
+<li>
+   {% get_discount as dis_order %}
+   <a href="{% url 'manager:sogl_list' %}"><i data-feather="check"></i>
+   <span>Согласования
+      {% if dis_order > 0 %}
+            <span class="badge badge-pill badge-danger">{{ dis_order }}</span>
+         {% endif %}
+
+   </span></a>
+</li>
+<li>
+   <a href="{% url 'common:customers_list' %}"><i data-feather="users"></i>
+   <span>Заказчики</span></a>
+</li>
+<li>
+   <a href="{% url 'manager:supplier_orders' %}"><i data-feather="truck"></i>
+   <span>Поставки</span></a>
+</li>
+
+
+<li class="mg-l-20-force mg-t-25-force menu-navigation">Материалы</li>
+<li>
+   <a href=""><i data-feather="truck"></i>
+   <span>Поставщики</span><i class="accordion-icon fa fa-angle-left"></i></a>
+   <ul class="sub-menu">
+      <li><a href="{% url 'common:manufacturer_textile' %}">Поставщики текстиля</a></li>
+      <li><a href="{% url 'common:manufacturer_cornice' %}">Поставщики карнизов</a></li>
+   </ul>
+</li>
+<li>
+   <a href="{% url 'common:textile_list' %}"><i data-feather="triangle"></i>
+   <span>Ткани</span></a>
+</li>
+<li>
+   <a href="{% url 'common:cornice_list' %}"><i data-feather="triangle"></i>
+   <span>Карнизы</span></a>
+</li>
+<li>
+   <a href=""><i data-feather="triangle"></i>
+   <span>Работы</span><i class="accordion-icon fa fa-angle-left"></i></a>
+   <ul class="sub-menu">
+      <li><a href="map-google.html">Добавить работу</a></li>
+      <li><a href="map-vector.html">Список работ</a></li>
+   </ul>
+</li>
+
+<li class="mg-l-20-force mg-t-25-force menu-extras">Директор</li>
+<li>
+   <a href="{% url 'director:payments_list' %}"><i data-feather="dollar-sign"></i>
+   <span>Контроль расходов</span></a>
+</li>
+<li>
+   <a href="{% url 'director:user_list' %}"><i data-feather="user"></i>
+   <span>Сотрудники</span></a>
+</li>
+<li>
+   <a href="{% url 'markup:markup_list' %}"><i data-feather="dollar-sign"></i>
+   <span>Наценка</span></a>
+</li>
+<li>
+   <a href=""><i data-feather="codepen"></i>
+   <span>Отчеты</span><i class="accordion-icon fa fa-angle-left"></i></a>
+   <ul class="sub-menu">
+      <li><a href="{% url 'report:orders' %}">Заказы</a></li>
+      <li><a href="{% url 'report:budget' %}">Продажи</a></li>
+      <li><a href="{% url 'report:users' %}">Сотрудники</a></li>
+      <li><a href="{% url 'report:suppliers' %}">Поставщики</a></li>
+   </ul>
+</li>

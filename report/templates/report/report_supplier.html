@@ -1,0 +1,209 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Отчет: Поставщики (Материал/Количество){% endblock %}
+{% block breadcrumb_buttons %}
+
+<button id="dashboardDate3" name="DatePick" class="btn btn-default dropdown-toggle mr-2 d-none d-md-block pd-y-8-force"></button>
+{% endblock %}
+
+{% block body_content %}
+<div class="pageheader pd-t-25 pd-b-35">
+  <div class="d-flex justify-content-between">
+
+     <div class="d-flex align-items-center">
+        <div class="d-inline-ock btn-group mb-3 mb-md-0 ft-right" role="group">
+            <button type="button" id="textile_button" onclick='textile();' class="btn btn-default">Текстиль</button>
+            <button type="button" id="cornice_button" onclick='cornice();' class="btn btn-default">Карнизы</button>
+            <button type="button" onclick='show_all();' class="btn btn-default">Показать все</button>
+        </div>
+     </div>
+
+  </div>
+</div>
+                     <!-- Filtering FooTable Start -->
+                     <!--================================-->
+                     <div class="col-md-6 col-lg-6">
+
+
+
+
+
+
+                           <div class="card-body pd-0">
+
+                               <div class="row">
+                                 <div class="mg-20 form-inline wd-100p">
+
+                                    <div class="col-sm-6">
+                                       <div class="form-group">
+                                           <div class="d-flex align-items-center">
+
+                                                <span id="startDateY" hidden> {{ startDate.0 }}</span>
+                                                <span id="startDateM" hidden> {{ startDate.1 }}</span>
+                                                <span id="startDateD" hidden> {{ startDate.2 }}</span>
+                                                <span id="endDateY" hidden> {{ endDate.0 }}</span>
+                                                <span id="endDateM" hidden> {{ endDate.1 }}</span>
+                                                <span id="endDateD" hidden> {{ endDate.2 }}</span>
+                                           </div>
+
+
+                                       </div>
+                                    </div>
+
+                                 </div>
+                         </div>
+
+                              <table id="textile" class="table table-hover mg-0" {% if textile %} {%else%} hidden {% endif%}>
+                                  <thead class="tx-10 tx-uppercase">
+                                     <tr>
+                                        <th>Материал</th>
+                                         <th class="tx-right">Заказанное количество</th>
+                                     </tr>
+                                  </thead>
+                                 <tbody>
+                                    {% for q in textile %}
+
+                                        <tr>
+                                            <td><strong>{{ q }}</strong></td>
+                                        </tr>
+                                        {% for t in textile|get_item:q %}
+                                            <tr>
+
+
+                                                <td>{{ t }}</td>
+                                                <td class="tx-right">{{ textile|get_item:q|get_item:t }}</td>
+
+
+                                            </tr>
+                                        {% endfor %}
+                                    {% endfor %}
+
+                                 </tbody>
+                              </table>
+                               <br>
+                               <table id="cornice" class="table table-hover mg-0" {% if cornice %} {%else%} hidden {% endif%}>
+                                  <thead class="tx-10 tx-uppercase">
+                                     <tr>
+                                        <th>Материал</th>
+                                         <th class="tx-right">Заказанное количество</th>
+                                     </tr>
+                                  </thead>
+                                 <tbody>
+                                    {% for q in cornice %}
+
+                                        <tr>
+                                            <td><strong>{{ q }}</strong></td>
+                                        </tr>
+                                        {% for t in cornice|get_item:q %}
+                                            <tr>
+
+
+                                                <td>{{ t }}</td>
+                                                <td class="tx-right">{{ cornice|get_item:q|get_item:t }}</td>
+
+
+                                            </tr>
+                                        {% endfor %}
+                                    {% endfor %}
+
+                                 </tbody>
+                              </table>
+                               <br>
+
+                           </div>
+
+                     </div>
+                     <!--/ Filtering FooTable End -->
+
+<script src="/static/main/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/main/assets/plugins/jquery-ui/jquery-ui.js"></script>
+
+
+<script>
+    function textile() {
+    document.getElementById("textile").style.display="block";
+    document.getElementById("cornice").style.display="none";
+}
+
+    function cornice() {
+    document.getElementById("cornice").style.display="block";
+    document.getElementById("textile").style.display="none";
+
+}
+
+    function show_all() {
+    document.getElementById("cornice").style.display="block";
+    document.getElementById("textile").style.display="block";
+
+}
+</script>
+
+<script>
+
+     // Dashboard DateTimePicker
+     $(function() {
+     var isRtl = $('body').attr('dir') === 'rtl' || $('html').attr('dir') === 'rtl';
+
+     // Button
+     var startY = document.getElementById( 'startDateY' );
+     var startM = document.getElementById( 'startDateM' );
+     var startD = document.getElementById( 'startDateD' );
+     var endY = document.getElementById( 'endDateY' );
+     var endM = document.getElementById( 'endDateM' );
+     var endD = document.getElementById( 'endDateD' );
+
+
+     var start = moment([Number(startY.textContent), Number(startM.textContent), Number(startD.textContent)]);
+     var end = moment([Number(endY.textContent), Number(endM.textContent), Number(endD.textContent)]);
+
+
+     function cb(start, end) {
+     $('#dashboardDate3').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+     }
+     $('#dashboardDate3').daterangepicker({
+     startDate: start,
+     endDate: end,
+     ranges: {
+     'Сегодня': [moment(), moment()],
+     'Вчера': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+     'Последние 7 дней': [moment().subtract(6, 'days'), moment()],
+     'Последние 30 дней': [moment().subtract(29, 'days'), moment()],
+     'Это месяц': [moment().startOf('month'), moment().endOf('month')],
+     'Предыдущий месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+     },
+     opens: (isRtl ? 'left' : 'right')
+     }, cb);
+     cb(start, end);
+
+     // Replace icons
+     $('#dashboardDate3').each(function() {
+     var obj = $(this).data('daterangepicker');
+     var _updateCalendars = obj.updateCalendars;
+     obj.updateCalendars = function() {
+     // Call original function
+     _updateCalendars.call(obj)
+     // Replace icons
+     obj.container.find('.prev > i').each(function() { this.className = 'ion ion-ios-arrow-back' });
+     obj.container.find('.next > i').each(function() { this.className = 'ion ion-ios-arrow-forward' });
+     obj.container.find('.daterangepicker_input > i').each(function() { this.className = 'ion ion-md-calendar' });
+     obj.container.find('.calendar-time > i').each(function() { this.className = 'ion ion-md-time' });
+
+     };
+     });
+
+      $('#dashboardDate3').on('apply.daterangepicker', function(ev, picker) {
+
+        var start = (picker.startDate.format('YYYY-MM-DD'));
+        var end = (picker.endDate.format('YYYY-MM-DD'));
+
+        var link = '{% url 'report:suppliers_date' 'val1' 'val2' %}';
+        link = link.replace('val1', start);
+        link = link.replace('val2', end);
+        window.location.href = link;
+      });
+     });
+</script>
+
+
+{% endblock %}
+

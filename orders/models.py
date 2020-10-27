@@ -75,6 +75,14 @@ class Order(models.Model):
         (3, 'Отказано'),
     )
 
+    STATUS_V_D2 = (
+        (0, 'Нет скидки'),
+        (1, 'Ожидание согласования'),
+        (2, 'Согласована'),
+        (3, 'Отказано'),
+        (4, 'Частичное согласование'),
+    )
+
     number = models.CharField(verbose_name='Номер', max_length=100, blank=True, null=True, default=GetCountOrder)
     status = models.IntegerField(verbose_name='Статус', choices=STATUS_V, default=0)
     status_css = models.IntegerField(verbose_name='Статус', choices=STATUS_CSS, default=0)
@@ -82,8 +90,15 @@ class Order(models.Model):
     textile_state = models.IntegerField(verbose_name='Состояние по текстилю', choices=STATUS_V_T, default=0)
     cornice_state = models.IntegerField(verbose_name='Состояние по карнизам', choices=STATUS_V_T, default=0)
     work_state = models.IntegerField(verbose_name='Состояние по работам', choices=STATUS_V_T, default=0)
-    discount = models.FloatField(verbose_name='Скидка', max_length=100, blank=True, null=True, default=1)
-    discount_s = models.IntegerField(verbose_name='Статус скидки', choices=STATUS_V_D, default=0)
+
+    discount_status = models.IntegerField(verbose_name='Общий статус скидки', choices=STATUS_V_D2, default=0)
+    discount_t = models.FloatField(verbose_name='Скидка к текстилю', max_length=100, blank=True, null=True, default=1)
+    discount_t_s = models.IntegerField(verbose_name='Статус скидки', choices=STATUS_V_D, default=0)
+    discount_c = models.FloatField(verbose_name='Скидка к карнизам', max_length=100, blank=True, null=True, default=1)
+    discount_c_s = models.IntegerField(verbose_name='Статус скидки', choices=STATUS_V_D, default=0)
+    discount_w = models.FloatField(verbose_name='Скидка к работам', max_length=100, blank=True, null=True, default=1)
+    discount_w_s = models.IntegerField(verbose_name='Статус скидки', choices=STATUS_V_D, default=0)
+
     discount_view = models.IntegerField(verbose_name='Просмотр скидки', default=0)
     date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
     date_finished = models.DateField(verbose_name='Дата исполнения', blank=True, null=True)
@@ -211,7 +226,7 @@ class Room(models.Model):
     status = models.BooleanField(verbose_name="Статус", max_length=1, blank=True, default=0)
 
     def __str__(self):
-        return str(self.order) +' '+ str(self.name)
+        return str(self.name)
 
     def get_absolute_url(self):
         return reverse('main:room', kwargs={"id": self.pk})
@@ -397,7 +412,7 @@ class OrderItemTextile1(models.Model):
         super(OrderItemTextile1, self).save(*args, **kwargs)
 
     def total_price(self):
-        t_price = self.item.price_opt * self.quantity * self.markup
+        t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t
         return round(t_price, 2)
 
     def remove_textile(self):
@@ -460,7 +475,7 @@ class OrderItemCornice(models.Model):
         super(OrderItemCornice, self).save(*args, **kwargs)
 
     def total_price(self):
-        t_price = self.item.price_opt * self.quantity * self.markup
+        t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_c
         return round(t_price, 2)
 
     def remove_cornice(self):
@@ -513,7 +528,7 @@ class OrderItemWorkSewing(models.Model):
         super(OrderItemWorkSewing, self).save(*args, **kwargs)
 
     def total_price(self):
-        t_price = self.item.price * self.quantity * self.markup
+        t_price = self.item.price * self.quantity * self.markup * self.order.discount_w
         return round(t_price, 2)
 
     def remove_sewing(self):
@@ -551,7 +566,7 @@ class OrderItemWorkAssembly(models.Model):
         super(OrderItemWorkAssembly, self).save(*args, **kwargs)
 
     def total_price(self):
-        t_price = self.item.price * self.quantity * self.markup
+        t_price = self.item.price * self.quantity * self.markup * self.order.discount_w
         return round(t_price, 2)
 
     def remove_assembly(self):
@@ -589,7 +604,7 @@ class OrderItemWorkHanging(models.Model):
         super(OrderItemWorkHanging, self).save(*args, **kwargs)
 
     def total_price(self):
-        t_price = self.item.price * self.quantity * self.markup
+        t_price = self.item.price * self.quantity * self.markup * self.order.discount_w
         return round(t_price, 2)
 
     def remove_hanging(self):
@@ -627,7 +642,7 @@ class OrderItemWorkDelivery(models.Model):
         super(OrderItemWorkDelivery, self).save(*args, **kwargs)
 
     def total_price(self):
-        t_price = self.item.price * self.quantity * self.markup
+        t_price = self.item.price * self.quantity * self.markup * self.order.discount_w
         return round(t_price, 2)
 
     def remove_delivery(self):

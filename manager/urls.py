@@ -5,7 +5,7 @@ from .views import M_OrderView, M_OrderViewD, M_TextileOrder,  SupplierOrderView
     SupplierOrderCorniceSend, M_SewingOrder, M_AssemblyOrder, M_HangingOrder, M_DeliveryOrder, M_OrderReady, \
     M_OrderViewD_Budget, M_TextileOrderedF, M_SupplierOrders, M_TextilePayedF, SupplierOrderSend2, SupplierOrderSend3, \
     M_CorniceOrderedF, M_CornicePayedF, M_SewingPayedF, M_AssemblyPayedF, M_HangingPayedF, M_DeliveryPayedF, M_Sogl, \
-    M_SoglSuccess, M_SoglDeny
+    M_SoglSuccess, M_SoglDeny, M_SoglView
 
 
 app_name = 'manager'
@@ -35,7 +35,8 @@ urlpatterns = [
     path('delivery/order/<id>/', M_DeliveryPayedF, name="delivery_ordered"),
     path('supplier/orders/', M_SupplierOrders, name="supplier_orders"),
     path('sogl/list/', M_Sogl, name="sogl_list"),
-    path('sogl/success/<id>/', M_SoglSuccess, name="sogl_success"),
-    path('sogl/deny/<id>/', M_SoglDeny, name="sogl_deny"),
+    path('sogl/<id>/', M_SoglView, name="sogl_view"),
+    path('sogl/<type_m>/success/<id>/', M_SoglSuccess, name="sogl_success"),
+    path('sogl/<type_m>/deny/<id>/', M_SoglDeny, name="sogl_deny"),
 
 ]

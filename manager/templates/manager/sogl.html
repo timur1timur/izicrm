@@ -1,6 +1,8 @@
 {% extends "main/base.html" %}
+{% load mathfilters %}
 
-{% block breadcrumb %}На согласовании{% endblock %}
+{% block title_h1 %}На согласовании{% endblock %}
+
 
 {% block body_content %}
                      <!-- Filtering FooTable Start -->
@@ -33,10 +35,11 @@
                                   <thead class="tx-10 tx-uppercase">
                                      <tr>
                                         <th>ID заказа</th>
-                                        <th>Клиент</th>
-                                        <th>Источник</th>
-                                        <th>Создан</th>
-                                        <th>Статус</th>
+                                         <th>Создан</th>
+                                         <th>Статус</th>
+                                        <th>Текстиль</th>
+                                        <th>Карнизы</th>
+                                        <th>Работы</th>
                                          <th>Дизайнер</th>
                                         <th class="tx-right">Действия</th>
                                      </tr>
@@ -44,40 +47,22 @@
                                  <tbody>
                                     {% for q in orders %}
 
-                                        <tr class="odd gradeX">
-                                            <td><a href="{% url 'manager:order_view' q.id %}">{{q.number}}
-                                            {% if q.user_view == 0 %}
+                                        <tr>
+                                            <td>{{q.number}}
+                                            {% if q.discount_view == 0 %}
                                                 <span class="badge badge-pill badge-danger">new</span>
                                             {% endif %}
-                                            </a></td>
-                                            <td><a href="">
-                                                {% for cus in customer %}
-                                                    {% for ord in cus.order.all %}
-                                                        {% if q.number == ord.number %}
-                                                            {{cus.name}}
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endfor %}
-                                            </a></td>
-                                            <td>
-                                                {% for cus in customer %}
-                                                    {% for ord in cus.order.all %}
-                                                        {% if q.number == ord.number %}
-                                                            {{cus.get_source_t_display}}
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endfor %}
                                             </td>
                                             <td>{{q.date_created|date:'d/m/Y'}}</td>
-                                            <td><span class="badge badge-{{q.get_status_css_display}}">{{q.get_status_display}}</span></td>
+                                            <td>{{q.get_discount_status_display}}</td>
+                                            <td>{{ 1|sub:q.discount_t|mul:100|floatformat:0 }} %</td>
+                                            <td>{{ 1|sub:q.discount_c|mul:100|floatformat:0 }} %</td>
+                                            <td>{{ 1|sub:q.discount_w|mul:100|floatformat:0 }} %</td>
                                             <td>
                                                 {{ q.user.get_full_name }}
                                             </td>
                                             <td class="tx-right">
-                                                {% if q.discount_s == 1 %}
-                                                    <a href="{% url 'manager:sogl_success' q.id %}"  title="" data-toggle="tooltip" data-original-title="Согласовать"><i data-feather="check" class="wd-16 mr-2"></i></a>
-                                                    <a href="{% url 'manager:sogl_deny' q.id %}"  title="" data-toggle="tooltip" data-original-title="Отказать"><i data-feather="x" class="wd-16 mr-2"></i></a>
-                                                {% endif %}
+                                                <a href="{% url 'manager:sogl_view' q.id %}"  title="" data-toggle="tooltip" data-original-title="Посмотреть"><i data-feather="eye" class="wd-16 mr-2"></i></a>
                                             </td>
                                         </tr>
                                     {% endfor %}

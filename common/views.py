@@ -7,13 +7,17 @@ from materials.models import TextileManufact, CorniceManufact, Textile, Cornice,
 from materials.forms import TextileManufactForm, CorniceManufactForm, TextileForm, CorniceForm, TextileCollectionForm, \
     CorniceCollectionForm
 from .utils import Get_Budget, GetStatusOrder, GetStatOrderPeriod, GetStatOrderFinishPeriod, GetCusPay
+from django.contrib.auth.decorators import login_required
 
 
+
+@login_required(login_url='login')
 def CustomerList(request):
     qs = Customer.objects.all()
 
     return render(request, 'common/customers.html', context={'qs': qs})
 
+@login_required(login_url='login')
 def CustomerCreate(request):
     if request.method == 'GET':
         form = CustomerForm()
@@ -45,10 +49,12 @@ def CustomerCreate(request):
             return redirect('common:customers_list')
     return render(request, 'common/create_customer.html', context={'form': form})
 
+@login_required(login_url='login')
 def PaymentsList(request):
     qs = Payment.objects.filter(user=request.user)
     return render(request, 'common/payments.html', context={'qs': qs})
 
+@login_required(login_url='login')
 def PaymentCreate(request):
 
     if request.method == 'GET':
@@ -74,10 +80,12 @@ def PaymentCreate(request):
             return redirect('common:payments_list')
         return render(request, 'main/payment_create.html', context={'form': form})
 
+@login_required(login_url='login')
 def TextileManufactList(request):
     qs = TextileManufact.objects.all()
     return render(request, 'common/manufacturer_textile.html', context={'qs': qs})
 
+@login_required(login_url='login')
 def TextileManufactAdd(request):
     if request.method == 'GET':
         form = TextileManufactForm()
@@ -96,11 +104,12 @@ def TextileManufactAdd(request):
             return redirect('common:manufacturer_textile')
         return render(request, 'common/manufacturer_create.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def CorniceManufactList(request):
     qs = CorniceManufact.objects.all()
     return render(request, 'common/manufacturer_cornice.html', context={'qs': qs})
 
+@login_required(login_url='login')
 def CorniceManufactAdd(request):
     if request.method == 'GET':
         form = CorniceManufactForm()
@@ -119,11 +128,12 @@ def CorniceManufactAdd(request):
             return redirect('common:manufacturer_cornice')
         return render(request, 'common/manufacturer_create.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def TextileList(request):
     qs = Textile.objects.all()
     return render(request, 'common/textile_list.html', context={'qs': qs})
 
+@login_required(login_url='login')
 def TextileAdd(request):
     if request.method == 'GET':
         form = TextileForm()
@@ -156,10 +166,12 @@ def TextileAdd(request):
             return redirect('common:textile_list')
         return render(request, 'common/textile_create.html', context={'form': form})
 
+@login_required(login_url='login')
 def CorniceList(request):
     qs = Cornice.objects.all()
     return render(request, 'common/cornice_list.html', context={'qs': qs})
 
+@login_required(login_url='login')
 def CorniceAdd(request):
     if request.method == 'GET':
         form = CorniceForm()
@@ -190,6 +202,7 @@ def CorniceAdd(request):
         return render(request, 'common/cornice_create.html', context={'form': form})
 
 
+@login_required(login_url='login')
 def TextileCollectionAdd(request):
     if request.method == 'GET':
         form = TextileCollectionForm()
@@ -210,6 +223,8 @@ def TextileCollectionAdd(request):
             return redirect('common:textile_list')
         return render(request, 'common/collection_create.html', context={'form': form})
 
+
+@login_required(login_url='login')
 def CorniceCollectionAdd(request):
     if request.method == 'GET':
         form = CorniceCollectionForm()
@@ -230,7 +245,7 @@ def CorniceCollectionAdd(request):
             return redirect('common:cornice_list')
         return render(request, 'common/collection_create.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def ReportOrders(request):
     qs = Order.objects.filter(status__gte=5)
     customers = Customer.objects.all()
@@ -244,6 +259,8 @@ import datetime
 from django.db.models import Sum, Count
 from django.utils import timezone
 
+
+@login_required(login_url='login')
 def dashboard_designer(request):
     customers = Customer.objects.filter(user=request.user).order_by('-date_created')[:8]
     payments = Payment.objects.filter(category__type_p=0, user=request.user).order_by('-date_created')[:7]
@@ -320,6 +337,7 @@ def dashboard_designer(request):
                                                                       'period': period
                                                                       })
 
+@login_required(login_url='login')
 def dashboard_designer_date(request, start, end):
 
 
@@ -379,7 +397,7 @@ from django.db.models.functions import ExtractDay, ExtractMonth, ExtractYear
 from itertools import chain
 from operator import attrgetter
 
-
+@login_required(login_url='login')
 def dashboard_manager(request):
 
     customers = Customer.objects.all().order_by('-id')[:8]
@@ -558,7 +576,7 @@ def dashboard_manager(request):
                                                                      'profit_mass': profit_mass,
                                                                      'max': max(max_mass)+4500})
 
-
+@login_required(login_url='login')
 def dashboard_manager_date(request, start, end):
 
     customers = Customer.objects.all().order_by('-id')[:7]
