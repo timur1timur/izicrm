@@ -33,12 +33,12 @@
 </li>
 <li class="mg-l-20-force mg-t-25-force menu-navigation">Материалы</li>
 <li>
-   <a href=""><i data-feather="truck"></i>
-   <span>Поставщики</span><i class="accordion-icon fa fa-angle-left"></i></a>
-   <ul class="sub-menu">
-      <li><a href="{% url 'common:manufacturer_textile' %}">Поставщики текстиля</a></li>
-      <li><a href="{% url 'common:manufacturer_cornice' %}">Поставщики карнизов</a></li>
-   </ul>
+   <a href="{% url 'storage:storage' %}"><i data-feather="layers"></i>
+   <span>Склад</span><i class="accordion-icon "></i></a>
+</li>
+<li>
+   <a href="{% url 'common:manufacturer_textile' %}"><i data-feather="truck"></i>
+   <span>Поставщики</span></a>
 </li>
 <li>
    <a href="{% url 'common:textile_list' %}"><i data-feather="triangle"></i>

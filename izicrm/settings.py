@@ -14,7 +14,7 @@ SECRET_KEY = 'vm$p(#gqc+5lf_g7tpf&7@-(!ace9fed$8$11e^n%9*a1a3skn'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['izi.karimov.ru.com', '127.0.0.1']
 
 
 # Application definition

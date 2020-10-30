@@ -30,10 +30,7 @@
    <span>Дашборд</span><i class="accordion-icon "></i></a>
 </li>
 
-<li>
-   <a href="{% url 'storage:storage' %}"><i data-feather="home"></i>
-   <span>Склад</span><i class="accordion-icon "></i></a>
-</li>
+
 
 <li>
    {% get_new_orders as count_order %}
@@ -65,6 +62,11 @@
 
 
 <li class="mg-l-20-force mg-t-25-force menu-navigation">Материалы</li>
+
+<li>
+   <a href="{% url 'storage:storage' %}"><i data-feather="layers"></i>
+   <span>Склад</span><i class="accordion-icon "></i></a>
+</li>
 <li>
    <a href="{% url 'common:manufacturer_textile' %}"><i data-feather="truck"></i>
    <span>Поставщики</span></a>

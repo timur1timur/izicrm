@@ -416,7 +416,7 @@ def ReportUser(request):
             'count_finish': orders_count_finish,
             'count_not_ready': orders_count_not_ready,
             'percent_not_ready': percent_not_ready,
-            'arrival': contract_sum,
+            'arrival': round(contract_sum, 2),
         }
     print(user_mass)
     context = {
@@ -462,7 +462,7 @@ def ReportUserDate(request, start, end):
             'count_finish': orders_count_finish,
             'count_not_ready': orders_count_not_ready,
             'percent_not_ready': percent_not_ready,
-            'arrival': contract_sum,
+            'arrival': round(contract_sum, 2),
         }
     print(user_mass)
     context = {
