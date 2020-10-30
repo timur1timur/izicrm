@@ -1,0 +1,82 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}
+<a href="{% url 'storage:storage'%}">Склад</a> / <a href="{% url 'storage:reserve'%}">Резерв</a>
+{% endblock %}
+
+{% block body_content %}
+                     <!-- Filtering FooTable Start -->
+                     <!--================================-->
+                     <div class="col-md-12 col-lg-12">
+                        <div class="card mg-b-30">
+
+                           <div class="card-body pd-0">
+
+
+                                           <div class="row">
+                                             <div class="mg-20 form-inline wd-100p">
+                                                <div class="col-sm-6">
+
+                                                   <div class="form-group">
+                                                       <label class="form-control-label tx-right">Тип:</label>
+                                                      <select id="foo-filter-status" class="custom-select custom-select-sm">
+                                                         <option value="">Показать все</option>
+                                                         <option value="Текстиль">Текстиль</option>
+                                                         <option value="Карнизы">Карнизы</option>
+
+                                                      </select>
+                                                   </div>
+                                                </div>
+
+                                                <div class="col-sm-6">
+                                                   <div class="form-group ft-right">
+                                                      <input id="foo-search" type="text" placeholder="Поиск" class="form-control" autocomplete="off">
+                                                   </div>
+                                                </div>
+
+                                             </div>
+                                          </div>
+                                          <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="50">
+                                              <thead class="tx-10 tx-uppercase">
+                                                 <tr>
+                                                     <th>Тип</th>
+                                                     <th>Позиция</th>
+                                                     <th>Поставщик</th>
+                                                     <th>Резерв</th>
+                                                     <th>Заказ</th>
+                                                     <th>Доступно</th>
+                                                     <th>Дата резервирования</th>
+                                                 </tr>
+                                              </thead>
+                                             <tbody>
+                                                {% load mathfilters %}
+                                                {% for q in orders %}
+                                                    <tr class="table table-bordered table-hover">
+                                                        <td>{{q.item.type_p}}</td>
+                                                        <td>{{q.item.item.collection}} {{q.item.item.model}} {{q.item.item.color}}</td>
+                                                        <td>{{q.item.item.manufacturer.name}}</td>
+                                                        <td>{{q.quantity}}</td>
+                                                        <td>{{q.order.number}}</td>
+                                                        <td>
+                                                            {% get_storage_item q.item.id as storage_result %}
+                                                            {{ storage_result }}
+                                                        </td>
+                                                        <td>{{q.date_created|date:'d.m.Y H:i'}}</td>
+                                                    </tr>
+                                                {% endfor %}
+
+
+                                             </tbody>
+
+                                          </table>
+
+
+                           </div>
+                        </div>
+                     </div>
+                     <!--/ Filtering FooTable End -->
+
+
+
+
+{% endblock %}

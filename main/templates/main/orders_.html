@@ -90,8 +90,12 @@
                                                 {% endif %}
                                                 {% if q.status == 11 %}
                                                 {% else %}
-                                                    <a href="{{ q.get_absolute_url}}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
-                                                    <a href="{{ q.archive}}" title="" data-toggle="tooltip" data-original-title="В архив"><i data-feather="archive" class="wd-16"></i></a>
+                                                    {% if q.status < 5%}
+                                                        <a href="{{ q.get_absolute_url}}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                        <a href="{{ q.archive}}" title="" data-toggle="tooltip" data-original-title="В архив"><i data-feather="archive" class="wd-16"></i></a>
+                                                    {% else %}
+                                                        <a href="{{ q.get_absolute_url}}"  title="" data-toggle="tooltip" data-original-title="Посмотреть"><i data-feather="eye" class="wd-16 mr-2"></i></a>
+                                                    {% endif %}
                                                 {% endif %}
                                             </td>
                                         </tr>

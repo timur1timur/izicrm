@@ -6,8 +6,12 @@ from django.shortcuts import reverse
 
 
 class TextileManufact(models.Model):
+    type_p = models.CharField(verbose_name='Тип', max_length=100, default='Текстиль')
     name = models.CharField(verbose_name='Производитель', max_length=100)
     email = models.EmailField(verbose_name='email', default='')
+    phone = models.CharField(verbose_name='Телефон', max_length=100, blank=True, null=True)
+    manager = models.CharField(verbose_name='Менеджер', max_length=100, blank=True, null=True)
+
 
     def __str__(self):
         return self.name
@@ -50,8 +54,11 @@ class Textile(models.Model):
 
 
 class CorniceManufact(models.Model):
+    type_p = models.CharField(verbose_name='Тип', max_length=100, default='Карнизы')
     name = models.CharField(verbose_name='Производитель', max_length=100)
     email = models.EmailField(verbose_name='email', default='')
+    phone = models.CharField(verbose_name='Телефон', max_length=100, blank=True, null=True)
+    manager = models.CharField(verbose_name='Менеджер', max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name

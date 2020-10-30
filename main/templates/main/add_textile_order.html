@@ -14,6 +14,7 @@
                 <div class="col-sm-8 mg-t-10 mg-sm-t-0" hidden>
                     {{ form.order }} {{ form.specification }} {{ form.item }} {{ form.markup }}
                 </div>
+
                 <p class="mg-b-30 tx-gray-700">Введите количество материала. {{ cus }}</p>
                 <div class="row">
                     <label class="col-sm-4 form-control-label">Материал:</label>
@@ -21,6 +22,17 @@
                         {{ prod_name.collection }} {{ prod_name.model }} {{ prod_name.color }}
                     </div>
                 </div>
+                {% if storage %}
+                    <div class="row mg-t-20">
+                        <label class="col-sm-4 form-control-label">В наличие:</label>
+                        <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+
+                            {% get_storage_item storage.id as storage_result %}
+                            <input type="text" class="form-control form-control-sm" name="storage" value="{{ storage_result }}" disabled>
+
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="row mg-t-20">
                     <label class="col-sm-4 form-control-label">Количество:</label>
                     <div class="col-sm-6 mg-t-10 mg-sm-t-0">

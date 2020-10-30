@@ -174,7 +174,19 @@
                                           <td>{{ t.specification.room.name }}</td>
                                           <td>{{t.item.collection}} {{t.item.model}}</td>
                                           <td class="text-center">{{ t.item.price_opt }}</td>
-                                          <td class="text-center">{{ t.quantity }}</td>
+                                          <td class="text-center">
+                                              {% if reserve %}
+                                                  {% for r in reserve %}
+                                                    {% if r.item.item == t.item %}
+                                                        {{ t.quantity }} (резерв {{r.quantity}})
+                                                    {% else %}
+                                                        {{ t.quantity }}
+                                                    {% endif %}
+                                                  {% endfor %}
+                                              {% else %}
+                                                {{ t.quantity }}
+                                              {% endif %}
+                                          </td>
                                           <td class="text-center">{{ t.item.price_opt|mul:t.quantity|floatformat:2 }}</td>
                                           <td class="text-center table-actions">
                                               {% if t.ordered < 1 %}
@@ -193,7 +205,14 @@
                                                 <a href="{{ t.get_shipped }}"  title="" data-toggle="tooltip" data-original-title="Отгружен"><i data-feather="arrow-down-circle" class="wd-16 mr-2"></i></a>
                                               {% endif %}
                                               {% if t.ordered < 1 %}
-                                                <a href="{{ t.get_stock }}"  title="" data-toggle="tooltip" data-original-title="В наличии"><i data-feather="check-circle" class="wd-16 mr-2"></i></a>
+                                                {% if reserve %}
+                                                  {% for r in reserve %}
+                                                    {% if r.item.item == t.item %}
+                                                        <a href="{{ t.get_stock }}"  title="" data-toggle="tooltip" data-original-title="В наличии"><i data-feather="check-circle" class="wd-16 mr-2"></i></a>
+                                                    {% endif %}
+                                                  {% endfor %}
+                                                {% else %}
+                                                {% endif %}
                                               {% endif %}
                                           </td>
                                        </tr>

@@ -5,7 +5,7 @@ from .models import TextileManufact, CorniceManufact, Textile, Cornice, TextileC
 class TextileManufactForm(forms.ModelForm):
     class Meta:
         model = TextileManufact
-        fields = ['name', 'email']
+        fields = ['name', 'email', 'phone', 'manager', 'type_p']
 
         widgets = {
             "name": forms.TextInput(
@@ -18,6 +18,24 @@ class TextileManufactForm(forms.ModelForm):
                 attrs={
                     "class": "form-control form-control-sm",
                     "placeholder": "email компании"
+                }
+            ),
+            "phone": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "телефон компании"
+                }
+            ),
+            "manager": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "менеджер"
+                }
+            ),
+            "type_p": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "менеджер"
                 }
             )
         }
@@ -45,7 +63,7 @@ class TextileCollectionForm(forms.ModelForm):
 class CorniceManufactForm(forms.ModelForm):
     class Meta:
         model = CorniceManufact
-        fields = ['name', 'email']
+        fields = ['name', 'email', 'phone', 'manager', 'type_p']
 
         widgets = {
             "name": forms.TextInput(
@@ -58,6 +76,24 @@ class CorniceManufactForm(forms.ModelForm):
                 attrs={
                     "class": "form-control form-control-sm",
                     "placeholder": "email компании"
+                }
+            ),
+            "phone": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "телефон компании"
+                }
+            ),
+            "manager": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "менеджер"
+                }
+            ),
+            "type_p": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "менеджер"
                 }
             )
         }

@@ -20,6 +20,10 @@ def M_OrderView(request):
     }
     return render(request, 'manager/orders_.html', context)
 
+
+from storage.models import StorageItemTextile, StorageItemTextileReserve
+
+
 @login_required(login_url='login')
 def M_OrderViewD(request, id):
     qs = Order.objects.get(pk=id)
@@ -35,7 +39,7 @@ def M_OrderViewD(request, id):
     supplier_order_cornice = SupplierOrderCornice.objects.filter(order=qs)
     customer = Customer.objects.all()
     contract = Contract.objects.get(order=qs)
-
+    reserve = StorageItemTextileReserve.objects.filter(order=qs)
     tracked_order, created = TrackedOrder.objects.get_or_create(order=qs, user=request.user)
     if created:
         qs.user_view = 1
@@ -89,7 +93,8 @@ def M_OrderViewD(request, id):
         'supplier_order_cornice': supplier_order_cornice,
         'customer': customer,
         'contract': contract,
-        'state': state
+        'state': state,
+        'reserve': reserve
     }
     return render(request, 'manager/order_v_.html', context)
 
@@ -380,9 +385,24 @@ def M_TextileStock(request, id):
     qs = OrderItemTextile1.objects.get(pk=id)
     curr_state = qs.ordered
     if curr_state == 0:
-        qs.ordered = 5
-        qs.ordered_icon = 5
+        qs.ordered = 4
+        qs.ordered_icon = 4
         qs.save(update_fields=['ordered', 'ordered_icon'])
+    M_ChangeOrderState(qs.order, 4, 7, 8)
+    storage = StorageItemTextile.objects.get(item=qs.item)
+    reserve = StorageItemTextileReserve.objects.get(order=qs.order, item=storage, quantity=qs.quantity)
+    cat = PaymentCategory.objects.get(name='Отгрузка со склада')
+    instance = Payment.objects.create(
+        order=qs.order,
+        category=cat,
+        type_money=0,
+        price=round(storage.price*qs.quantity, 2),
+        receipt='Отгрузка со склада',
+        user=request.user
+    )
+    storage.quantity = storage.quantity - qs.quantity
+    storage.save(update_fields=['quantity'])
+    reserve.delete()
     return redirect('manager:order_view', id=qs.order.pk)
 
 @login_required(login_url='login')

@@ -2,8 +2,10 @@
 
 {% block title_h1 %}Поставщики текстиля{% endblock %}
 {% block breadcrumb_buttons %}
-    <button onclick="location.href='{% url 'common:manufacturer_textile_add' %}'" type="button" class="btn btn-secondary mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force" >
-    <i data-feather="file-plus" class="wd-16 mr-2"></i>Добавить поставщика</button>
+<button onclick="location.href='{% url 'common:manufacturer_textile_add' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
+<i data-feather="plus" class="wd-16 mr-2"></i>Поставщика текстиля</button>
+<button onclick="location.href='{% url 'common:manufacturer_cornice_add' %}'" type="button" class="btn btn-secondary mr-2 mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force">
+<i data-feather="plus" class="wd-16 mr-2"></i>Поставщика карнизов</button>
 {% endblock %}
 
 {% block body_content %}
@@ -28,9 +30,11 @@
                               <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="7">
                                   <thead class="tx-10 tx-uppercase">
                                      <tr>
-                                        <th>ID</th>
+                                        <th>Тип</th>
                                         <th>Название</th>
                                         <th>email</th>
+                                         <th>Телефон</th>
+                                         <th>Менеджер</th>
                                         <th>Коллекции</th>
                                          <th>Ткани</th>
                                         <th class="tx-right">Действия</th>
@@ -39,14 +43,21 @@
                                  <tbody>
                                     {% for q in qs %}
                                         <tr class="odd gradeX">
-                                            <td>{{q.id}}</td>
+                                            <td>{{q.type_p}}</td>
                                             <td>{{ q.name }}</td>
                                             <td>{{ q.email }}</td>
+                                            <td>{{ q.manager }}</td>
+                                            <td>{{ q.phone }}</td>
                                             <td></td>
                                             <td></td>
                                             <td class="tx-right">
-                                                <a href=""  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
-                                                <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                {% if q.type_p == 'Текстиль' %}
+                                                    <a href="{% url 'common:manufacturer_textile_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                    <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                {% elif q.type_p == 'Карнизы' %}
+                                                    <a href="{% url 'common:manufacturer_cornice_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                    <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                {% endif %}
                                             </td>
                                         </tr>
                                     {% endfor %}

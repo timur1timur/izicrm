@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'common',
     'markup',
     'director',
-    'report'
+    'report',
+    'storage'
 ]
 
 MIDDLEWARE = [

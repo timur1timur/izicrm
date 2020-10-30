@@ -53,3 +53,16 @@ def get_markup(markup):
 def get_profit_position(total, price, quantity):
     result = float(total) - (float(price)*int(quantity))
     return round(result, 2)
+
+from storage.models import StorageItemTextile, StorageItemTextileReserve
+from django.db.models import Sum
+
+@register.simple_tag()
+def get_storage_item(id):
+    storage_item = StorageItemTextile.objects.get(pk=id)
+    reserve = StorageItemTextileReserve.objects.filter(item=storage_item).aggregate(Sum('quantity'))['quantity__sum']
+    if reserve != None:
+        result = storage_item.quantity - reserve
+    else:
+        result = storage_item.quantity
+    return result

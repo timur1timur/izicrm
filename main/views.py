@@ -424,13 +424,21 @@ def SpecificationViewD(request, pk):
 
     return render(request, 'main/specification_v_.html', context)
 
+from storage.models import StorageItemTextile, StorageItemTextileReserve
+
 @login_required(login_url='login')
 def TextileReview(request, id):
     if request.method == 'GET':
         sp = Specification.objects.get(pk=id)
         textile = Textile.objects.all()
+        textile_storage = StorageItemTextile.objects.all()
+
         markup = GetMarkupMaterials(sp.order, 0)
-        return render(request, 'main/add_textile.html', context={'textile': textile, 'id': id, 'markup': markup})
+        return render(request, 'main/add_textile.html', context={'textile': textile, 'storage': textile_storage, 'id': id, 'markup': markup})
+
+
+from django.db.models import Sum
+from datetime import datetime
 
 @login_required(login_url='login')
 def SpecificationTextileAdd(request, id, prod_id):
@@ -438,8 +446,13 @@ def SpecificationTextileAdd(request, id, prod_id):
         sp = Specification.objects.get(pk=id)
         markup = GetMarkupMaterials(sp.order, 0)
         prod_name = Textile.objects.get(pk=prod_id)
+        textile_storage = StorageItemTextile.objects.filter(item=prod_id)
+        if textile_storage:
+            t_s = textile_storage[0]
+        else:
+            t_s = 0
         form = OrderTextileForm({'specification': sp, 'order': sp.order, 'item': prod_id, 'markup': markup})
-        return render(request, 'main/add_textile_order.html', context={'form': form, 'prod_name': prod_name})
+        return render(request, 'main/add_textile_order.html', context={'form': form, 'prod_name': prod_name, 'storage': t_s})
 
     if request.method == 'POST':
         sp = Specification.objects.get(pk=id)
@@ -963,6 +976,34 @@ def ContractReady(request, id):
         sp.status_css = 4
         sp.progress = 4
         sp.save(update_fields=['status', 'progress', 'status_css'])
+
+    offer = Offer.objects.get(order=sp)
+    textile = OrderItemTextile1.objects.filter(order=sp, version=offer.version.version)
+    for t in textile:
+        item_storage = StorageItemTextile.objects.filter(item=t.item)
+        print(item_storage)
+        if item_storage:
+            item_storage_q = item_storage[0].quantity
+            item_reserve_q = StorageItemTextileReserve.objects.filter(item=item_storage[0]).aggregate(Sum('quantity'))['quantity__sum']
+            if item_storage_q > 0 and item_reserve_q != None:
+                check_q = item_storage_q - item_reserve_q - t.quantity
+            elif item_storage_q > 0 and item_reserve_q == None:
+                check_q = item_storage_q - t.quantity
+        if check_q > 0 or check_q == 0:
+            instance = StorageItemTextileReserve.objects.create(
+                    order=sp,
+                    item=item_storage[0],
+                    quantity=t.quantity
+                )
+
+
+        # if storage != None and storage != 0:
+        #     item_storage = StorageItemTextile.objects.filter(item=item)[0]
+        #     instance = StorageItemTextileReserve.objects.create(
+        #         order=sp.order,
+        #         item=item_storage,
+        #         quantity=quantity
+        #     )
     return redirect('main:order_view', id=sp.pk)
 
 @login_required(login_url='login')

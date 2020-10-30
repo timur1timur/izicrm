@@ -17,5 +17,6 @@ urlpatterns = [
     path('markup/', include('markup.urls', namespace='markup')),
     path('director/', include('director.urls', namespace='director')),
     path('report/', include('report.urls', namespace='report')),
+    path('storage/', include('storage.urls', namespace='storage')),
 
 ]

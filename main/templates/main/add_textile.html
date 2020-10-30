@@ -38,6 +38,7 @@
                                          <th>Высота</th>
                                         <th>Цвет</th>
                                          <th>Цена</th>
+                                         <th>Склад</th>
                                         <th class="tx-center">Действия</th>
                                      </tr>
                                   </thead>
@@ -52,6 +53,15 @@
                                             <td>{{ q.height }}</td>
                                             <td>{{ q.color }}</td>
                                             <td>{{ q.price_opt|mul:markup|floatformat }}</td>
+                                            <td>
+                                                {% for s in storage %}
+                                                    {% if s.item == q %}
+                                                        {% get_storage_item s.id as storage_result %}
+                                                            {{ storage_result }}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                            </td>
                                             <td class="tx-center">
                                                 <a href="{% url 'main:sp_add_textile' id=id prod_id=q.id%}"  title="" data-toggle="tooltip" data-original-title="Выбрать"><i data-feather="plus" class="wd-16 mr-2"></i></a>
                                             </td>

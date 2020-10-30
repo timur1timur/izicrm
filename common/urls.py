@@ -1,8 +1,8 @@
 from django.urls import path
 from .views import CustomerList, CustomerCreate, TextileManufactList, TextileManufactAdd, \
-    CorniceManufactList, CorniceManufactAdd, TextileList, TextileAdd, CorniceList, CorniceAdd, \
+    CorniceManufactAdd, TextileList, TextileAdd, CorniceList, CorniceAdd, \
     TextileCollectionAdd, CorniceCollectionAdd, PaymentsList, PaymentCreate, ReportOrders, dashboard_designer, \
-    dashboard_designer_date, dashboard_manager, dashboard_manager_date
+    dashboard_designer_date, dashboard_manager, dashboard_manager_date, TextileManufactEdit, CorniceManufactEdit
 
 app_name = 'common'
 
@@ -16,8 +16,12 @@ urlpatterns = [
 
     path('manufacturer/textile/list/', TextileManufactList, name="manufacturer_textile"),
     path('manufacturer/textile/add/', TextileManufactAdd, name="manufacturer_textile_add"),
-    path('manufacturer/cornice/list/', CorniceManufactList, name="manufacturer_cornice"),
     path('manufacturer/cornice/add/', CorniceManufactAdd, name="manufacturer_cornice_add"),
+    path('manufacturer/textile/edit/<id>/', TextileManufactEdit, name="manufacturer_textile_edit"),
+    path('manufacturer/cornice/edit/<id>/', CorniceManufactEdit, name="manufacturer_cornice_edit"),
+    path('manufacturer/textile/remove/<id>/', TextileManufactAdd, name="manufacturer_textile_remove"),
+    path('manufacturer/cornice/remove/<id>/', CorniceManufactAdd, name="manufacturer_cornice_remove"),
+
     path('collection/textile/add/', TextileCollectionAdd, name="collection_textile_add"),
     path('collection/cornice/add/', CorniceCollectionAdd, name="collection_cornice_add"),
     path('textile/list/', TextileList, name="textile_list"),

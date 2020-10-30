@@ -80,10 +80,15 @@ def PaymentCreate(request):
             return redirect('common:payments_list')
         return render(request, 'main/payment_create.html', context={'form': form})
 
+
 @login_required(login_url='login')
 def TextileManufactList(request):
     qs = TextileManufact.objects.all()
-    return render(request, 'common/manufacturer_textile.html', context={'qs': qs})
+    qc = CorniceManufact.objects.all()
+    result_list = sorted(
+        chain(qs, qc),
+        key=attrgetter('id'), reverse=True)
+    return render(request, 'common/manufacturer_textile.html', context={'qs': result_list})
 
 @login_required(login_url='login')
 def TextileManufactAdd(request):
@@ -95,19 +100,51 @@ def TextileManufactAdd(request):
         form = TextileManufactForm(request.POST)
         name = request.POST.get("name", None)
         email = request.POST.get("email", None)
+        phone = request.POST.get("phone", None)
+        manager = request.POST.get("manager", None)
+        type_p = request.POST.get("type_p", None)
 
         if name != None and email != None:
             instance = TextileManufact.objects.create(
                 name=name,
-                email=email
+                email=email,
+                phone=phone,
+                manager=manager,
+                type_p=type_p
             )
             return redirect('common:manufacturer_textile')
         return render(request, 'common/manufacturer_create.html', context={'form': form})
 
 @login_required(login_url='login')
-def CorniceManufactList(request):
-    qs = CorniceManufact.objects.all()
-    return render(request, 'common/manufacturer_cornice.html', context={'qs': qs})
+def TextileManufactEdit(request, id):
+    if request.method == 'GET':
+        textile_m = TextileManufact.objects.get(pk=id)
+        form = TextileManufactForm({'name': textile_m.name,
+                                    'type_p': textile_m.type_p,
+                                    'email': textile_m.email,
+                                    'phone': textile_m.phone,
+                                    'manager': textile_m.manager})
+        return render(request, 'common/manufacturer_edit.html', context={'form': form})
+
+    if request.method == 'POST':
+        form = TextileManufactForm(request.POST)
+        name = request.POST.get("name", None)
+        email = request.POST.get("email", None)
+        phone = request.POST.get("phone", None)
+        manager = request.POST.get("manager", None)
+        type_p = request.POST.get("type_p", None)
+
+        if name != None and email != None:
+            instance = TextileManufact.objects.get(pk=id)
+            instance.name = name
+            instance.email = email
+            instance.phone = phone
+            instance.manager = manager
+            instance.type_p = type_p
+            instance.save(update_fields=['name', 'email', 'phone', 'manager', 'type_p'])
+            return redirect('common:manufacturer_textile')
+        return render(request, 'common/manufacturer_edit.html', context={'form': form})
+
 
 @login_required(login_url='login')
 def CorniceManufactAdd(request):
@@ -119,14 +156,51 @@ def CorniceManufactAdd(request):
         form = CorniceManufactForm(request.POST)
         name = request.POST.get("name", None)
         email = request.POST.get("email", None)
+        phone = request.POST.get("phone", None)
+        manager = request.POST.get("manager", None)
+        type_p = request.POST.get("type_p", None)
 
         if name != None and email != None:
             instance = CorniceManufact.objects.create(
                 name=name,
-                email=email
+                email=email,
+                phone=phone,
+                manager=manager,
+                type_p=type_p
             )
-            return redirect('common:manufacturer_cornice')
+            return redirect('common:manufacturer_textile')
         return render(request, 'common/manufacturer_create.html', context={'form': form})
+
+@login_required(login_url='login')
+def CorniceManufactEdit(request, id):
+    if request.method == 'GET':
+        textile_m = CorniceManufact.objects.get(pk=id)
+        form = CorniceManufactForm({'name': textile_m.name,
+                                    'type_p': textile_m.type_p,
+                                    'email': textile_m.email,
+                                    'phone': textile_m.phone,
+                                    'manager': textile_m.manager})
+        return render(request, 'common/manufacturer_edit.html', context={'form': form})
+
+    if request.method == 'POST':
+        form = CorniceManufactForm(request.POST)
+        name = request.POST.get("name", None)
+        email = request.POST.get("email", None)
+        phone = request.POST.get("phone", None)
+        manager = request.POST.get("manager", None)
+        type_p = request.POST.get("type_p", None)
+
+        if name != None and email != None:
+            instance = CorniceManufact.objects.get(pk=id)
+            instance.name = name
+            instance.email = email
+            instance.phone = phone
+            instance.manager = manager
+            instance.type_p = type_p
+            instance.save(update_fields=['name', 'email', 'phone', 'manager', 'type_p'])
+            return redirect('common:manufacturer_textile')
+        return render(request, 'common/manufacturer_edit.html', context={'form': form})
+
 
 @login_required(login_url='login')
 def TextileList(request):
