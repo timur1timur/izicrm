@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from .models import StorageItemTextile, StorageItemCornice, StorageItemTextileReserve
 from itertools import chain
 from operator import attrgetter
-from materials.models import Textile, Cornice
+from materials.models import Textile, Cornice, TextileCollection
 from .forms import StorageTextileForm
 from datetime import datetime
 
@@ -20,10 +20,34 @@ def Reserve(request):
 
     return render(request, 'storage/reserve.html', context={'orders': reserve})
 
-def TextileReview(request):
-    if request.method == 'GET':
-        textile = Textile.objects.all()
-        return render(request, 'storage/add_textile.html', context={'textile': textile})
+def TextileReview(request, collection_id, model_id):
+    if collection_id != 'all':
+        if model_id != 'all':
+            get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+            current_c = get_collection.name
+            qs = Textile.objects.filter(collection=get_collection, model=model_id)
+        else:
+            get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+            current_c = get_collection.name
+            qs = Textile.objects.filter(collection=get_collection)
+    else:
+        qs = Textile.objects.all()[:100]
+        current_c = 'all'
+
+    current_m = model_id
+    collection = TextileCollection.objects.all()
+    if collection_id != 'all':
+        get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+        models = Textile.objects.filter(collection=get_collection).order_by().values('model').distinct()
+    else:
+        models = None
+
+    return render(request, 'storage/add_textile.html', context={'qs': qs,
+                                                                'current_c': current_c,
+                                                                'current_m': current_m,
+                                                                'collection': collection,
+                                                                'models': models})
+
 
 def StorageTextileAdd(request, id):
     if request.method == 'GET':

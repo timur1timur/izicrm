@@ -27,7 +27,7 @@
                                     </div>
                                  </div>
                               </div>
-                              <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="7">
+                              <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="50">
                                   <thead class="tx-10 tx-uppercase">
                                      <tr>
                                         <th>Тип</th>
@@ -53,10 +53,10 @@
                                             <td class="tx-right">
                                                 {% if q.type_p == 'Текстиль' %}
                                                     <a href="{% url 'common:manufacturer_textile_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
-                                                    <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                    <a href="{% url 'common:manufacturer_textile_remove' id=q.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
                                                 {% elif q.type_p == 'Карнизы' %}
                                                     <a href="{% url 'common:manufacturer_cornice_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
-                                                    <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                    <a href="{% url 'common:manufacturer_cornice_remove' id=q.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
                                                 {% endif %}
                                             </td>
                                         </tr>

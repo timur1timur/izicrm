@@ -17,6 +17,27 @@ def MarkupList(request):
     }
     return render(request, 'markup/markups.html', context=context)
 
+def MarkupCommonEdit(request, id):
+    if request.method == 'GET':
+        item = MarkupCommon.objects.get(pk=id)
+        markup = item.markup
+
+        form = MarkupCustomerCategoryForm({'markup': markup})
+        return render(request, 'markup/markup_common_edit.html',
+                      context={'form': form})
+
+    if request.method == 'POST':
+        form = MarkupCustomerCategoryForm(request.POST)
+        markup = request.POST.get("markup", None)
+
+        if markup != None:
+            item = MarkupCommon.objects.get(pk=id)
+            item.markup = markup
+            item.save(update_fields=['markup'])
+            return redirect('markup:markup_list')
+        return render(request, 'markup/markup_common_edit', context={'form': form})
+
+
 def MarkupCustomerCategoryEdit(request, id):
     if request.method == 'GET':
         item = MarkupCustomerCategory.objects.get(pk=id)
@@ -34,7 +55,7 @@ def MarkupCustomerCategoryEdit(request, id):
             item = MarkupCustomerCategory.objects.get(pk=id)
             item.markup = markup
             item.source_t = source_t
-            item.save()
+            item.save(update_fields=['markup', 'source_t'])
             return redirect('markup:markup_list')
         return render(request, 'markup/markup_edit', context={'form': form})
 
@@ -56,7 +77,7 @@ def MarkupMaterialCategoryEdit(request, id):
             item = MarkupMaterialCategory.objects.get(pk=id)
             item.markup = markup
             item.source_t = source_t
-            item.save()
+            item.save(update_fields=['markup', 'source_t'])
             return redirect('markup:markup_list')
         return render(request, 'markup/markup_edit', context={'form': form})
 
@@ -78,6 +99,6 @@ def MarkupWorkCategoryEdit(request, id):
             item = MarkupWorkCategory.objects.get(pk=id)
             item.markup = markup
             item.source_t = source_t
-            item.save()
+            item.save(update_fields=['markup', 'source_t'])
             return redirect('markup:markup_list')
         return render(request, 'markup/markup_edit', context={'form': form})

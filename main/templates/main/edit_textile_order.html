@@ -1,0 +1,60 @@
+{% extends "main/base.html" %}
+
+{% block title %}{% endblock %}
+{% block title_h1 %}Редактирование материала к заказу{{ order }}{% endblock %}
+
+
+
+{% block body_content %}
+
+<form method="POST" class="post-form">{% csrf_token %}
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="form-layout form-layout-4">
+                <p class="mg-b-30 tx-gray-700">Введите количество материала.</p>
+                <div class="row">
+                    <label class="col-sm-4 form-control-label">Материал:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                        {{ prod_name.collection }} {{ prod_name.model }} {{ prod_name.color }}
+                    </div>
+                </div>
+                {% if storage %}
+                    <div class="row mg-t-20">
+                        <label class="col-sm-4 form-control-label">В наличие:</label>
+                        <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+
+                            {% get_storage_item storage.id as storage_result %}
+                            <input type="text" class="form-control form-control-sm" name="storage" value="{{ storage_result }}" disabled>
+
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Количество:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                        {{ form.quantity }}
+                    </div>
+                </div>
+
+                <br>
+               <!-- row -->
+
+               <!-- row -->
+               <div class="row mg-t-30">
+                  <div class="col-sm-8">
+                     <div class="form-layout-footer">
+                        <button type="Submit" class="btn btn-primary">Изменить</button>
+                         <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Отменить</a>
+                     </div>
+                     <!-- form-layout-footer -->
+                  </div>
+                  <!-- col-8 -->
+               </div>
+            </div>
+            <!-- form-layout -->
+         </div>
+
+    </div>
+ </form>
+</br>
+{% endblock %}

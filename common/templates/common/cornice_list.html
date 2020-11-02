@@ -2,10 +2,15 @@
 
 {% block title_h1 %}Карнизы{% endblock %}
 {% block breadcrumb_buttons %}
-<button onclick="location.href='{% url 'common:cornice_add' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
-<i data-feather="plus" class="wd-16 mr-2"></i>Добавить карниз</button>
-<button onclick="location.href='{% url 'common:collection_cornice_add' %}'" type="button" class="btn btn-secondary mr-2 mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force">
-<i data-feather="plus" class="wd-16 mr-2"></i>Добавить коллекцию</button>
+{% if user.is_authenticated %}
+    {% if request.user|has_group:"designer" %}
+    {% else %}
+        <button onclick="location.href='{% url 'common:cornice_add' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
+        <i data-feather="plus" class="wd-16 mr-2"></i>Добавить карниз</button>
+        <button onclick="location.href='{% url 'common:collection_cornice_add' %}'" type="button" class="btn btn-secondary mr-2 mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force">
+        <i data-feather="plus" class="wd-16 mr-2"></i>Добавить коллекцию</button>
+    {% endif %}
+{% endif %}
 {% endblock %}
 
 {% block body_content %}
@@ -19,18 +24,20 @@
                                  <div class="mg-20 form-inline wd-100p">
                                     <div class="col-sm-6">
                                        <div class="form-group">
+                                           <span>Коллекция:</span>
 
-                                          <select id="foo-filter-status" class="form-control">
+                                          <select id="foo-filter-status" class="custom-select custom-select-sm mg-l-10">
                                              <option value="">Показать все</option>
-                                             <option value="Запланирован">Запланирован</option>
-                                             <option value="disabled">Disabled</option>
-                                             <option value="suspended">Suspended</option>
+                                              {% for c in collection %}
+                                                <option value="{{c.name}}">{{c.name|title}}</option>
+                                              {% endfor %}
+
                                           </select>
                                        </div>
                                     </div>
                                     <div class="col-sm-6">
                                        <div class="form-group ft-right">
-                                          <input id="foo-search" type="text" placeholder="Поиск" class="form-control" autocomplete="off">
+                                          <input id="foo-search" type="text" placeholder="Поиск" class="form-control form-control-sm" autocomplete="off">
                                        </div>
                                     </div>
                                  </div>
@@ -39,30 +46,49 @@
                                   <thead class="tx-10 tx-uppercase">
                                      <tr>
                                         <th>ID</th>
-                                        <th>Поставщик</th>
+                                        {% if request.user|has_group:"designer" %}
+                                         {% else %}
+                                            <th>Поставщик</th>
+                                         {% endif %}
                                          <th>Коллекция</th>
                                         <th>Модель</th>
                                          <th>Длина</th>
-                                         <th>Цена опт</th>
-                                         <th>Цена пог.метра</th>
-                                        <th class="tx-right">Действия</th>
+                                         <th>Цена</th>
+                                         {% if request.user|has_group:"designer" %}
+                                         {% else %}
+                                            <th class="tx-right">Действия</th>
+                                         {% endif %}
                                      </tr>
                                   </thead>
+                                  {% load mathfilters %}
                                  <tbody>
                                     {% for q in qs %}
 
                                         <tr class="odd gradeX">
                                             <td><a href="">{{q.id}}</a></td>
-                                            <td>{{ q.manufacturer }}</td>
+                                            {% if request.user|has_group:"designer" %}
+                                            {% else %}
+                                                <td>{{ q.manufacturer }}</td>
+                                            {% endif %}
                                             <td>{{ q.collection }}</td>
                                             <td>{{ q.model }}</td>
                                             <td>{{ q.long }}</td>
-                                            <td>{{ q.price_opt }}</td>
-                                            <td>{{ q.price_pog }}</td>
-                                            <td class="tx-right">
-                                                <a href=""  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
-                                                <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                            <td>
+                                                {% if request.user|has_group:"designer" %}
+
+                                                    {{ q.price_opt|mul:markup|mul:markup_c|floatformat }}
+
+                                                {% else %}
+                                                    {{ q.price_opt }}
+                                                {% endif %}
                                             </td>
+                                            {% if request.user|has_group:"designer" %}
+                                            {% else %}
+                                                <td class="tx-right">
+                                                    <a href="{% url 'common:cornice_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                    <a href="{% url 'common:cornice_remove' id=q.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                </td>
+                                            {% endif %}
                                         </tr>
                                     {% endfor %}
 

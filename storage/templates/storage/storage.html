@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block breadcrumb_buttons %}
-    <button onclick="location.href='{% url 'storage:review_textile' %}'" type="button" class="btn btn-secondary mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force" >
+    <button onclick="location.href='{% url 'storage:review_textile' collection_id='all' model_id='all' %}'" type="button" class="btn btn-secondary mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force" >
     <i data-feather="file-plus" class="wd-16 mr-2"></i>Добавить</button>
 {% endblock %}
 

@@ -6,7 +6,7 @@ from .views import  SpecificationTextileAdd, SpecificationViewD, \
     OrderCreateKp, RoomAdd, RoomRemove, RoomChangeStatus, RoomReady, ContractCreateXls, CustomerCreate, \
     ContractCreate, OfferCreate, OfferSelect, ContractCreateWord, GetContract, PaymentCreate, ContractReady, TestTemplate,\
     OrderCreateCustomer, SpecificationCopy, TextileReview, CorniceReview, SpecificationHangingAdd, SpecificationDeliveryAdd, \
-    SpecificationHangingRemove, SpecificationDeliveryRemove, OrderArchive, GetDiscount, RefreshDiscount, home
+    SpecificationHangingRemove, SpecificationDeliveryRemove, OrderArchive, GetDiscount, RefreshDiscount, home, SpecificationTextileEdit
 
 
 app_name = 'main'
@@ -23,7 +23,7 @@ urlpatterns = [
     path('specification/change/status/<id>/', SpecificationChangeStatus, name="change_status"),
     path('specification/ready/<id>/', SpecificationReady, name="sp_ready"),
     path('specification/copy/<id>/', SpecificationCopy, name="sp_copy"),
-    path('textile/review/<id>/', TextileReview, name="review_textile"),
+    path('textile/review/<id>/<collection_id>/<model_id>/', TextileReview, name="review_textile"),
     path('cornice/review/<id>/', CorniceReview, name="review_cornice"),
 
     path('textile/add/<id>/<prod_id>/', SpecificationTextileAdd, name="sp_add_textile"),
@@ -33,6 +33,7 @@ urlpatterns = [
     path('hanging/add/<id>/', SpecificationHangingAdd, name="sp_add_hanging"),
     path('delivery/add/<id>/', SpecificationDeliveryAdd, name="sp_add_delivery"),
 
+    path('textile/edit/<id>/', SpecificationTextileEdit, name="sp_edit_textile"),
     path('textile/remove/<id>/', SpecificationTextileRemove, name="sp_remove_textile"),
     path('cornice/remove/<id>/', SpecificationCorniceRemove, name="sp_remove_cornice"),
     path('sewing/remove/<id>/', SpecificationSewingRemove, name="sp_remove_sewing"),

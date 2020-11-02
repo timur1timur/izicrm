@@ -1,0 +1,102 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Работы{% endblock %}
+{% block breadcrumb_buttons %}
+{% if user.is_authenticated %}
+    {% if request.user|has_group:"designer" %}
+    {% else %}
+        <button onclick="location.href='{% url 'common:works_create' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
+        <i data-feather="plus" class="wd-16 mr-2"></i>Добавить работы</button>
+    {% endif %}
+{% endif %}
+
+
+
+
+{% endblock %}
+
+{% block body_content %}
+                     <!-- Filtering FooTable Start -->
+                     <!--================================-->
+                     <div class="col-md-12 col-lg-12">
+                        <div class="card mg-b-30">
+
+                           <div class="card-body pd-0">
+                              <div class="row">
+                                 <div class="mg-20 form-inline wd-100p">
+                                    <div class="col-sm-6">
+                                       <div class="form-group">
+
+                                          <select id="foo-filter-status" class="custom-select">
+                                             <option value="">Показать все</option>
+                                             <option value="Пошив">Пошив</option>
+                                             <option value="Монтаж">Монтаж</option>
+                                             <option value="Развеска штор">Развеска штор</option>
+                                              <option value="Доставка">Доставка</option>
+                                          </select>
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-group ft-right">
+                                          <input id="foo-search" type="text" placeholder="Поиск" class="form-control" autocomplete="off">
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                               {% load mathfilters %}
+                              <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="20">
+                                  <thead class="tx-10 tx-uppercase">
+                                     <tr>
+                                        <th>Тип</th>
+                                        <th>Название</th>
+                                        <th>Цена</th>
+                                         {% if request.user|has_group:"designer" %}
+                                         {% else %}
+                                            <th class="tx-right">Действия</th>
+                                         {% endif %}
+                                     </tr>
+                                  </thead>
+                                 <tbody>
+                                    {% for q in qs %}
+                                        <tr class="odd gradeX">
+                                            <td>{{ q.type_work.name}}</td>
+                                            <td>{{ q.name }}</td>
+                                            <td>
+                                                {% if request.user|has_group:"designer" %}
+                                                    {% for m in markup %}
+                                                        {% if m.get_source_t_display == q.type_work.name %}
+                                                            {{ q.price|mul:m.markup|mul:markup_c|floatformat }}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    {{ q.price }}
+                                                {% endif %}
+
+                                            </td>
+                                            {% if request.user|has_group:"designer" %}
+                                            {% else %}
+                                                <td class="tx-right">
+                                                    <a href="{% url 'common:works_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                    <a href="{% url 'common:works_remove' id=q.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                </td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+
+                                 </tbody>
+                                 <tfoot>
+                                    <tr>
+                                       <td colspan="5">
+                                          <div class="ft-right">
+                                             <ul class="pagination"></ul>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </tfoot>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                     <!--/ Filtering FooTable End -->
+{% endblock %}
+

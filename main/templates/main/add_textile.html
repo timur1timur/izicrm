@@ -6,29 +6,54 @@
                      <!-- Filtering FooTable Start -->
                      <!--================================-->
                      <div class="col-md-12 col-lg-12">
+                         <div class="card-body pd-0">
+                           <div class="row">
+                             <div class="mg-20 form-inline wd-100p">
+                                <div class="col-sm-8">
+                                    <div class="input-group mb-3">
+                                       <div class="input-group-prepend">
+                                          <span class="input-group-text">Коллекция</span>
+                                       </div>
+                                       <select id="textile_collection" class="custom-select">
+                                           <option value="all">Показать все</option>
+
+                                          {% for c in collection %}
+                                            {% if c.name == current_c %}
+                                                <option selected>{{c.name|title}}</option>
+                                            {% else %}
+                                                <option value="{{c.name}}">{{c.name|title}}</option>
+                                            {% endif %}
+                                          {% endfor %}
+                                      </select>
+                                        <div class="input-group-prepend mg-l-10">
+                                          <span class="input-group-text">Модель</span>
+                                       </div>
+                                       <select id="textile_model" class="custom-select">
+                                         <option value="all">Показать все</option>
+                                          {% for m in models %}
+                                            {% if m.model == current_m %}
+                                                <option selected>{{m.model|title}}</option>
+                                            {% else %}
+                                                <option value="{{m.model}}">{{m.model|title}}</option>
+                                            {% endif %}
+                                          {% endfor %}
+                                      </select>
+                                        <div class="form-layout-footer">
+                                            <button type="button" id="button-textile-designer" value="{{id}}" class="btn btn-primary mg-l-10">Фильтр</button>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                             </div>
+                          </div>
+
                         <div class="card mg-b-30">
 
                            <div class="card-body pd-0">
-                              <div class="row">
-                                 <div class="mg-20 form-inline wd-100p">
-                                    <div class="col-sm-6">
-                                       <div class="form-group">
 
-                                          <select id="foo-filter-status" class="form-control">
-                                             <option value="">Показать все</option>
-                                             <option value="Запланирован">Запланирован</option>
-                                             <option value="disabled">Disabled</option>
-                                             <option value="suspended">Suspended</option>
-                                          </select>
-                                       </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                       <div class="form-group ft-right">
-                                          <input id="foo-search" type="text" placeholder="Поиск" class="form-control" autocomplete="off">
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
                               <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="50">
                                   <thead class="tx-10 tx-uppercase">
                                      <tr>
@@ -44,7 +69,7 @@
                                   </thead>
                                  <tbody>
                                     {% load mathfilters %}
-                                    {% for q in textile %}
+                                    {% for q in qs %}
 
                                         <tr class="odd gradeX">
                                             <td>{{ q.id }}</td>

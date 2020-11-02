@@ -16,17 +16,13 @@ class TextileManufact(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        self.name = str(self.name).upper()
-        super(TextileManufact, self).save(*args, **kwargs)
-
 
 class TextileCollection(models.Model):
     name = models.CharField(verbose_name='Коллекция', max_length=100, blank=True)
     manufacturer = models.ForeignKey(TextileManufact, null=True, on_delete=models.CASCADE, verbose_name='Производитель', blank=True)
 
     def __str__(self):
-        return str(self.name).upper()
+        return str(self.name)
 
 
 #Ткани
@@ -34,20 +30,21 @@ class Textile(models.Model):
     article = models.CharField(verbose_name='Артикул', max_length=100, blank=True)
     manufacturer = models.ForeignKey(TextileManufact, null=True, on_delete=models.CASCADE, verbose_name='Производитель', blank=True)
     collection = models.ForeignKey(TextileCollection, null=True, on_delete=models.CASCADE, verbose_name='Коллекция')
+    designation = models.CharField(verbose_name='Обозначение', max_length=100, blank=True)
     model = models.CharField(verbose_name='Модель', max_length=100)
-    color = models.CharField(verbose_name='Цвет', max_length=100, default='')
-    height = models.FloatField(verbose_name='Высота', null=True, blank=True)
+    color = models.CharField(verbose_name='Цвет', max_length=100, default='', null=True, blank=True)
+    height = models.CharField(verbose_name='Высота', max_length=100, null=True, blank=True)
     price_opt = models.FloatField(verbose_name='Цена отп', null=True, blank=True)
-    price_pog = models.FloatField(verbose_name='Цена пог метра', null=True, blank=True)
-    price_rul = models.FloatField(verbose_name='Цена рулон', null=True, blank=True)
+    currency = models.CharField(verbose_name='Валюта', max_length=100, default='руб.', null=True, blank=True)
+    type_i = models.CharField(verbose_name='Тип измерения', max_length=100, default='шт', null=True, blank=True)
     date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
 
     def __str__(self):
         return self.article
 
-    # def save(self, *args, **kwargs):
-    #     self.article = slugify((str(self.collection.name) + "-" + self.model + "-" + self.color))
-    #     super(Textile, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.article = slugify((str(self.collection.name) + "-" + str(self.model) + "-" + str(self.color)))
+        super(Textile, self).save(*args, **kwargs)
 
     def choose_textile(self):
         return reverse('main:sp_add_textile', kwargs={"id": self.pk})
@@ -84,7 +81,6 @@ class Cornice(models.Model):
     model = models.CharField(verbose_name='Модель', max_length=100)
     long = models.IntegerField(verbose_name='Длина, мм')
     price_opt = models.FloatField(verbose_name='Цена отп', null=True, blank=True)
-    price_pog = models.FloatField(verbose_name='Цена пог метра', null=True, blank=True)
     date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
 
     def __str__(self):

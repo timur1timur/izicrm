@@ -170,7 +170,31 @@
         window.location.href = link;
     });
   </script>
-
+  <script>
+    $("#button-textile").click(function() {
+        var link = '{% url 'common:textile_filter' 'NEWVALUESTUB' 'NEWVALUESTUB2' %}';
+        link = link.replace('NEWVALUESTUB', $("#textile_collection").val());
+        link = link.replace('NEWVALUESTUB2', $("#textile_model").val());
+        window.location.href = link;
+    });
+  </script>
+  <script>
+    $("#button-textile-storage").click(function() {
+        var link = '{% url 'storage:review_textile' 'NEWVALUESTUB' 'NEWVALUESTUB2' %}';
+        link = link.replace('NEWVALUESTUB', $("#textile_collection").val());
+        link = link.replace('NEWVALUESTUB2', $("#textile_model").val());
+        window.location.href = link;
+    });
+  </script>
+  <script>
+    $("#button-textile-designer").click(function() {
+        var link = '{% url 'main:review_textile' 'ID' 'NEWVALUESTUB' 'NEWVALUESTUB2' %}';
+        link = link.replace('NEWVALUESTUB', $("#textile_collection").val());
+        link = link.replace('NEWVALUESTUB2', $("#textile_model").val());
+        link = link.replace('ID', $("#button-textile-designer").val());
+        window.location.href = link;
+    });
+  </script>
 
   <!-- footable Script -->
   <script src="/static/main/assets/plugins/footable/footable.all.min.js"></script>

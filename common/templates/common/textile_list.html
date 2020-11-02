@@ -2,71 +2,121 @@
 
 {% block title_h1 %}Текстиль{% endblock %}
 {% block breadcrumb_buttons %}
-<button onclick="location.href='{% url 'common:textile_add' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
-<i data-feather="plus" class="wd-16 mr-2"></i>Добавить ткань</button>
-<button onclick="location.href='{% url 'common:collection_textile_add' %}'" type="button" class="btn btn-secondary mr-2 mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force">
-<i data-feather="plus" class="wd-16 mr-2"></i>Добавить коллекцию</button>
+{% if user.is_authenticated %}
+    {% if request.user|has_group:"designer" %}
+    {% else %}
+        <button onclick="location.href='{% url 'common:textile_add' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
+        <i data-feather="plus" class="wd-16 mr-2"></i>Добавить ткань</button>
+        <button onclick="location.href='{% url 'common:collection_textile_add' %}'" type="button" class="btn btn-secondary mr-2 mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force">
+        <i data-feather="plus" class="wd-16 mr-2"></i>Добавить коллекцию</button>
+    {% endif %}
+{% endif %}
 {% endblock %}
 
 {% block body_content %}
                      <!-- Filtering FooTable Start -->
                      <!--================================-->
+
                      <div class="col-md-12 col-lg-12">
+                         <div class="card-body pd-0">
+                           <div class="row">
+                             <div class="mg-20 form-inline wd-100p">
+                                <div class="col-sm-8">
+                                    <div class="input-group mb-3">
+                                       <div class="input-group-prepend">
+                                          <span class="input-group-text">Коллекция</span>
+                                       </div>
+                                       <select id="textile_collection" class="custom-select">
+                                           <option value="all">Показать все</option>
+
+                                          {% for c in collection %}
+                                            {% if c.name == current_c %}
+                                                <option selected>{{c.name|title}}</option>
+                                            {% else %}
+                                                <option value="{{c.name}}">{{c.name|title}}</option>
+                                            {% endif %}
+                                          {% endfor %}
+                                      </select>
+                                        <div class="input-group-prepend mg-l-10">
+                                          <span class="input-group-text">Модель</span>
+                                       </div>
+                                       <select id="textile_model" class="custom-select">
+                                         <option value="all">Показать все</option>
+                                          {% for m in models %}
+                                            {% if m.model == current_m %}
+                                                <option selected>{{m.model|title}}</option>
+                                            {% else %}
+                                                <option value="{{m.model}}">{{m.model|title}}</option>
+                                            {% endif %}
+                                          {% endfor %}
+                                      </select>
+                                        <div class="form-layout-footer">
+                                            <button type="button" id="button-textile" class="btn btn-primary mg-l-10">Фильтр</button>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                             </div>
+                          </div>
                         <div class="card mg-b-30">
 
-                           <div class="card-body pd-0">
-                            <div class="row">
-                                 <div class="mg-20 form-inline wd-100p">
-                                    <div class="col-sm-6">
-                                       <div class="form-group">
-
-                                          <select id="foo-filter-status" class="form-control">
-                                             <option value="">Показать все</option>
-                                             <option value="Запланирован">Запланирован</option>
-                                             <option value="disabled">Disabled</option>
-                                             <option value="suspended">Suspended</option>
-                                          </select>
-                                       </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                       <div class="form-group ft-right">
-                                          <input id="foo-search" type="text" placeholder="Поиск" class="form-control" autocomplete="off">
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                              <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="50">
+                              <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="300">
                                   <thead class="tx-10 tx-uppercase">
                                      <tr>
                                         <th>ID</th>
-                                        <th>Поставщик</th>
+                                         {% if request.user|has_group:"designer" %}
+                                         {% else %}
+                                            <th>Поставщик</th>
+                                         {% endif %}
+
                                         <th>Коллекция</th>
                                         <th>Модель</th>
                                         <th>Цвет</th>
                                          <th>Высота</th>
-                                         <th>Цена опт</th>
-                                         <th>Цена пог.метра</th>
-                                         <th>Цена рулона</th>
-                                        <th class="tx-right">Действия</th>
+                                         <th>Цена</th>
+
+                                        {% if request.user|has_group:"designer" %}
+                                         {% else %}
+                                            <th class="tx-right">Действия</th>
+                                         {% endif %}
                                      </tr>
                                   </thead>
+                                  {% load mathfilters %}
                                  <tbody>
                                     {% for q in qs %}
 
                                         <tr class="odd gradeX">
                                             <td><a href="">{{q.id}}</a></td>
-                                            <td>{{ q.manufacturer }}</td>
+                                            {% if request.user|has_group:"designer" %}
+                                            {% else %}
+                                                <td>{{ q.manufacturer }}</td>
+                                            {% endif %}
+
                                             <td>{{ q.collection }}</td>
                                             <td>{{ q.model }}</td>
                                             <td>{{ q.color }}</td>
                                             <td>{{ q.height }}</td>
-                                            <td>{{ q.price_opt }}</td>
-                                            <td>{{ q.price_pog }}</td>
-                                            <td>{{ q.price_rul }}</td>
-                                            <td class="tx-right">
-                                                <a href=""  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
-                                                <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                            <td>
+                                                {% if request.user|has_group:"designer" %}
+
+                                                    {{ q.price_opt|mul:markup|mul:markup_c|floatformat }}
+
+                                                {% else %}
+                                                    {{ q.price_opt }} {{q.currency}}
+                                                {% endif %}
+
                                             </td>
+                                            {% if request.user|has_group:"designer" %}
+                                            {% else %}
+
+                                                <td class="tx-right">
+                                                    <a href="{% url 'common:textile_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                    <a href="{% url 'common:textile_remove' id=q.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                </td>
+                                            {% endif %}
                                         </tr>
                                     {% endfor %}
 

@@ -37,8 +37,10 @@
                                           {% for t in textile %}
                                              <tr>
                                                 <td>{{t.item.collection}} {{t.item.model}} {{t.item.color}}</td>
-                                                <td>{{ t.quantity }} шт.</td>
-                                                <td>{{ t.total_price }} руб.</td>
+                                                <td>{{ t.quantity }} {{ t.item.type_i }}</td>
+                                                <td>{{ t.total_price }} {{t.item.currency }}</td>
+
+                                                <td><a href="{% url 'main:sp_edit_textile' id=t.id %}" title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16"></i></a></td>
                                                 <td><a href="{{ t.remove_textile }}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
                                              </tr>
                                           {% endfor %}
@@ -53,7 +55,7 @@
 
                         <div class="card-footer bg-transparent">
                            <nav class="nav nav-with-icon tx-13">
-                              <a href="{{ qs.review_textile }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить текстиль</a>
+                              <a href="{% url 'main:review_textile' id=qs.id collection_id='all' model_id='all' %}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить текстиль</a>
                            </nav>
                         </div>
                         <!-- card-footer -->

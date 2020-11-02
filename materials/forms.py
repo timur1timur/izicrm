@@ -121,7 +121,7 @@ class CorniceCollectionForm(forms.ModelForm):
 class TextileForm(forms.ModelForm):
     class Meta:
         model = Textile
-        fields = ['manufacturer', 'collection', 'model', 'color', 'height', 'price_opt', 'price_pog', 'price_rul']
+        fields = ['manufacturer', 'collection', 'model', 'color', 'height', 'price_opt']
 
         widgets = {
             "manufacturer": forms.Select(
@@ -179,7 +179,7 @@ class TextileForm(forms.ModelForm):
 class CorniceForm(forms.ModelForm):
     class Meta:
         model = Cornice
-        fields = ['manufacturer', 'collection', 'model', 'long', 'price_opt', 'price_pog']
+        fields = ['manufacturer', 'collection', 'model', 'long', 'price_opt']
 
         widgets = {
             "manufacturer": forms.Select(

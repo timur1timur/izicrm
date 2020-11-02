@@ -7,7 +7,7 @@ from orders.models import Specification, OrderItemTextile1, OrderItemCornice, Or
     OrderItemWorkAssembly, Order, Room, Customer, Contract, OfferVersion, Offer, OrderDoc, Payment, \
     OrderItemWorkHanging, OrderItemWorkDelivery, PaymentCategory
 from works.models import Work
-from materials.models import Textile, Cornice
+from materials.models import Textile, Cornice, TextileCollection
 
 from django.contrib.auth.decorators import login_required
 
@@ -427,14 +427,42 @@ def SpecificationViewD(request, pk):
 from storage.models import StorageItemTextile, StorageItemTextileReserve
 
 @login_required(login_url='login')
-def TextileReview(request, id):
-    if request.method == 'GET':
-        sp = Specification.objects.get(pk=id)
-        textile = Textile.objects.all()
-        textile_storage = StorageItemTextile.objects.all()
+def TextileReview(request, id, collection_id, model_id):
 
-        markup = GetMarkupMaterials(sp.order, 0)
-        return render(request, 'main/add_textile.html', context={'textile': textile, 'storage': textile_storage, 'id': id, 'markup': markup})
+    sp = Specification.objects.get(pk=id)
+    textile_storage = StorageItemTextile.objects.all()
+
+    if collection_id != 'all':
+        if model_id != 'all':
+            get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+            current_c = get_collection.name
+            qs = Textile.objects.filter(collection=get_collection, model=model_id)
+        else:
+            get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+            current_c = get_collection.name
+            qs = Textile.objects.filter(collection=get_collection)
+    else:
+        qs = Textile.objects.all()[:100]
+        current_c = 'all'
+
+    current_m = model_id
+    collection = TextileCollection.objects.all()
+    if collection_id != 'all':
+        get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+        models = Textile.objects.filter(collection=get_collection).order_by().values('model').distinct()
+    else:
+        models = None
+
+    markup = GetMarkupMaterials(sp.order, 0)
+    return render(request, 'main/add_textile.html', context={'qs': qs,
+                                                             'storage': textile_storage,
+                                                             'id': id,
+                                                             'markup': markup,
+                                                             'current_c': current_c,
+                                                             'current_m': current_m,
+                                                             'collection': collection,
+                                                             'models': models
+                                                             })
 
 
 from django.db.models import Sum
@@ -460,6 +488,26 @@ def SpecificationTextileAdd(request, id, prod_id):
         if form.is_valid():
             form.save()
             return redirect('main:spec', pk=sp.pk)
+
+@login_required(login_url='login')
+def SpecificationTextileEdit(request, id):
+    if request.method == 'GET':
+
+        prod_name = OrderItemTextile1.objects.get(pk=id)
+        form = OrderTextileForm({'quantity': prod_name.quantity})
+        return render(request, 'main/edit_textile_order.html', context={'form': form, 'prod_name': prod_name.item})
+
+    if request.method == 'POST':
+        prod_name = OrderItemTextile1.objects.get(pk=id)
+        form = OrderTextileForm(request.POST)
+        quantity = request.POST.get("quantity", None)
+
+        if quantity != None:
+            instance = OrderItemTextile1.objects.get(pk=id)
+            instance.quantity = quantity
+            instance.save(update_fields=['quantity'])
+            return redirect('main:spec', pk=prod_name.specification.pk)
+        return render(request, 'main/edit_textile_order.html', context={'form': form, 'prod_name': prod_name.item})
 
 
 @login_required(login_url='login')

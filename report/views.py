@@ -59,10 +59,6 @@ def ReportOrders(request):
             if label == cat[0]:
                 cus_label2.append(f"{cat[1]} - {data} шт.")
 
-    print(cus_data2)
-    print(cus_label2)
-
-
     end_n = datetime.datetime.now() + datetime.timedelta(days=1)
     end = end_n.strftime("%Y-%m-%d")
     end_s = end.split('-')
@@ -245,7 +241,6 @@ def ReportBudget(request):
                 }
         y += 1
         i += 1
-    print(budget_mass)
 
     date_m = []
     arrival_m = []
@@ -334,13 +329,12 @@ def ReportBudgetMonth(request):
                 contract['price__sum'] = 0
 
         budget_mass[month_dict.get(str(month_list[y]))] = {
-                    'arrival': contract['price__sum'],
-                    'expense': payment['price__sum'],
+                    'arrival': round(contract['price__sum'], 2),
+                    'expense': round(payment['price__sum'], 2),
                     'profit': round(profit, 2),
                 }
 
         y += 1
-    print(budget_mass)
     date_m = []
     arrival_m = []
     expense_m = []
@@ -356,10 +350,6 @@ def ReportBudgetMonth(request):
         date_m.append([z, month_list[z]])
         z += 1
 
-    print(date_m)
-    print(arrival_m)
-    print(expense_m)
-    print(profit_m)
     max_mass = []
     for m in arrival_m:
         max_mass.append(m[1])
