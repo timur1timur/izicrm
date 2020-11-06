@@ -43,7 +43,7 @@ class Textile(models.Model):
         return self.article
 
     def save(self, *args, **kwargs):
-        self.article = slugify((str(self.collection.name) + "-" + str(self.model) + "-" + str(self.color)))
+        self.article = (str(self.collection) + "-" + str(self.model) + "-" + str(self.color))
         super(Textile, self).save(*args, **kwargs)
 
     def choose_textile(self):

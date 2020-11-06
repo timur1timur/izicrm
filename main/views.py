@@ -1037,21 +1037,13 @@ def ContractReady(request, id):
                 check_q = item_storage_q - item_reserve_q - t.quantity
             elif item_storage_q > 0 and item_reserve_q == None:
                 check_q = item_storage_q - t.quantity
-        if check_q > 0 or check_q == 0:
-            instance = StorageItemTextileReserve.objects.create(
-                    order=sp,
-                    item=item_storage[0],
-                    quantity=t.quantity
-                )
+            if check_q > 0 or check_q == 0:
+                instance = StorageItemTextileReserve.objects.create(
+                        order=sp,
+                        item=item_storage[0],
+                        quantity=t.quantity
+                    )
 
-
-        # if storage != None and storage != 0:
-        #     item_storage = StorageItemTextile.objects.filter(item=item)[0]
-        #     instance = StorageItemTextileReserve.objects.create(
-        #         order=sp.order,
-        #         item=item_storage,
-        #         quantity=quantity
-        #     )
     return redirect('main:order_view', id=sp.pk)
 
 @login_required(login_url='login')
