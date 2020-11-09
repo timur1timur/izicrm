@@ -19,9 +19,9 @@
 
                                           {% for c in collection %}
                                             {% if c.name == current_c %}
-                                                <option selected>{{c.name|title}}</option>
+                                                <option selected value="{{c.id}}">{{c.name|title}}</option>
                                             {% else %}
-                                                <option value="{{c.name}}">{{c.name|title}}</option>
+                                                <option value="{{c.id}}">{{c.name|title}}</option>
                                             {% endif %}
                                           {% endfor %}
                                       </select>

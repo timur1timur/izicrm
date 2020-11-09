@@ -23,11 +23,11 @@ def Reserve(request):
 def TextileReview(request, collection_id, model_id):
     if collection_id != 'all':
         if model_id != 'all':
-            get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+            get_collection = TextileCollection.objects.get(id=collection_id)
             current_c = get_collection.name
             qs = Textile.objects.filter(collection=get_collection, model=model_id)
         else:
-            get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+            get_collection = TextileCollection.objects.get(id=collection_id)
             current_c = get_collection.name
             qs = Textile.objects.filter(collection=get_collection)
     else:
@@ -37,7 +37,7 @@ def TextileReview(request, collection_id, model_id):
     current_m = model_id
     collection = TextileCollection.objects.all()
     if collection_id != 'all':
-        get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+        get_collection = TextileCollection.objects.get(id=collection_id)
         models = Textile.objects.filter(collection=get_collection).order_by().values('model').distinct()
     else:
         models = None

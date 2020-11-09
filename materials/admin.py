@@ -8,4 +8,5 @@ admin.site.register(Textile)
 admin.site.register(CorniceManufact)
 admin.site.register(CorniceCollection)
 admin.site.register(Cornice)
+admin.site.register(CorniceAdditional)
 

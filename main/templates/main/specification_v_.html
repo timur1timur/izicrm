@@ -86,6 +86,25 @@
                                        </tbody>
                                     </table>
                                  </div>
+                                 {% if additional %}
+                                    <div class="col-md-6 col-lg-6">
+                                       <table class="table">
+                                          <tbody>
+                                             {% for t in additional %}
+                                                <tr>
+                                                   <td>{{t.item.name}}</td>
+                                                   <td>{{ t.quantity }} шт.</td>
+                                                   <td>{{ t.total_price }} руб.</td>
+                                                   <td><a href="{% url 'main:sp_remove_cornice_additional' id=t.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
+                                                </tr>
+                                             {% endfor %}
+                                             <tr>
+                                                <td>ИТОГ ДОПЫ: {{summ_ad}}</td>
+                                             </tr>
+                                          </tbody>
+                                       </table>
+                                    </div>
+                                 {% endif %}
                               </div>
                         {% endif %}
 

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from orders.models import Order, Offer, Room, Specification, OrderItemTextile1, OrderItemCornice, OrderItemWorkSewing, \
     OrderItemWorkAssembly, SupplierOrder, SupplierOrderCornice, Customer, Contract, OrderItemWorkHanging, \
-    OrderItemWorkDelivery, Payment, PaymentCategory, TrackedOrder
+    OrderItemWorkDelivery, Payment, PaymentCategory, TrackedOrder, OrderItemCorniceAdditional
 from .forms import SupplierOrderedTextileForm, PaymentFormManager, SupplierForm, SupplierOrderedCorniceForm
 from .models import SupplierOrderedTextile, SupplierOrderedCornice
 from .utils import SendTo, mailanalytics, M_StatusMaterialsCheck, M_ChangeOrderState, M_GetStatusMaterialOrder, \
@@ -31,6 +31,7 @@ def M_OrderViewD(request, id):
     offer_version = offer.version.get_version_display()
     textile = OrderItemTextile1.objects.filter(order=qs, version=offer_version)
     cornice = OrderItemCornice.objects.filter(order=qs, version=offer_version)
+    additional = OrderItemCorniceAdditional.objects.filter(order=qs, version=offer_version)
     sewing = OrderItemWorkSewing.objects.filter(order=qs, version=offer_version)
     assembly = OrderItemWorkAssembly.objects.filter(order=qs, version=offer_version)
     hanging = OrderItemWorkHanging.objects.filter(order=qs, version=offer_version)
@@ -85,6 +86,7 @@ def M_OrderViewD(request, id):
         'qs': qs,
         'textile': textile,
         'cornice': cornice,
+        'additional': additional,
         'sewing': sewing,
         'assembly': assembly,
         'hanging': hanging,

@@ -1,6 +1,7 @@
 from django import forms
 from .models import Specification, OrderItemTextile1, OrderItemCornice, OrderItemWorkSewing, OrderItemWorkAssembly, \
-    Room, Customer, Contract, Payment, SupplierOrder, Order, OrderItemWorkHanging, OrderItemWorkDelivery, PaymentCategory
+    Room, Customer, Contract, Payment, SupplierOrder, Order, OrderItemWorkHanging, OrderItemWorkDelivery, \
+    PaymentCategory, OrderItemCorniceAdditional
 from works.models import Work
 
 SOURCE_T = (
@@ -310,6 +311,23 @@ class OrderTextileForm(forms.ModelForm):
 class OrderCorniceForm(forms.ModelForm):
     class Meta:
         model = OrderItemCornice
+        fields = ['specification', 'order', 'item', 'quantity', 'markup']
+        widgets = {
+            "quantity": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                }
+            ),
+            "item": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                }
+            )
+        }
+
+class OrderCorniceAdditionalForm(forms.ModelForm):
+    class Meta:
+        model = OrderItemCorniceAdditional
         fields = ['specification', 'order', 'item', 'quantity', 'markup']
         widgets = {
             "quantity": forms.TextInput(

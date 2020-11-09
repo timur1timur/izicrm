@@ -20,5 +20,7 @@ admin.site.register(Payment)
 admin.site.register(PaymentCategory)
 admin.site.register(SupplierOrder)
 admin.site.register(SupplierOrderCornice)
+admin.site.register(OrderItemCorniceAdditional)
+
 
 

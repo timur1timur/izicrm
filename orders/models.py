@@ -1,6 +1,6 @@
 from django.db import models
 from .utils import decimal2text
-from materials.models import Cornice, Textile, TextileManufact, CorniceManufact
+from materials.models import Cornice, Textile, TextileManufact, CorniceManufact, CorniceAdditional
 from works.models import Work
 from django.shortcuts import reverse
 from markup.models import MarkupMaterialCategory, MarkupWorkCategory
@@ -436,6 +436,47 @@ class OrderItemTextile1(models.Model):
     def get_stay_out(self):
         return reverse('manager:textile_stay_out', kwargs={"id": self.pk})
 
+
+class OrderItemCorniceAdditional(models.Model):
+    ORDER_STATE = (
+        (0, 'Не заказан'),
+        (1, 'Заказ отправлен'),
+        (2, 'Заказан'),
+        (3, 'Оплачен'),
+        (4, 'Отгружены'),
+        (5, 'В наличии'),
+        (6, 'Отсутствует у поставщика'),
+    )
+
+    ORDER_STATE_ICON = (
+        (0, 'fa-circle-thin'),
+        (1, 'target'),
+        (2, 'disc'),
+        (3, 'dollar-sign'),
+        (4, 'arrow-down-circle'),
+        (5, 'arrow-down-circle'),
+        (6, 'alert-circle'),
+    )
+
+    specification = models.ForeignKey(Specification, null=True, on_delete=models.CASCADE, verbose_name='Спецификация')
+    version = models.CharField(verbose_name='Версия', max_length=100, blank=True)
+    order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Заказ')
+    item = models.ForeignKey(CorniceAdditional, null=True, on_delete=models.CASCADE, verbose_name='Доп', )
+    quantity = models.FloatField(default=1, verbose_name='Количество')
+    markup = models.FloatField(verbose_name='Наценка', max_length=100, default=1)
+    ordered = models.IntegerField(verbose_name="Состояние заказа", choices=ORDER_STATE, default=0)
+    ordered_icon = models.IntegerField(verbose_name="Состояние заказа icon", choices=ORDER_STATE_ICON, default=0)
+
+    def __str__(self):
+        return str(self.item.name) + '-' + str(self.quantity)
+
+    def save(self, *args, **kwargs):
+        self.version = self.specification.get_version_display()
+        super(OrderItemCorniceAdditional, self).save(*args, **kwargs)
+
+    def total_price(self):
+        t_price = self.item.price * self.quantity * self.markup * self.order.discount_c
+        return round(t_price, 2)
 
 class OrderItemCornice(models.Model):
     ORDER_STATE = (

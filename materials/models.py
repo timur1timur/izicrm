@@ -91,3 +91,15 @@ class Cornice(models.Model):
         model_tr = transliterate(self.model)
         self.article = slugify(manuf_tr + "-" + model_tr + "-" + str(self.long))
         super(Cornice, self).save(*args, **kwargs)
+
+
+class CorniceAdditional(models.Model):
+    cornice = models.ForeignKey(Cornice, null=True, on_delete=models.SET_NULL, verbose_name='Карниз')
+    category = models.CharField(verbose_name='Категория', max_length=100, default=None)
+    name = models.CharField(verbose_name='Наименование', max_length=100)
+    type_p = models.CharField(verbose_name='Тип', max_length=100, default=None)
+    price = models.FloatField(verbose_name='Цена', null=True, blank=True)
+    date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.name

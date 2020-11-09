@@ -3,12 +3,13 @@ from orders.models import Customer, Payment, Order, Contract, Offer, OrderItemTe
     OrderItemWorkSewing, OrderItemWorkAssembly, OrderItemWorkHanging, OrderItemWorkDelivery, PaymentCategory, Contract
 from manager.models import SupplierOrderedTextile, SupplierOrderedCornice
 from orders.forms import CustomerForm, PaymentForm
-from materials.models import TextileManufact, CorniceManufact, Textile, Cornice, TextileCollection, CorniceCollection
+from materials.models import TextileManufact, CorniceManufact, Textile, Cornice, TextileCollection, CorniceCollection, \
+    CorniceAdditional
 from materials.forms import TextileManufactForm, CorniceManufactForm, TextileForm, CorniceForm, TextileCollectionForm, \
-    CorniceCollectionForm
+    CorniceCollectionForm, CorniceAdditionalForm
 from works.models import Work, TypeWork
 from works.forms import WorkForm
-from markup.models import MarkupWorkCategory, MarkupCommon, MarkupMaterialCategory
+from markup.models import MarkupWorkCategory, MarkupCommon, MarkupMaterialCategory, MarkupSetting
 from .utils import Get_Budget, GetStatusOrder, GetStatOrderPeriod, GetStatOrderFinishPeriod, GetCusPay
 from django.contrib.auth.decorators import login_required
 
@@ -88,7 +89,8 @@ def WorksList(request):
     qs = Work.objects.all()
     markup = MarkupWorkCategory.objects.all()
     markup_c = MarkupCommon.objects.get(name='Общая')
-    return render(request, 'common/works_list.html', context={'qs': qs, 'markup': markup, 'markup_c': markup_c.markup})
+    settings = MarkupSetting.objects.get(name='markup_view')
+    return render(request, 'common/works_list.html', context={'qs': qs, 'markup': markup, 'markup_c': markup_c.markup, 'settings': settings})
 
 
 @login_required(login_url='login')
@@ -139,7 +141,7 @@ def WorksEdit(request, id):
             return redirect('common:works_list')
         return render(request, 'common/works_edit.html', context={'form': form})
 
-
+@login_required(login_url='login')
 def WorksRemove(request, id):
     qs = Work.objects.get(pk=id)
     qs.delete()
@@ -285,17 +287,19 @@ def TextileList(request):
     collection = TextileCollection.objects.all()
     markup = MarkupMaterialCategory.objects.get(source_t=0)
     markup_c = MarkupCommon.objects.get(name='Общая')
-    return render(request, 'common/textile_list.html', context={'qs': qs, 'markup': markup.markup, 'markup_c': markup_c.markup, 'collection': collection})
+    settings = MarkupSetting.objects.get(name='markup_view')
+    print(settings.value)
+    return render(request, 'common/textile_list.html', context={'qs': qs, 'markup': markup.markup, 'markup_c': markup_c.markup, 'collection': collection, 'settings': settings})
 
 @login_required(login_url='login')
 def TextileListFilter(request, collection_id, model_id):
     if collection_id != 'all':
         if model_id != 'all':
-            get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+            get_collection = TextileCollection.objects.get(pk=collection_id)
             current_c = get_collection.name
             qs = Textile.objects.filter(collection=get_collection, model=model_id)
         else:
-            get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+            get_collection = TextileCollection.objects.get(pk=collection_id)
             current_c = get_collection.name
             qs = Textile.objects.filter(collection=get_collection)
     else:
@@ -305,20 +309,22 @@ def TextileListFilter(request, collection_id, model_id):
     current_m = model_id
     collection = TextileCollection.objects.all()
     if collection_id != 'all':
-        get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+        get_collection = TextileCollection.objects.get(pk=collection_id)
         models = Textile.objects.filter(collection=get_collection).order_by().values('model').distinct()
     else:
         models = None
     
     markup = MarkupMaterialCategory.objects.get(source_t=0)
     markup_c = MarkupCommon.objects.get(name='Общая')
+    settings = MarkupSetting.objects.get(name='markup_view')
     return render(request, 'common/textile_list.html', context={'qs': qs,
                                                                 'current_c': current_c,
                                                                 'current_m': current_m,
                                                                 'markup': markup.markup,
                                                                 'markup_c': markup_c.markup,
                                                                 'collection': collection,
-                                                                'models': models})
+                                                                'models': models,
+                                                                'settings': settings})
 
 
 @login_required(login_url='login')
@@ -395,9 +401,11 @@ def TextileRemove(request, id):
 def CorniceList(request):
     qs = Cornice.objects.all()
     collection = CorniceCollection.objects.all()
+    additional = CorniceAdditional.objects.all()
     markup = MarkupMaterialCategory.objects.get(source_t=1)
     markup_c = MarkupCommon.objects.get(name='Общая')
-    return render(request, 'common/cornice_list.html', context={'qs': qs, 'markup': markup.markup, 'markup_c': markup_c.markup, 'collection': collection})
+    settings = MarkupSetting.objects.get(name='markup_view')
+    return render(request, 'common/cornice_list.html', context={'qs': qs, 'markup': markup.markup, 'markup_c': markup_c.markup, 'collection': collection, 'settings': settings})
 
 @login_required(login_url='login')
 def CorniceAdd(request):
@@ -424,18 +432,91 @@ def CorniceAdd(request):
             instance.manufacturer = manufacturer_obj
             instance.collection = collection_obj
             instance.save()
-            return redirect('common:cornice_list')
+            return redirect('common:cornice_additional', id=instance.pk)
         return render(request, 'common/cornice_create.html', context={'form': form})
+
+
+@login_required(login_url='login')
+def CorniceAdditionalView(request, id):
+    if request.method == 'GET':
+        cornice = Cornice.objects.get(pk=id)
+        form = CorniceAdditionalForm({'cornice': cornice})
+        return render(request, 'common/cornice_additional_create.html', context={'form': form, 'cornice': cornice})
+
+    if request.method == 'POST':
+        form = CorniceAdditionalForm(request.POST)
+        cornice = request.POST.get("cornice", None)
+        category = request.POST.get("category", None)
+        name = request.POST.get("name", None)
+        type_p = request.POST.get("type_p", None)
+        price = request.POST.get("price", None)
+
+        if cornice != None and name != None and price != None:
+            cornice_g = Cornice.objects.get(pk=cornice)
+            instance = CorniceAdditional.objects.create(
+                cornice=cornice_g,
+                category=category,
+                name=name,
+                type_p=type_p,
+                price=price,
+            )
+            instance.save()
+            return redirect('common:cornice_list')
+        return render(request, 'common/cornice_additional_create.html', context={'form': form})
+
+@login_required(login_url='login')
+def CorniceAdditionalEdit(request, id):
+    if request.method == 'GET':
+        additional = CorniceAdditional.objects.get(pk=id)
+        form = CorniceAdditionalForm({'cornice': additional.cornice, 'category': additional.category, 'name': additional.name, 'type_p': additional.type_p, 'price': additional.price})
+        return render(request, 'common/cornice_additional_edit.html', context={'form': form,
+                                                                               'cornice': additional.cornice})
+
+    if request.method == 'POST':
+        form = CorniceAdditionalForm(request.POST)
+        category = request.POST.get("category", None)
+        name = request.POST.get("name", None)
+        type_p = request.POST.get("type_p", None)
+        price = request.POST.get("price", None)
+
+        if name != None and price != None:
+            instance = CorniceAdditional.objects.get(pk=id)
+            instance.category = category
+            instance.type_p = type_p
+            instance.name = name
+            instance.price = price
+            instance.save(update_fields=['category', 'type_p', 'name', 'price'])
+            return redirect('common:cornice_additional_list', id=instance.cornice.id)
+        return render(request, 'common/cornice_additional_edit.html', context={'form': form})
+
+@login_required(login_url='login')
+def CorniceAdditionalDelete(request, id):
+    additional = CorniceAdditional.objects.get(pk=id)
+    cornice_d = additional.cornice
+    additional.delete()
+    return redirect('common:cornice_additional_list', id=cornice_d.id)
+
+@login_required(login_url='login')
+def CorniceAdditionalList(request, id):
+    cornice_g = Cornice.objects.get(pk=id)
+    additional = CorniceAdditional.objects.filter(cornice=cornice_g)
+    return render(request, 'common/cornice_list_additional.html', context={'additional': additional, 'cornice': cornice_g})
+
+def CorniceAdditionalOrder(request, id):
+    cornice_g = Cornice.objects.get(pk=id)
+    additional = CorniceAdditional.objects.filter(cornice=cornice_g)
+    return render(request, 'common/cornice_list_additional.html', context={'additional': additional, 'cornice': cornice_g})
 
 @login_required(login_url='login')
 def CorniceEdit(request, id):
     if request.method == 'GET':
         textile_id = Cornice.objects.get(pk=id)
+        additional = CorniceAdditional.objects.filter(cornice=textile_id)
         form = CorniceForm({'collection': textile_id.collection,
                             'model': textile_id.model,
                             'long': textile_id.long,
                             'price_opt': textile_id.price_opt})
-        return render(request, 'common/cornice_edit.html', context={'form': form})
+        return render(request, 'common/cornice_edit.html', context={'form': form, 'cornice': textile_id, 'additional': additional})
 
     if request.method == 'POST':
         form = TextileForm(request.POST)
@@ -446,7 +527,7 @@ def CorniceEdit(request, id):
 
         if collection != None and model != None and price_opt != None:
             collection_g = CorniceCollection.objects.get(pk=collection)
-            instance = Textile.objects.get(pk=id)
+            instance = Cornice.objects.get(pk=id)
             instance.collection = collection_g
             instance.model = model
             instance.long = long

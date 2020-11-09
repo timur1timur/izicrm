@@ -1,5 +1,5 @@
 from django import forms
-from .models import TextileManufact, CorniceManufact, Textile, Cornice, TextileCollection, CorniceCollection
+from .models import TextileManufact, CorniceManufact, Textile, Cornice, TextileCollection, CorniceCollection, CorniceAdditional
 
 
 class TextileManufactForm(forms.ModelForm):
@@ -221,4 +221,44 @@ class CorniceForm(forms.ModelForm):
                 }
             )
 
+        }
+
+
+class CorniceAdditionalForm(forms.ModelForm):
+    class Meta:
+        model = CorniceAdditional
+        fields = ['cornice', 'category', 'name', 'type_p', 'price']
+
+        widgets = {
+            "cornice": forms.Select(
+                attrs={
+                    "type": "Select",
+                    "class": "custom-select",
+
+                }
+            ),
+            "category": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Категория"
+                }
+            ),
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Наименование"
+                }
+            ),
+            "type_p": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Тип (Диаметр)"
+                }
+            ),
+            "price": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Цена"
+                }
+            )
         }

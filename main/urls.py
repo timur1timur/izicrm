@@ -6,7 +6,8 @@ from .views import  SpecificationTextileAdd, SpecificationViewD, \
     OrderCreateKp, RoomAdd, RoomRemove, RoomChangeStatus, RoomReady, ContractCreateXls, CustomerCreate, \
     ContractCreate, OfferCreate, OfferSelect, ContractCreateWord, GetContract, PaymentCreate, ContractReady, TestTemplate,\
     OrderCreateCustomer, SpecificationCopy, TextileReview, CorniceReview, SpecificationHangingAdd, SpecificationDeliveryAdd, \
-    SpecificationHangingRemove, SpecificationDeliveryRemove, OrderArchive, GetDiscount, RefreshDiscount, home, SpecificationTextileEdit
+    SpecificationHangingRemove, SpecificationDeliveryRemove, OrderArchive, GetDiscount, RefreshDiscount, home, SpecificationTextileEdit, \
+    SpecificationCorniceAdditionalReview, SpecificationCorniceAdditionalAdd, SpecificationCorniceAdditionalRemove
 
 
 app_name = 'main'
@@ -28,6 +29,10 @@ urlpatterns = [
 
     path('textile/add/<id>/<prod_id>/', SpecificationTextileAdd, name="sp_add_textile"),
     path('cornice/add/<id>/<prod_id>/', SpecificationCorniceAdd, name="sp_add_cornice"),
+    path('cornice/additional/review/<id>/<order_item_id>/', SpecificationCorniceAdditionalReview, name="sp_review_cornice_additional"),
+    path('cornice/additional/add/<id>/<prod_id>/<order_item_id>/', SpecificationCorniceAdditionalAdd, name="sp_add_cornice_additional"),
+    path('cornice/additional/remove/<id>/', SpecificationCorniceAdditionalRemove, name="sp_remove_cornice_additional"),
+
     path('sewing/add/<id>/', SpecificationSewingAdd, name="sp_add_sewing"),
     path('assembly/add/<id>/', SpecificationAssemblyAdd, name="sp_add_assembly"),
     path('hanging/add/<id>/', SpecificationHangingAdd, name="sp_add_hanging"),

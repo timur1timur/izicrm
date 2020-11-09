@@ -2,12 +2,12 @@ from django.shortcuts import render, redirect, HttpResponse
 
 from orders.forms import SpecificationForm, OrderTextileForm, OrderCorniceForm, OrderWorkSewingForm, \
     OrderWorkAssemblyForm, RoomForm, CustomerForm, ContractForm, PaymentForm, CustomerStartForm, OrderWorkHangingForm, \
-    OrderWorkDeliveryForm
+    OrderWorkDeliveryForm, OrderCorniceAdditionalForm
 from orders.models import Specification, OrderItemTextile1, OrderItemCornice, OrderItemWorkSewing, \
     OrderItemWorkAssembly, Order, Room, Customer, Contract, OfferVersion, Offer, OrderDoc, Payment, \
-    OrderItemWorkHanging, OrderItemWorkDelivery, PaymentCategory
+    OrderItemWorkHanging, OrderItemWorkDelivery, PaymentCategory, OrderItemCorniceAdditional
 from works.models import Work
-from materials.models import Textile, Cornice, TextileCollection
+from materials.models import Textile, Cornice, TextileCollection, CorniceAdditional
 
 from django.contrib.auth.decorators import login_required
 
@@ -132,6 +132,7 @@ def SpecificationChangeStatus(request, id):
         assembly_list = OrderItemWorkAssembly.objects.filter(specification=sp)
         hanging_list = OrderItemWorkHanging.objects.filter(specification=sp)
         delivery_list = OrderItemWorkDelivery.objects.filter(specification=sp)
+        additional = OrderItemCorniceAdditional.objects.filter(specification=sp)
 
         summ_t = 0
         for obj_i in textile_list:
@@ -141,6 +142,11 @@ def SpecificationChangeStatus(request, id):
         for obj_i in cornice_list:
             iter1 = obj_i.total_price()
             summ_c += iter1
+
+        summ_ad = 0
+        for obj_i in additional:
+            iter1 = obj_i.total_price()
+            summ_ad += iter1
 
         summ_s = 0
         for obj_i in sewing_list:
@@ -163,9 +169,9 @@ def SpecificationChangeStatus(request, id):
             summ_d += iter1
 
 
-        total = round((summ_t+summ_c+summ_s+summ_a+summ_h+summ_d), 2)
+        total = round((summ_t+summ_c+summ_s+summ_a+summ_h+summ_d+summ_ad), 2)
         sp.textile_total = round(summ_t, 2)
-        sp.cornice_total = round(summ_c, 2)
+        sp.cornice_total = round(summ_c + summ_ad, 2)
         sp.sewing_total = round(summ_s, 2)
         sp.assembly_total = round(summ_a, 2)
         sp.hanging_total = round(summ_s, 2)
@@ -373,6 +379,7 @@ def SpecificationViewD(request, pk):
     assembly_list = OrderItemWorkAssembly.objects.filter(specification=qs)
     hanging_list = OrderItemWorkHanging.objects.filter(specification=qs)
     delivery_list = OrderItemWorkDelivery.objects.filter(specification=qs)
+    additional = OrderItemCorniceAdditional.objects.filter(specification=qs)
 
     summ_t = 0
     for obj_i in textile_list:
@@ -383,6 +390,11 @@ def SpecificationViewD(request, pk):
     for obj_i in cornice_list:
         iter1 = obj_i.total_price()
         summ_c += iter1
+
+    summ_ad = 0
+    for obj_i in additional:
+        iter1 = obj_i.total_price()
+        summ_ad += iter1
 
     summ_s = 0
     for obj_i in sewing_list:
@@ -409,6 +421,7 @@ def SpecificationViewD(request, pk):
         'qs': qs,
         'textile': textile_list,
         'cornice': cornice_list,
+        'additional': additional,
         'sewing': sewing_list,
         'assembly': assembly_list,
         'hanging': hanging_list,
@@ -419,7 +432,8 @@ def SpecificationViewD(request, pk):
         'summ_a': round(summ_a, 2),
         'summ_h': round(summ_h, 2),
         'summ_d': round(summ_d, 2),
-        'summ': round((summ_t+summ_c+summ_s+summ_a+summ_h+summ_d), 2),
+        'summ_ad': round(summ_ad, 2),
+        'summ': round((summ_t+summ_c+summ_s+summ_a+summ_h+summ_d+summ_ad), 2),
     }
 
     return render(request, 'main/specification_v_.html', context)
@@ -434,11 +448,11 @@ def TextileReview(request, id, collection_id, model_id):
 
     if collection_id != 'all':
         if model_id != 'all':
-            get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+            get_collection = TextileCollection.objects.get(id=collection_id)
             current_c = get_collection.name
             qs = Textile.objects.filter(collection=get_collection, model=model_id)
         else:
-            get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+            get_collection = TextileCollection.objects.get(id=collection_id)
             current_c = get_collection.name
             qs = Textile.objects.filter(collection=get_collection)
     else:
@@ -448,7 +462,7 @@ def TextileReview(request, id, collection_id, model_id):
     current_m = model_id
     collection = TextileCollection.objects.all()
     if collection_id != 'all':
-        get_collection = TextileCollection.objects.get(name__iexact=collection_id)
+        get_collection = TextileCollection.objects.get(id=collection_id)
         models = Textile.objects.filter(collection=get_collection).order_by().values('model').distinct()
     else:
         models = None
@@ -533,10 +547,77 @@ def SpecificationCorniceAdd(request, id, prod_id):
 
     if request.method == 'POST':
         sp = Specification.objects.get(pk=id)
+        prod_name = Cornice.objects.get(pk=prod_id)
         form = OrderCorniceForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('main:spec', pk=sp.pk)
+        specification = request.POST.get("specification", None)
+        order = request.POST.get("order", None)
+        item = request.POST.get("item", None)
+        quantity = request.POST.get("quantity", None)
+        markup = request.POST.get("markup", None)
+        if specification != None and order != None and item != None and quantity != None and markup != None:
+            specification_g = Specification.objects.get(pk=specification)
+            order_g = Order.objects.get(pk=order)
+            item_g = Cornice.objects.get(pk=item)
+            instance = OrderItemCornice.objects.create(
+                specification=specification_g,
+                order=order_g,
+                item=item_g,
+                quantity=quantity,
+                markup=markup,
+            )
+            return redirect('main:sp_review_cornice_additional', id=prod_name.id, order_item_id=instance.id)
+
+@login_required(login_url='login')
+def SpecificationCorniceAdditionalReview(request, id, order_item_id):
+    order_item = OrderItemCornice.objects.get(pk=order_item_id)
+    cornice_g = Cornice.objects.get(pk=id)
+    additional = CorniceAdditional.objects.filter(cornice=cornice_g)
+    return render(request, 'main/add_cornice_additional_review.html', context={'additional': additional, 'cornice': cornice_g, 'order_item': order_item})
+
+@login_required(login_url='login')
+def SpecificationCorniceAdditionalAdd(request, id, prod_id, order_item_id):
+    if request.method == 'GET':
+        order_item = OrderItemCornice.objects.get(pk=order_item_id)
+        additional = CorniceAdditional.objects.get(cornice=id)
+        markup = GetMarkupMaterials(order_item.order, 1)
+        form = OrderCorniceAdditionalForm({'specification': order_item.specification,
+                                           'order': order_item.order,
+                                           'item': additional,
+                                           'markup': markup
+                                           })
+        return render(request, 'main/add_cornice_additional_order2.html', context={'form': form,
+                                                                                  'order_item': order_item,
+                                                                                  'additional': additional})
+
+    if request.method == 'POST':
+        form = OrderCorniceAdditionalForm(request.POST)
+        specification = request.POST.get("specification", None)
+        order = request.POST.get("order", None)
+        item = request.POST.get("item", None)
+        quantity = request.POST.get("quantity", None)
+        markup = request.POST.get("markup", None)
+        print(specification, order, item, quantity, markup)
+        if specification != None and order != None and item != None and quantity != None and markup != None:
+            specification_g = Specification.objects.get(pk=specification)
+            order_g = Order.objects.get(pk=order)
+            item_g = CorniceAdditional.objects.get(pk=item)
+            instance = OrderItemCorniceAdditional.objects.create(
+                specification=specification_g,
+                order=order_g,
+                item=item_g,
+                quantity=quantity,
+                markup=markup,
+            )
+            return redirect('main:spec', pk=specification_g.pk)
+    return render(request, 'main/add_cornice_additional_order2.html', context={'form': form})
+
+@login_required(login_url='login')
+def SpecificationCorniceAdditionalRemove(request, id):
+    additional = OrderItemCorniceAdditional.objects.get(pk=id)
+    specification_g = additional.specification
+    additional.delete()
+    return redirect('main:spec', pk=specification_g.pk)
+
 
 @login_required(login_url='login')
 def SpecificationCorniceRemove(request, id):

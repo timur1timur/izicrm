@@ -270,6 +270,36 @@
                                           </td>
                                        </tr>
                                     {% endfor %}
+                                    {% for t in additional %}
+                                       <tr>
+                                          <td class="text-center w-100px"><span class="wd-30 ht-30 tx-gray-450">{{t.get_ordered_display}}</span></td>
+                                          <td>{{ t.specification.room.name }}</td>
+                                          <td>{{t.item.name}}</td>
+                                          <td class="text-center">{{ t.item.price }}</td>
+                                          <td class="text-center">{{ t.quantity }}</td>
+                                          <td class="text-center">{{ t.item.price|mul:t.quantity|floatformat:2 }}</td>
+                                          <td class="text-center table-actions">
+                                              {% if t.ordered < 1 %}
+                                                <a href="{{ t.get_order }}"  title="" data-toggle="tooltip" data-original-title="Заказать"><i data-feather="target" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 1 %}
+                                                <a href="{{ t.get_ordered }}"  title="" data-toggle="tooltip" data-original-title="Заказан"><i data-feather="disc" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 1 %}
+                                                <a href="{{ t.get_stay_out }}"  title="" data-toggle="tooltip" data-original-title="Отсутствует"><i data-feather="alert-circle" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 2 %}
+                                                <a href="{{ t.get_payed }}"  title="" data-toggle="tooltip" data-original-title="Оплачен"><i data-feather="dollar-sign" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered == 3 %}
+                                                <a href="{{ t.get_shipped }}"  title="" data-toggle="tooltip" data-original-title="Отгружен"><i data-feather="arrow-down-circle" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                              {% if t.ordered < 1 %}
+                                                <a href="{{ t.get_stock }}"  title="" data-toggle="tooltip" data-original-title="В наличии"><i data-feather="check-circle" class="wd-16 mr-2"></i></a>
+                                              {% endif %}
+                                          </td>
+                                       </tr>
+                                    {% endfor %}
                                  </tbody>
                               </table>
 

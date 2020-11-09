@@ -47,7 +47,16 @@ def get_markup(markup):
     markup_p = markup*100 - 100
     return f'{round(markup_p,2)} %'
 
+from materials.models import Cornice, CorniceAdditional
 
+@register.filter(name='get_additional')
+def get_additional(cornice):
+    cornice_g = Cornice.objects.get(pk=cornice)
+    if CorniceAdditional.objects.filter(cornice=cornice_g):
+        add_count = CorniceAdditional.objects.filter(cornice=cornice_g).count()
+    else:
+        add_count = 0
+    return add_count
 
 @register.simple_tag()
 def get_profit_position(total, price, quantity):

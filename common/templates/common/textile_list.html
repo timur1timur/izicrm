@@ -5,6 +5,13 @@
 {% if user.is_authenticated %}
     {% if request.user|has_group:"designer" %}
     {% else %}
+        {% if settings.value == 0 %}
+            <button onclick="location.href='{% url 'markup:markup_view' id='1'%}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
+            <i data-feather="eye" class="wd-16 mr-2"></i>Режим дизайнера</button>
+        {% else %}
+            <button onclick="location.href='{% url 'markup:markup_view' id='0'%}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
+            <i data-feather="eye" class="wd-16 mr-2"></i>Режим менеджера</button>
+        {% endif %}
         <button onclick="location.href='{% url 'common:textile_add' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
         <i data-feather="plus" class="wd-16 mr-2"></i>Добавить ткань</button>
         <button onclick="location.href='{% url 'common:collection_textile_add' %}'" type="button" class="btn btn-secondary mr-2 mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force">
@@ -31,9 +38,9 @@
 
                                           {% for c in collection %}
                                             {% if c.name == current_c %}
-                                                <option selected>{{c.name|title}}</option>
+                                                <option selected value="{{c.id}}">{{c.name|title}}</option>
                                             {% else %}
-                                                <option value="{{c.name}}">{{c.name|title}}</option>
+                                                <option value="{{c.id}}">{{c.name|title}}</option>
                                             {% endif %}
                                           {% endfor %}
                                       </select>
@@ -44,7 +51,7 @@
                                          <option value="all">Показать все</option>
                                           {% for m in models %}
                                             {% if m.model == current_m %}
-                                                <option selected>{{m.model|title}}</option>
+                                                <option selected value="{{m.model}}">{{m.model|title}}</option>
                                             {% else %}
                                                 <option value="{{m.model}}">{{m.model|title}}</option>
                                             {% endif %}
@@ -53,11 +60,10 @@
                                         <div class="form-layout-footer">
                                             <button type="button" id="button-textile" class="btn btn-primary mg-l-10">Фильтр</button>
                                         </div>
+
                                     </div>
-
-
-
                                 </div>
+
 
                              </div>
                           </div>
@@ -100,9 +106,9 @@
                                             <td>{{ q.color }}</td>
                                             <td>{{ q.height }}</td>
                                             <td>
-                                                {% if request.user|has_group:"designer" %}
+                                                {% if request.user|has_group:"designer" or settings.value == 1 %}
 
-                                                    {{ q.price_opt|mul:markup|mul:markup_c|floatformat }}
+                                                    {{ q.price_opt|mul:markup|mul:markup_c|floatformat }} {{q.currency}}
 
                                                 {% else %}
                                                     {{ q.price_opt }} {{q.currency}}

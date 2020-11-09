@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import MarkupCommon, MarkupCustomerCategory, MarkupMaterialCategory, MarkupWorkCategory
+from .models import MarkupCommon, MarkupCustomerCategory, MarkupMaterialCategory, MarkupWorkCategory, MarkupSetting
 from .forms import MarkupCustomerCategoryForm, MarkupMaterialCategoryForm, MarkupWorkCategoryForm
 
 
@@ -102,3 +102,13 @@ def MarkupWorkCategoryEdit(request, id):
             item.save(update_fields=['markup', 'source_t'])
             return redirect('markup:markup_list')
         return render(request, 'markup/markup_edit', context={'form': form})
+
+def MarkupViewChange(request, id):
+    settings = MarkupSetting.objects.get(name='markup_view')
+    if int(id) == 1:
+        settings.value = 1
+        settings.save(update_fields=['value'])
+    elif int(id) == 0:
+        settings.value = 0
+        settings.save(update_fields=['value'])
+    return redirect(request.META.get('HTTP_REFERER'))
