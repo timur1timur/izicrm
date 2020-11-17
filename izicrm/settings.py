@@ -127,8 +127,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
 
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://user:EFzb2xAnzqI0cnb2PuKBXwuQdIudosyd@redis-18055.c242.eu-west-1-2.ec2.cloud.redislabs.com:18055'
+CELERY_RESULT_BACKEND = 'redis://redis-18055.c242.eu-west-1-2.ec2.cloud.redislabs.com:18055'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'

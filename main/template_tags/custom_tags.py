@@ -75,3 +75,26 @@ def get_storage_item(id):
     else:
         result = storage_item.quantity
     return result
+
+from markup.models import MarkupCurrency
+
+@register.simple_tag()
+def get_currency():
+    usd = MarkupCurrency.objects.get(name='USD')
+    eur = MarkupCurrency.objects.get(name='EUR')
+    f = f'USD: {round(usd.value,2)} руб  EUR: {round(eur.value,2)} руб'
+    return f
+
+
+
+
+@register.filter(name='get_currency_price')
+def get_currency_price(price, type):
+    if type == 1:
+        usd = MarkupCurrency.objects.get(name='USD')
+        f_price = float(price) * float(usd.value)*1.03
+    elif type == 2:
+        eur = MarkupCurrency.objects.get(name='EUR')
+        f_price = float(price) * float(eur.value) * 1.03
+
+    return round(f_price, 2)

@@ -23,11 +23,12 @@
                                                 <div class="col-sm-6">
 
                                                    <div class="form-group">
-                                                       <label class="form-control-label tx-right">Тип:</label>
+                                                       <label class="form-control-label tx-right">Коллекция:</label>
                                                       <select id="foo-filter-status" class="custom-select custom-select-sm">
                                                          <option value="">Показать все</option>
-                                                         <option value="Текстиль">Текстиль</option>
-                                                         <option value="Карнизы">Карнизы</option>
+                                                        {% for c in collection %}
+                                                            <option value="{{c.item.collection.name}}">{{c.item.collection.name}}</option>
+                                                        {% endfor %}
 
                                                       </select>
                                                    </div>
@@ -44,13 +45,13 @@
                                           <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="50">
                                               <thead class="tx-10 tx-uppercase">
                                                  <tr>
-                                                     <th>Тип</th>
-                                                     <th>Позиция</th>
-                                                     <th>Поставщик</th>
+                                                     <th>Коллекция</th>
+                                                     <th>Модель/Цвет</th>
                                                      <th>Количество</th>
                                                      <th>Зарезервировано</th>
                                                      <th>Доступно</th>
                                                      <th>Закупочная цена (средняя)</th>
+                                                     <th>Цена фирмы</th>
                                                      <th>Дата добавления</th>
                                                      <th>Действия</th>
                                                  </tr>
@@ -59,9 +60,8 @@
                                                 {% load mathfilters %}
                                                 {% for q in orders %}
                                                     <tr class="table table-bordered table-hover">
-                                                        <td>{{q.type_p}}</td>
-                                                        <td>{{q.item.collection}} {{q.item.model}} {{q.item.color}}</td>
-                                                        <td>{{q.item.manufacturer.name}}</td>
+                                                        <td>{{q.item.collection}}</td>
+                                                        <td>{{q.item.model}} {{q.item.color}}</td>
                                                         <td>{{q.quantity}}</td>
                                                         <td>
                                                             {% for r in reserve %}
@@ -75,9 +75,11 @@
                                                             {{ storage_result }}
                                                         </td>
                                                         <td>{{q.price}}</td>
+                                                        <td>{{q.price_f}}</td>
                                                         <td>{{q.date_created|date:'d.m.Y H:i'}}</td>
 
                                                         <td class="tx-right">
+                                                            <a href="{% url 'storage:edit_textile' id=q.id%}" title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16"></i></a>
                                                             <a href="{% url 'storage:remove_textile' id=q.id%}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
                                                         </td>
 

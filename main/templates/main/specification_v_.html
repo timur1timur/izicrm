@@ -37,8 +37,8 @@
                                           {% for t in textile %}
                                              <tr>
                                                 <td>{{t.item.collection}} {{t.item.model}} {{t.item.color}}</td>
-                                                <td>{{ t.quantity }} {{ t.item.type_i }}</td>
-                                                <td>{{ t.total_price }} {{t.item.currency }}</td>
+                                                <td>{{ t.quantity }} м.</td>
+                                                <td>{{ t.total_price }} руб.</td>
 
                                                 <td><a href="{% url 'main:sp_edit_textile' id=t.id %}" title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16"></i></a></td>
                                                 <td><a href="{{ t.remove_textile }}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>

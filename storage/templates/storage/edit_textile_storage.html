@@ -1,7 +1,7 @@
 {% extends "main/base.html" %}
 
 {% block title %}{% endblock %}
-{% block title_h1 %}Добавить материал к заказу{{ order }}{% endblock %}
+{% block title_h1 %}Редактирование позиции на складе{% endblock %}
 
 
 
@@ -21,7 +21,7 @@
                 <div class="row">
                     <label class="col-sm-4 form-control-label">Материал:</label>
                     <div class="col-sm-6 mg-t-10 mg-sm-t-0">
-                        {{ item.collection }} {{ item.model }} {{ item.color }}
+                        {{ item.item.collection }} {{ item.item.model }} {{ item.item.color }}
                     </div>
                 </div>
                 <div class="row mg-t-20">
@@ -50,7 +50,7 @@
                <div class="row mg-t-30">
                   <div class="col-sm-8">
                      <div class="form-layout-footer">
-                        <button type="Submit" class="btn btn-primary">Добавить</button>
+                        <button type="Submit" class="btn btn-primary">Изменить</button>
                          <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Отменить</a>
                      </div>
                      <!-- form-layout-footer -->

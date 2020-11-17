@@ -55,7 +55,7 @@
                                     </div>
                                     <div class="clearfix">
                                        {% if state.kp_select %}
-                                          <a href="{{ qs.create_kp}}" class="badge badge-dark">Скачать</a>
+                                          <a href="{{ qs.create_kp}}" class="badge badge-dark">Открыть</a>
                                           {% if qs.status == 1 %}
                                              <a href="#" class="badge badge-dark">Выбрать</a>
                                           {% endif %}
@@ -88,7 +88,7 @@
                                     {% endif %}
                                     {% if state.contract_create %}
                                        <div class="clearfix">
-                                          <a href="{{ qs.get_doc}}" class="badge badge-dark">Скачать</a>
+                                          <a href="{% url 'main:contract_view' id=qs.id %}" class="badge badge-dark">Открыть</a>
                                           {% if qs.status == 3 %}
                                              <a href="{{qs.ready_contract}}" class="badge badge-dark">Подписать</a>
                                           {% endif %}

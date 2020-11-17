@@ -58,3 +58,12 @@ class MarkupSetting(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class MarkupCurrency(models.Model):
+
+    name = models.CharField(verbose_name='Название', max_length=100)
+    value = models.FloatField(verbose_name='Значение', default=0)
+
+    def __str__(self):
+        return self.name

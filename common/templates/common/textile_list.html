@@ -56,7 +56,7 @@
                                                 <option value="{{m.model}}">{{m.model|title}}</option>
                                             {% endif %}
                                           {% endfor %}
-                                      </select>
+                                       </select>
                                         <div class="form-layout-footer">
                                             <button type="button" id="button-textile" class="btn btn-primary mg-l-10">Фильтр</button>
                                         </div>
@@ -81,7 +81,7 @@
                                         <th>Коллекция</th>
                                         <th>Модель</th>
                                         <th>Цвет</th>
-                                         <th>Высота</th>
+                                         <th>СМ</th>
                                          <th>Цена</th>
 
                                         {% if request.user|has_group:"designer" %}
@@ -107,11 +107,21 @@
                                             <td>{{ q.height }}</td>
                                             <td>
                                                 {% if request.user|has_group:"designer" or settings.value == 1 %}
-
-                                                    {{ q.price_opt|mul:markup|mul:markup_c|floatformat }} {{q.currency}}
-
+                                                    {% if q.currency == '$' %}
+                                                        {{ q.price_opt|mul:markup|mul:markup_c|floatformat|get_currency_price:1 }} руб. (${{ q.price_opt|mul:markup|mul:markup_c|floatformat }})
+                                                    {% elif q.currency == 'euro' %}
+                                                        {{ q.price_opt|mul:markup|mul:markup_c|floatformat|get_currency_price:2 }} руб. (€{{ q.price_opt|mul:markup|mul:markup_c|floatformat }})
+                                                    {% else %}
+                                                        {{ q.price_opt|mul:markup|mul:markup_c|floatformat }} руб.
+                                                    {% endif %}
                                                 {% else %}
-                                                    {{ q.price_opt }} {{q.currency}}
+                                                    {% if q.currency == '$' %}
+                                                        {{ q.price_opt|get_currency_price:1 }} руб. (${{ q.price_opt }})
+                                                    {% elif q.currency == 'euro' %}
+                                                        {{ q.price_opt|get_currency_price:2 }} руб. (€{{ q.price_opt }})
+                                                    {% else %}
+                                                        {{ q.price_opt }} руб.
+                                                    {% endif %}
                                                 {% endif %}
 
                                             </td>

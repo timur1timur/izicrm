@@ -10,10 +10,11 @@ def Storage(request):
     reserve = StorageItemTextileReserve.objects.all()
     qs = StorageItemTextile.objects.all()
     qc = StorageItemCornice.objects.all()
+    collection = StorageItemTextile.objects.all()
     result_list = sorted(
         chain(qs, qc),
         key=attrgetter('date_created'), reverse=True)
-    return render(request, 'storage/storage.html', context={'orders': result_list, 'reserve': reserve})
+    return render(request, 'storage/storage.html', context={'orders': result_list, 'reserve': reserve, 'collection': collection})
 
 def Reserve(request):
     reserve = StorageItemTextileReserve.objects.all()
@@ -23,18 +24,21 @@ def Reserve(request):
 def TextileReview(request, collection_id, model_id):
     if collection_id != 'all':
         if model_id != 'all':
+            m_id = model_id.replace('%20', ' ')
             get_collection = TextileCollection.objects.get(id=collection_id)
             current_c = get_collection.name
-            qs = Textile.objects.filter(collection=get_collection, model=model_id)
+            qs = Textile.objects.filter(collection=get_collection, model=m_id)
         else:
             get_collection = TextileCollection.objects.get(id=collection_id)
             current_c = get_collection.name
             qs = Textile.objects.filter(collection=get_collection)
+            m_id = 'all'
     else:
         qs = Textile.objects.all()[:100]
         current_c = 'all'
+        m_id = 'all'
 
-    current_m = model_id
+    current_m = m_id
     collection = TextileCollection.objects.all()
     if collection_id != 'all':
         get_collection = TextileCollection.objects.get(id=collection_id)
@@ -60,13 +64,15 @@ def StorageTextileAdd(request, id):
         item = request.POST.get("item", None)
         quantity = request.POST.get("quantity", None)
         price = request.POST.get("price", None)
+        price_f = request.POST.get("price_f", None)
         item_check = StorageItemTextile.objects.filter(item=item)
         if item_check:
             instance = item_check[0]
             instance.price = round((instance.price * instance.quantity + float(price)*float(quantity))/(instance.quantity + float(quantity)),2)
             instance.quantity += float(quantity)
+            instance.price_f = price_f
             instance.date_created = datetime.now()
-            instance.save(update_fields=['quantity', 'price', 'date_created'])
+            instance.save(update_fields=['quantity', 'price', 'price_f', 'date_created'])
             return redirect('storage:storage')
         else:
             if form.is_valid():
@@ -74,6 +80,26 @@ def StorageTextileAdd(request, id):
                 return redirect('storage:storage')
         return render(request, 'storage/add_textile_storage.html', context={'form': form})
 
+
+def StorageTextileEdit(request, id):
+    if request.method == 'GET':
+        prod_g = StorageItemTextile.objects.get(pk=id)
+        form = StorageTextileForm({'item': prod_g.item, 'price': prod_g.price, 'quantity': prod_g.quantity, 'type_p': prod_g.type_p})
+        return render(request, 'storage/edit_textile_storage.html', context={'form': form, 'item': prod_g})
+
+    if request.method == 'POST':
+        form = StorageTextileForm(request.POST)
+        item = request.POST.get("item", None)
+        quantity = request.POST.get("quantity", None)
+        price = request.POST.get("price", None)
+        if quantity != None and price != None:
+            instance = StorageItemTextile.objects.get(pk=id)
+            instance.price = price
+            instance.quantity = quantity
+            instance.date_created = datetime.now()
+            instance.save(update_fields=['quantity', 'price', 'date_created'])
+            return redirect('storage:storage')
+        return render(request, 'storage/edit_textile_storage.html', context={'form': form})
 
 def StorageTextileRemove(request, id):
     prod_name = StorageItemTextile.objects.get(pk=id)

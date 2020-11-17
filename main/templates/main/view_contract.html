@@ -1,0 +1,59 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Просмотр договора к заказу {{order_id.number}}{% endblock %}
+
+
+
+{% block body_content %}
+<div class="page-inner pd-0-force">
+
+               <div class="container">
+                 <div class="row">
+                       <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                           <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Договор</span>
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+                                        {% url "main:contract_get_pdf" id=order_id.id as pdf_url%}
+                                        <a href='#' onclick="location.href='{{pdf_url}}'" class="badge badge-dark" target="_blank">Просмотр</a>
+                                        <a href='#' onclick="printJS('{{pdf_url}}')" class="badge badge-dark">Печать</a>
+                                    </div>
+
+                                 </div>
+                          </div>
+                       </div>
+
+                        <div class="col-md-6 col-lg-6 col-xl-3">
+                          <div class="card mg-b-30">
+                                 <div class="card-body">
+                                    <div class="media d-inline-flex">
+                                       <div>
+                                           <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10 mg-b-2">Приложение 1</span>
+                                       </div>
+                                    </div>
+                                    <div class="clearfix">
+                                        {% url "main:contract_get_pdf" id=order_id.id as pdf_url%}
+                                        <a href='#' onclick="location.href='{{pdf_url}}'" class="badge badge-dark" target="_blank">Просмотр</a>
+                                        <a href='#' onclick="printJS('{{pdf_url}}')" class="badge badge-dark">Печать</a>
+                                    </div>
+
+                                 </div>
+                          </div>
+                       </div>
+                 </div>
+               </div>
+                <div class="row mg-t-30">
+                  <div class="col-sm-8">
+                     <div class="form-layout-footer">
+                        <button type="button" onclick="location.href='{% url 'main:order_view' id=order_id.id%}'" class="btn btn-secondary">Назад</button>
+                     </div>
+                     <!-- form-layout-footer -->
+                  </div>
+                  <!-- col-8 -->
+                </div>
+    <br>
+{% endblock %}

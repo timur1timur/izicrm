@@ -295,18 +295,21 @@ def TextileList(request):
 def TextileListFilter(request, collection_id, model_id):
     if collection_id != 'all':
         if model_id != 'all':
+            m_id = model_id.replace('%20', ' ')
             get_collection = TextileCollection.objects.get(pk=collection_id)
             current_c = get_collection.name
-            qs = Textile.objects.filter(collection=get_collection, model=model_id)
+            qs = Textile.objects.filter(collection=get_collection, model__icontains=m_id)
         else:
             get_collection = TextileCollection.objects.get(pk=collection_id)
             current_c = get_collection.name
             qs = Textile.objects.filter(collection=get_collection)
+            m_id = 'all'
     else:
         qs = Textile.objects.all()[:100]
         current_c = 'all'
+        m_id = 'all'
 
-    current_m = model_id
+    current_m = m_id
     collection = TextileCollection.objects.all()
     if collection_id != 'all':
         get_collection = TextileCollection.objects.get(pk=collection_id)
@@ -386,7 +389,7 @@ def TextileEdit(request, id):
             instance.height = height
             instance.price_opt = price_opt
             instance.save(update_fields=['model', 'color', 'height', 'price_opt'])
-            return redirect('common:textile_list')
+            return redirect('common:textile_filter', collection_id=collection_g.id, model_id=instance.model)
         return render(request, 'common/textile_edit.html', context={'form': form})
 
 

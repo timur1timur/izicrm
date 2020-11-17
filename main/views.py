@@ -448,18 +448,21 @@ def TextileReview(request, id, collection_id, model_id):
 
     if collection_id != 'all':
         if model_id != 'all':
+            m_id = model_id.replace('%20', ' ')
             get_collection = TextileCollection.objects.get(id=collection_id)
             current_c = get_collection.name
-            qs = Textile.objects.filter(collection=get_collection, model=model_id)
+            qs = Textile.objects.filter(collection=get_collection, model=m_id)
         else:
             get_collection = TextileCollection.objects.get(id=collection_id)
             current_c = get_collection.name
             qs = Textile.objects.filter(collection=get_collection)
+            m_id = 'all'
     else:
         qs = Textile.objects.all()[:100]
         current_c = 'all'
+        m_id = 'all'
 
-    current_m = model_id
+    current_m = m_id
     collection = TextileCollection.objects.all()
     if collection_id != 'all':
         get_collection = TextileCollection.objects.get(id=collection_id)
@@ -1036,6 +1039,7 @@ def OfferSelect(request, id):
 
 
 from docxtpl import DocxTemplate
+import convertapi
 
 @login_required(login_url='login')
 def ContractCreateWord(request, id):
@@ -1070,10 +1074,13 @@ def ContractCreateWord(request, id):
 
     doc.render(context)
     doc.save(f)
-
+    convertapi.api_secret = 'JP1PQL3pMArtbl1P'
+    result = convertapi.convert('pdf', {'File': f'{path}'})
+    name_pdf = f'contract_{order_id.number}.pdf'
+    result.file.save(f'{join(settings.MEDIA_ROOT, name_pdf)}')
     contract_file = OrderDoc()
     contract_file.order = order_id
-    contract_file.contract_doc.name = path
+    contract_file.contract_doc.name = join(settings.MEDIA_ROOT, name_pdf)
     contract_file.save()
 
     curr_state = order_id.status
@@ -1085,6 +1092,23 @@ def ContractCreateWord(request, id):
 
     return redirect('main:order_view', id=order_id.pk)
 
+import convertapi
+
+@login_required(login_url='login')
+def ViewContract(request, id):
+    order_id = Order.objects.get(pk=id)
+    doc_contract = OrderDoc.objects.get(order=order_id)
+    convertapi.api_secret = 'JP1PQL3pMArtbl1P'
+    result = convertapi.convert('pdf', {'File': f'{doc_contract.contract_doc}'})
+    result.file.save(f'media/contract_{order_id.number}.pdf')
+    return render(request, 'main/view_contract.html', context={'order_id': order_id})
+
+
+@login_required(login_url='login')
+def ViewContract(request, id):
+    order_id = Order.objects.get(pk=id)
+    return render(request, 'main/view_contract.html', context={'order_id': order_id})
+
 
 @login_required(login_url='login')
 def GetContract(request, id):
@@ -1092,8 +1116,19 @@ def GetContract(request, id):
     contract_date = order_id.date_created.strftime('%Y%m%d')
     doc_contract = OrderDoc.objects.get(order=order_id)
     response = HttpResponse(doc_contract.contract_doc, content_type='text/plain')
-    response['Content-Disposition'] = f'attachment; filename={contract_date}_contract_{order_id.number}.docx'
+    response['Content-Disposition'] = f'attachment; filename={contract_date}_contract_{order_id.number}.pdf'
     return response
+
+
+@login_required(login_url='login')
+def GetContractPDF(request, id):
+    order_id = Order.objects.get(pk=id)
+    obj = OrderDoc.objects.get(order=order_id)
+    contract_date = order_id.date_created.strftime('%Y%m%d')
+    response = HttpResponse(obj.contract_doc, content_type='application/pdf')
+    response['Content-Disposition'] = f'filename={contract_date}_contract_{order_id.number}.pdf'
+    return response
+
 
 
 @login_required(login_url='login')

@@ -373,6 +373,9 @@ class Payment(models.Model):
     def __str__(self):
         return str(self.id)
 
+
+from markup.models import MarkupCurrency
+
 class OrderItemTextile1(models.Model):
     ORDER_STATE = (
         (0, 'Не заказан'),
@@ -412,7 +415,14 @@ class OrderItemTextile1(models.Model):
         super(OrderItemTextile1, self).save(*args, **kwargs)
 
     def total_price(self):
-        t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t
+        usd = MarkupCurrency.objects.get(name='USD')
+        eur = MarkupCurrency.objects.get(name='EUR')
+        if self.item.currency == '$':
+            t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t * float(usd.value) * 1.03
+        elif self.item.currency == 'euro':
+            t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t * float(eur.value) * 1.03
+        else:
+            t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t
         return round(t_price, 2)
 
     def remove_textile(self):
@@ -435,6 +445,7 @@ class OrderItemTextile1(models.Model):
 
     def get_stay_out(self):
         return reverse('manager:textile_stay_out', kwargs={"id": self.pk})
+
 
 
 class OrderItemCorniceAdditional(models.Model):

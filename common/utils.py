@@ -234,3 +234,14 @@ def GetCusPay(order):
         val3 = 0
     return val1, val2, val3
 
+import requests
+
+def get_currency_now():
+    res = requests.get('https://www.cbr-xml-daily.ru/daily_json.js')
+    usd = res.json()['Valute']['USD']['Value']
+    eur = res.json()['Valute']['EUR']['Value']
+    mass = {
+        'usd': round(usd, 2),
+        'eur': round(eur, 2)
+    }
+    return mass
