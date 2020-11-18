@@ -36,15 +36,12 @@ class Textile(models.Model):
     height = models.CharField(verbose_name='Высота', max_length=100, null=True, blank=True)
     price_opt = models.FloatField(verbose_name='Цена отп', null=True, blank=True)
     currency = models.CharField(verbose_name='Валюта', max_length=100, default='руб.', null=True, blank=True)
-    type_i = models.CharField(verbose_name='Тип измерения', max_length=100, default='шт', null=True, blank=True)
+    type_i = models.CharField(verbose_name='Тип измерения', max_length=100, default='м', null=True, blank=True)
     date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
 
     def __str__(self):
         return self.article
 
-    def save(self, *args, **kwargs):
-        self.article = (str(self.collection) + "-" + str(self.model) + "-" + str(self.color))
-        super(Textile, self).save(*args, **kwargs)
 
     def choose_textile(self):
         return reverse('main:sp_add_textile', kwargs={"id": self.pk})
@@ -73,6 +70,16 @@ class CorniceCollection(models.Model):
         return str(self.name).upper()
 
 
+class CorniceAdditional(models.Model):
+    category = models.CharField(verbose_name='Категория', max_length=100, default=None)
+    name = models.CharField(verbose_name='Наименование', max_length=100)
+    type_p = models.CharField(verbose_name='Тип', max_length=100, default=None)
+    price = models.FloatField(verbose_name='Цена', null=True, blank=True)
+    date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.name
+
 #Корнизы
 class Cornice(models.Model):
     article = models.CharField(verbose_name='Артикул', max_length=100, blank=True)
@@ -81,6 +88,7 @@ class Cornice(models.Model):
     model = models.CharField(verbose_name='Модель', max_length=100)
     long = models.IntegerField(verbose_name='Длина, мм')
     price_opt = models.FloatField(verbose_name='Цена отп', null=True, blank=True)
+    additional = models.ManyToManyField(CorniceAdditional, verbose_name='Допы')
     date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
 
     def __str__(self):
@@ -93,13 +101,4 @@ class Cornice(models.Model):
         super(Cornice, self).save(*args, **kwargs)
 
 
-class CorniceAdditional(models.Model):
-    cornice = models.ForeignKey(Cornice, null=True, on_delete=models.SET_NULL, verbose_name='Карниз')
-    category = models.CharField(verbose_name='Категория', max_length=100, default=None)
-    name = models.CharField(verbose_name='Наименование', max_length=100)
-    type_p = models.CharField(verbose_name='Тип', max_length=100, default=None)
-    price = models.FloatField(verbose_name='Цена', null=True, blank=True)
-    date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
 
-    def __str__(self):
-        return self.name

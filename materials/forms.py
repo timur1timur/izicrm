@@ -227,16 +227,10 @@ class CorniceForm(forms.ModelForm):
 class CorniceAdditionalForm(forms.ModelForm):
     class Meta:
         model = CorniceAdditional
-        fields = ['cornice', 'category', 'name', 'type_p', 'price']
+        fields = ['category', 'name', 'type_p', 'price']
 
         widgets = {
-            "cornice": forms.Select(
-                attrs={
-                    "type": "Select",
-                    "class": "custom-select",
 
-                }
-            ),
             "category": forms.TextInput(
                 attrs={
                     "class": "form-control form-control-sm",

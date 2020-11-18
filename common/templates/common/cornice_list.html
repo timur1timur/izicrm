@@ -1,6 +1,10 @@
 {% extends "main/base.html" %}
 
-{% block title_h1 %}Карнизы{% endblock %}
+{% block title_h1 %}
+<a href="{% url 'common:cornice_list'%}">Карнизы</a>/<a href="{% url 'common:cornice_list'%}">Допы</a>
+
+
+{% endblock %}
 {% block breadcrumb_buttons %}
 {% if user.is_authenticated %}
     {% if request.user|has_group:"designer" %}

@@ -404,7 +404,6 @@ def TextileRemove(request, id):
 def CorniceList(request):
     qs = Cornice.objects.all()
     collection = CorniceCollection.objects.all()
-    additional = CorniceAdditional.objects.all()
     markup = MarkupMaterialCategory.objects.get(source_t=1)
     markup_c = MarkupCommon.objects.get(name='Общая')
     settings = MarkupSetting.objects.get(name='markup_view')
@@ -435,7 +434,7 @@ def CorniceAdd(request):
             instance.manufacturer = manufacturer_obj
             instance.collection = collection_obj
             instance.save()
-            return redirect('common:cornice_additional', id=instance.pk)
+            return redirect('common:cornice_list')
         return render(request, 'common/cornice_create.html', context={'form': form})
 
 
@@ -471,9 +470,8 @@ def CorniceAdditionalView(request, id):
 def CorniceAdditionalEdit(request, id):
     if request.method == 'GET':
         additional = CorniceAdditional.objects.get(pk=id)
-        form = CorniceAdditionalForm({'cornice': additional.cornice, 'category': additional.category, 'name': additional.name, 'type_p': additional.type_p, 'price': additional.price})
-        return render(request, 'common/cornice_additional_edit.html', context={'form': form,
-                                                                               'cornice': additional.cornice})
+        form = CorniceAdditionalForm({'category': additional.category, 'name': additional.name, 'type_p': additional.type_p, 'price': additional.price})
+        return render(request, 'common/cornice_additional_edit.html', context={'form': form})
 
     if request.method == 'POST':
         form = CorniceAdditionalForm(request.POST)

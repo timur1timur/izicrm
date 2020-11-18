@@ -3,6 +3,7 @@ import openpyxl
 import csv
 import datetime
 from materials.models import TextileManufact, TextileCollection, Textile
+from materials.utils import transliterate
 import os
 
 
@@ -12,12 +13,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         print(os.getcwd())
-        wb = openpyxl.load_workbook(filename='material.xlsx')
-        sheet = wb['kado']
+        wb = openpyxl.load_workbook(filename='materials/mat.xlsx')
+        sheet = wb['Sinstroy&mebel-art']
         i = 2
         y = 2
         z = 2
-        max_count = 48
+        max_count = 208
         while i < max_count:
             supplier = sheet[f'A{i}'].value
             collection = sheet[f'B{i}'].value
@@ -62,9 +63,14 @@ class Command(BaseCommand):
             base_collections = TextileCollection.objects.get(name=collection)
 
             if Textile.objects.get_or_create(manufacturer=base_supplier, collection=base_collections,
-                                             designation=designation, model=model, color=color,
+                                             model=model, color=color,
                                              height=height, price_opt=price):
-                print(z, model, color, height, price)
+                instance = Textile.objects.get(manufacturer=base_supplier, collection=base_collections,
+                                               model=model, color=color,
+                                               height=height, price_opt=price)
+                instance.article = transliterate(str(collection)[0]).upper() + transliterate(str(model)[0]).upper() + str(instance.pk)
+                instance.save(update_fields=['article'])
+                print(z, instance.article, model, color, height, price)
             z += 1
 
 
@@ -72,8 +78,10 @@ class Command(BaseCommand):
 
 
 
-
-        # obj = Textile.objects.filter(date_created__gte='2020-10-29')
-        # for ob in obj:
-        #     print(ob.id, ob.article)
-        #     ob.delete()
+    #     obj = Textile.objects.filter(date_created__gte='2020-10-29')
+    #
+    #
+    #     obj = Textile.objects.filter(manufacturer__name='Дом Каро')
+    #     for ob in obj:
+    #         print(ob.id, ob.article)
+    #         ob.delete()
