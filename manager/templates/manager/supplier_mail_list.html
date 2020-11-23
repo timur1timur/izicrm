@@ -1,0 +1,37 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Отправленные заказы поставщику{% endblock %}
+
+
+
+{% block body_content %}
+
+
+                  <!--================================-->
+                  <!-- Start Left sidebar -->
+
+                  <div class="col-lg-12 email-right-sidebar">
+                     <div class="card bd-r-0-force bd-t-0-force bd-b-0-force">
+                        <div class="card-body pd-0">
+
+                           <div class="table-responsive">
+                              <table class="table table-hover mb-0">
+                                 <tbody>
+                                    {% for m in mail %}
+                                       <tr>
+                                          <td class="wd-15p">{{m.email}}</td>
+                                          <td><a href="{% url 'manager:supplier_mail_view' id=m.id%}"><span class="badge badge-outline-info mr-2">{{m.type_p}}</span>{{m.subject}}</a></td>
+                                          <td class="wd-15p">
+                                             <p class="mb-0 tx-10 tx-gray-500">{{m.date_created|date:'d/m/Y H:m:s'}}</p>
+                                          </td>
+                                       </tr>
+                                    {% endfor %}
+
+                                 </tbody>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <!--/ End email-rightbar -->
+{% endblock %}

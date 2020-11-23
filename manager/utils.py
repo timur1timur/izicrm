@@ -11,7 +11,7 @@ from email.mime.audio import MIMEAudio
 from email.mime.multipart import MIMEMultipart
 import datetime
 from orders.models import SupplierOrder, Order
-
+import imaplib
 
 
 def send_email(addr_to, msg_subj, msg_text, files):

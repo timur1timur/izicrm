@@ -1,0 +1,61 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Просмотр сообщения{% endblock %}
+
+
+
+{% block body_content %}
+<div class="page-inner pd-0-force mg-0-force ht-100vh bg-white">
+               <div class="row no-gutters wd-100p clearfix">
+                  <!--================================-->
+                  <!-- Start Left sidebar -->
+                  <!--================================-->
+
+                  <div class="col-lg-9 email-right-sidebar">
+                     <div class="card bd-r-0-force bd-t-0-force bd-b-0-force">
+                        <div class="card-body">
+
+                           <div class="pd-y-15 mg-t-15 bd-b">
+                              <div class="row">
+                                 <div class="col-md-6 toolbar-left">
+                                    <!--Sender Information-->
+                                    <div class="d-flex">
+
+                                       <div class="text-left">
+                                          <div class="tx-semibold">{{mail.subject}}</div>
+                                          <span class="tx-12 tx-gray-500">{{mail.email}}</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="col-md-6 text-md-right hidden-xs">
+                                    <!--Details Information-->
+                                    <p class="mg-0"><small class="tx-gray-500">{{mail.date_created|date:'d/m/Y H:m:s'}}</small></p>
+
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row mg-t-20 mg-b-15">
+                              <div class="col-md-12">
+                                 <div class="mg-b-20 bd-b">
+                                    {{mail.text}}
+                                 </div>
+                              </div>
+
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <!--/ End email-rightbar -->
+               </div>
+            </div>
+            <div class="row mg-t-30">
+               <div class="col-sm-8">
+                  <div class="form-layout-footer">
+                     <a href="{% url 'manager:supplier_mail_list'%}" class="btn btn-secondary">К списку сообщений</a>
+                  </div>
+                  <!-- form-layout-footer -->
+               </div>
+               <!-- col-8 -->
+            </div>
+<br>
+{% endblock %}

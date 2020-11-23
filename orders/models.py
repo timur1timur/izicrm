@@ -769,8 +769,11 @@ class SupplierOrderCornice(models.Model):
 
 
 class SupplierMail(models.Model):
-    supplier = models.ForeignKey(TextileManufact, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Поставщик')
+    email = models.CharField(verbose_name='email', max_length=100, blank=True)
     subject = models.CharField(verbose_name='Тема письма', max_length=100, blank=True)
+    text = models.CharField(verbose_name='Текст письма', max_length=1000, blank=True)
+    type_p = models.CharField(verbose_name='Тип', max_length=1000, blank=True)
+
     date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
 
     def __str__(self):

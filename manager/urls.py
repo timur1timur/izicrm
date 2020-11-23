@@ -8,7 +8,7 @@ from .views import M_OrderView, M_OrderViewD, SupplierOrderView, SupplierOrderSe
     M_SoglSuccess, M_SoglDeny, M_SoglView, SupplierCorniceAddition, M_CorniceAdditionOrderedF, M_CorniceAdditionalPayedF, \
     M_CorniceAdditionalShipped, M_CorniceAdditionalStock, M_CorniceAdditionalStayOut, m_check_price, \
     m_check_price_cornice, m_check_price_additional, M_SupplierOrderedTextileEdit, M_SupplierOrderedCorniceEdit, \
-    M_SupplierOrderedAdditEdit
+    M_SupplierOrderedAdditEdit, SupplierMailList, SupplierMailView
 
 
 app_name = 'manager'
@@ -45,6 +45,9 @@ urlpatterns = [
     path('assembly/order/<id>/', M_AssemblyPayedF, name="assembly_ordered"),
     path('hanging/order/<id>/', M_HangingPayedF, name="hanging_ordered"),
     path('delivery/order/<id>/', M_DeliveryPayedF, name="delivery_ordered"),
+
+    path('supplier/mail/list/', SupplierMailList, name="supplier_mail_list"),
+    path('supplier/mail/view/<id>/', SupplierMailView, name="supplier_mail_view"),
 
     path('supplier/orders/', M_SupplierOrders, name="supplier_orders"),
     path('supplier/textile_ordered/edit/<id>/', M_SupplierOrderedTextileEdit, name="supplier_ordered_textile_edit"),

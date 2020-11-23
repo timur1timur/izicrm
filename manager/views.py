@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from orders.models import Order, Offer, Room, Specification, OrderItemTextile1, OrderItemCornice, OrderItemWorkSewing, \
     OrderItemWorkAssembly, SupplierOrder, SupplierOrderCornice, Customer, Contract, OrderItemWorkHanging, \
-    OrderItemWorkDelivery, Payment, PaymentCategory, TrackedOrder, OrderItemCorniceAdditional
+    OrderItemWorkDelivery, Payment, PaymentCategory, TrackedOrder, OrderItemCorniceAdditional, SupplierMail
 from .forms import SupplierOrderedTextileForm, PaymentFormManager, SupplierForm, SupplierOrderedCorniceForm
 from .models import SupplierOrderedTextile, SupplierOrderedCornice
 from .utils import SendTo, mailanalytics, M_StatusMaterialsCheck, M_ChangeOrderState, M_GetStatusMaterialOrder, \
@@ -1017,6 +1017,11 @@ def SupplierOrderSend2(request, id):
         print(email, subject, text)
 
         SendTo(text, email, subject)
+        instance = SupplierMail.objects.create(
+            email=email,
+            subject=subject,
+            text=text
+        )
         curr_state = order.status
         if curr_state == 0:
             order.status = 1
@@ -1031,7 +1036,15 @@ def SupplierOrderSend2(request, id):
         return redirect('manager:order_view', id=order.order.pk)
     return render(request, 'manager/supplier_send.html')
 
+@login_required(login_url='login')
+def SupplierMailList(request):
+    mail = SupplierMail.objects.all()
+    return render(request, 'manager/supplier_mail_list.html', context={'mail': mail})
 
+@login_required(login_url='login')
+def SupplierMailView(request, id):
+    mail = SupplierMail.objects.get(pk=id)
+    return render(request, 'manager/supplier_mail_view.html', context={'mail': mail})
 
 @login_required(login_url='login')
 def SupplierOrderSend3(request, id):
@@ -1060,6 +1073,13 @@ def SupplierOrderSend3(request, id):
         text = request.POST['text']
 
         SendTo(text, email, subject)
+        SendTo(text, email, subject)
+        instance = SupplierMail.objects.create(
+            email=email,
+            subject=subject,
+            text=text
+        )
+
         curr_state = order.status
         if curr_state == 0:
             order.status = 1
