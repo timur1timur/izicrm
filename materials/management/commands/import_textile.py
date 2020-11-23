@@ -19,6 +19,7 @@ class Command(BaseCommand):
         for s in sheetnames:
             sheet = wb[s]
             row_count = sheet.max_row
+            print(sheet, row_count)
             i = 2
             y = 2
             z = 2
@@ -34,7 +35,7 @@ class Command(BaseCommand):
                 currency = sheet[f'J{i}'].value
 
                 if TextileManufact.objects.get_or_create(name=supplier):
-                    print(supplier, 'существует')
+                    print(i, supplier, 'существует')
 
                 i += 1
 
@@ -64,7 +65,7 @@ class Command(BaseCommand):
                 currency = sheet[f'J{z}'].value
 
                 base_supplier = TextileManufact.objects.get(name=supplier)
-                base_collections = TextileCollection.objects.get(name=collection)
+                base_collections = TextileCollection.objects.get(manufacturer=base_supplier, name=collection)
 
                 if Textile.objects.get_or_create(manufacturer=base_supplier, collection=base_collections,
                                                  model=transliterate(str(model)), color=color,

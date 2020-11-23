@@ -18,7 +18,7 @@ class TextileManufact(models.Model):
 
 
 class TextileCollection(models.Model):
-    name = models.CharField(verbose_name='Коллекция', max_length=100, blank=True)
+    name = models.CharField(verbose_name='Коллекция', max_length=200, blank=True)
     manufacturer = models.ForeignKey(TextileManufact, null=True, on_delete=models.CASCADE, verbose_name='Производитель', blank=True)
 
     def __str__(self):
