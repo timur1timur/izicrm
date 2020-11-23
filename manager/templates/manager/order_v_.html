@@ -274,7 +274,7 @@
                                        <tr>
                                           <td class="text-center w-100px"><span class="wd-30 ht-30 tx-gray-450">{{t.get_ordered_display}}</span></td>
                                           <td>{{ t.specification.room.name }}</td>
-                                          <td>{{t.item.name}}</td>
+                                          <td>{{t.item.additional.category}}: {{t.item.additional.name}} ({{t.item.type_p}}) - ({{t.color}})</td>
                                           <td class="text-center">{{ t.item.price }}</td>
                                           <td class="text-center">{{ t.quantity }}</td>
                                           <td class="text-center">{{ t.item.price|mul:t.quantity|floatformat:2 }}</td>
@@ -399,72 +399,76 @@
                     <!--END-->
 
                   </div>
-                  <div class="col-xl-4">
-                     <!-- Skills -->
-                     <div class="card mg-b-30">
-                        <div class="card-header tx-14 tx-semibold">Заказ поставщику</div>
-                        <div class="card-body">
-                           {% for supp in supplier_order %}
-                              {% if supp.status == 0 %}
-                                 <div>
-                                    <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10">{{ supp.supplier }}</span>
-                                 </div>
+                      <div class="col-xl-4">
+                         <!-- Skills -->
+                         <div class="card mg-b-30">
+                            <div class="card-header tx-14 tx-semibold">Заказ поставщику</div>
+                            <div class="card-body">
+                               {% for supp in supplier_order %}
+                                  {% if supp.status == 0 %}
+                                     <div>
+                                        <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10">{{ supp.supplier }}</span>
+                                     </div>
 
-                                 <table class="table table-separated">
+                                     <table class="table table-separated">
 
-                                    <tbody>
-                                        {% for item in supp.materials.all %}
-                                              <tr>
+                                        <tbody>
+                                            {% for item in supp.materials.all %}
+                                                  <tr>
 
-                                                    <td>{{item.item.collection}} {{item.item.model}}</td>
-                                                    <td class="text-center">{{item.quantity}}</td>
+                                                        <td>{{item.item.collection}} {{item.item.model}}</td>
+                                                        <td class="text-center">{{item.quantity}}</td>
 
-                                              </tr>
-                                        {% endfor %}
-                                        <tr>
-                                             <td class="text-right">ИТОГ:</td>
-                                             <td class="text-center">294</td>
-                                        </tr>
-                                    </tbody>
-                                 </table>
-                                 <a href="{{ supp.send_order }}" class="card-footer d-block text-center small tx-semibold">ОТПРАВИТЬ</a>
-                              {% endif %}
-                           {% endfor %}
-                            {% for supp in supplier_order_cornice %}
-                              {% if supp.status == 0 %}
-                                 <div>
-                                    <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10">{{ supp.supplier }}</span>
-                                 </div>
+                                                  </tr>
+                                            {% endfor %}
 
-                                 <table class="table table-separated">
+                                        </tbody>
+                                     </table>
+                                     <a href="{{ supp.send_order }}" class="card-footer d-block text-center small tx-semibold">ОТПРАВИТЬ</a>
+                                  {% endif %}
+                               {% endfor %}
+                                {% for supp in supplier_order_cornice %}
+                                  {% if supp.status == 0 %}
+                                     <div>
+                                        <span class="tx-uppercase tx-spacing-1 tx-semibold tx-10">{{ supp.supplier }}</span>
+                                     </div>
 
-                                    <tbody>
-                                        {% for item in supp.materials.all %}
-                                              <tr>
+                                     <table class="table table-separated">
 
-                                                    <td>{{item.item.model}} {{item.item.long}}</td>
-                                                    <td class="text-center">{{item.quantity}}</td>
+                                        <tbody>
+                                            {% for item in supp.materials.all %}
+                                                  <tr>
 
-                                              </tr>
-                                        {% endfor %}
-                                        <tr>
-                                             <td class="text-right">ИТОГ:</td>
-                                             <td class="text-center">294</td>
-                                        </tr>
-                                    </tbody>
-                                 </table>
-                                 <a href="{{ supp.send_order }}" class="card-footer d-block text-center small tx-semibold">ОТПРАВИТЬ</a>
-                              {% endif %}
-                           {% endfor %}
+                                                        <td>{{item.item.model}} {{item.item.long}}</td>
+                                                        <td class="text-center">{{item.quantity}}</td>
 
+                                                  </tr>
+                                            {% endfor %}
+                                            {% for item in supp.additional.all %}
+                                                  <tr>
 
-                        </div>
-                     </div>
-                     <!-- / Skills -->
+                                                        <td>
+                                                            {{item.item.additional.category}}: {{item.item.additional.name}} ({{item.item.type_p}}) - ({{item.color}})
+                                                        </td>
+                                                        <td class="text-center">{{item.quantity}}</td>
 
+                                                  </tr>
+                                            {% endfor %}
+
+                                        </tbody>
+                                     </table>
+                                     <a href="{{ supp.send_order }}" class="card-footer d-block text-center small tx-semibold">ОТПРАВИТЬ</a>
+                                  {% endif %}
+                               {% endfor %}
 
 
-                  </div>
+                            </div>
+                         </div>
+                         <!-- / Skills -->
+
+
+
+                      </div>
                </div>
 
             </div>

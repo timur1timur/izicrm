@@ -4,9 +4,9 @@ from orders.models import Customer, Payment, Order, Contract, Offer, OrderItemTe
 from manager.models import SupplierOrderedTextile, SupplierOrderedCornice
 from orders.forms import CustomerForm, PaymentForm
 from materials.models import TextileManufact, CorniceManufact, Textile, Cornice, TextileCollection, CorniceCollection, \
-    CorniceAdditional
+    CorniceAdditional, CorniceCollectionColor, CorniceAdditionalOptions
 from materials.forms import TextileManufactForm, CorniceManufactForm, TextileForm, CorniceForm, TextileCollectionForm, \
-    CorniceCollectionForm, CorniceAdditionalForm
+    CorniceCollectionForm, CorniceAdditionalForm, CorniceCollectionColorForm, CorniceAdditionalOptionsForm
 from works.models import Work, TypeWork
 from works.forms import WorkForm
 from markup.models import MarkupWorkCategory, MarkupCommon, MarkupMaterialCategory, MarkupSetting
@@ -439,74 +439,123 @@ def CorniceAdd(request):
 
 
 @login_required(login_url='login')
-def CorniceAdditionalView(request, id):
+def CorniceAdditionalList(request):
+    additional = CorniceAdditional.objects.all()
+    collection = CorniceCollection.objects.all()
+    return render(request, 'common/cornice_additional_list.html', context={'additional': additional, 'collection': collection})
+
+@login_required(login_url='login')
+def CorniceAdditionalAdd(request):
     if request.method == 'GET':
-        cornice = Cornice.objects.get(pk=id)
-        form = CorniceAdditionalForm({'cornice': cornice})
-        return render(request, 'common/cornice_additional_create.html', context={'form': form, 'cornice': cornice})
+        form = CorniceAdditionalForm()
+        return render(request, 'common/cornice_additional_create.html', context={'form': form})
 
     if request.method == 'POST':
         form = CorniceAdditionalForm(request.POST)
-        cornice = request.POST.get("cornice", None)
+        collection = request.POST.get("collection", None)
         category = request.POST.get("category", None)
         name = request.POST.get("name", None)
-        type_p = request.POST.get("type_p", None)
-        price = request.POST.get("price", None)
 
-        if cornice != None and name != None and price != None:
-            cornice_g = Cornice.objects.get(pk=cornice)
+        if collection != None and name != None and category != None:
+            collection_g = CorniceCollection.objects.get(pk=collection)
             instance = CorniceAdditional.objects.create(
-                cornice=cornice_g,
+                collection=collection_g,
                 category=category,
-                name=name,
-                type_p=type_p,
-                price=price,
+                name=name
             )
             instance.save()
-            return redirect('common:cornice_list')
+            return redirect('common:cornice_additional_list')
         return render(request, 'common/cornice_additional_create.html', context={'form': form})
 
 @login_required(login_url='login')
 def CorniceAdditionalEdit(request, id):
     if request.method == 'GET':
         additional = CorniceAdditional.objects.get(pk=id)
-        form = CorniceAdditionalForm({'category': additional.category, 'name': additional.name, 'type_p': additional.type_p, 'price': additional.price})
-        return render(request, 'common/cornice_additional_edit.html', context={'form': form})
+        form = CorniceAdditionalForm({'category': additional.category, 'name': additional.name})
+        return render(request, 'common/cornice_additional_edit.html', context={'form': form, 'collection': additional.collection.name})
 
     if request.method == 'POST':
         form = CorniceAdditionalForm(request.POST)
         category = request.POST.get("category", None)
         name = request.POST.get("name", None)
-        type_p = request.POST.get("type_p", None)
-        price = request.POST.get("price", None)
 
-        if name != None and price != None:
+        if name != None and category != None:
             instance = CorniceAdditional.objects.get(pk=id)
             instance.category = category
-            instance.type_p = type_p
             instance.name = name
-            instance.price = price
-            instance.save(update_fields=['category', 'type_p', 'name', 'price'])
-            return redirect('common:cornice_additional_list', id=instance.cornice.id)
+            instance.save(update_fields=['category', 'name'])
+            return redirect('common:cornice_additional_list')
         return render(request, 'common/cornice_additional_edit.html', context={'form': form})
 
 @login_required(login_url='login')
 def CorniceAdditionalDelete(request, id):
     additional = CorniceAdditional.objects.get(pk=id)
-    cornice_d = additional.cornice
     additional.delete()
-    return redirect('common:cornice_additional_list', id=cornice_d.id)
+    return redirect('common:cornice_additional_list')
 
 @login_required(login_url='login')
-def CorniceAdditionalList(request, id):
-    cornice_g = Cornice.objects.get(pk=id)
-    additional = CorniceAdditional.objects.filter(cornice=cornice_g)
-    return render(request, 'common/cornice_list_additional.html', context={'additional': additional, 'cornice': cornice_g})
-
 def CorniceAdditionalOrder(request, id):
     cornice_g = Cornice.objects.get(pk=id)
     additional = CorniceAdditional.objects.filter(cornice=cornice_g)
     return render(request, 'common/cornice_list_additional.html', context={'additional': additional, 'cornice': cornice_g})
+
+
+@login_required(login_url='login')
+def CorniceAdditionalOptionsList(request, id):
+    additional = CorniceAdditional.objects.get(pk=id)
+    options = CorniceAdditionalOptions.objects.filter(additional=additional)
+    return render(request, 'common/cornice_additional_options_list.html', context={'additional': additional, 'options': options})
+
+@login_required(login_url='login')
+def CorniceAdditionalOptionsAdd(request, id):
+    if request.method == 'GET':
+        additional = CorniceAdditional.objects.get(pk=id)
+        form = CorniceAdditionalOptionsForm()
+        return render(request, 'common/cornice_additional_options_create.html', context={'form': form, 'additional': additional})
+
+    if request.method == 'POST':
+        form = CorniceAdditionalOptionsForm(request.POST)
+        type_p = request.POST.get("type_p", None)
+        price = request.POST.get("price", None)
+
+        if type_p != None and price != None:
+            additional_g = CorniceAdditional.objects.get(pk=id)
+            instance = CorniceAdditionalOptions.objects.create(
+                additional=additional_g,
+                type_p=type_p,
+                price=price
+            )
+            instance.save()
+            return redirect('common:cornice_additional_options_list', id=additional_g.id)
+        return render(request, 'common/cornice_additional_options_create.html', context={'form': form})
+
+@login_required(login_url='login')
+def CorniceAdditionalOptionsEdit(request, id):
+    if request.method == 'GET':
+        options = CorniceAdditionalOptions.objects.get(pk=id)
+        form = CorniceAdditionalOptionsForm({'additional': options.additional, 'type_p': options.type_p, 'price': options.price})
+        return render(request, 'common/cornice_additional_options_edit.html', context={'form': form, 'options': options})
+
+    if request.method == 'POST':
+        form = CorniceAdditionalOptionsForm(request.POST)
+        type_p = request.POST.get("type_p", None)
+        price = request.POST.get("price", None)
+
+        if type_p != None and price != None:
+            instance = CorniceAdditionalOptions.objects.get(pk=id)
+            instance.type_p = type_p
+            instance.price = price
+            instance.save(update_fields=['type_p', 'price'])
+            instance.save()
+            return redirect('common:cornice_additional_options_list', id=instance.additional.id)
+        return render(request, 'common/cornice_additional_options_create.html', context={'form': form})
+
+@login_required(login_url='login')
+def CorniceAdditionalOptionsRemove(request, id):
+     options = CorniceAdditionalOptions.objects.get(pk=id)
+     additional = options.additional
+     options.delete()
+     return redirect('common:cornice_additional_options_list', id=additional.id)
 
 @login_required(login_url='login')
 def CorniceEdit(request, id):
@@ -543,6 +592,15 @@ def CorniceRemove(request, id):
     qs.delete()
     return redirect('common:cornice_list')
 
+
+@login_required(login_url='login')
+def TextileCollectionList(request):
+    collection = TextileCollection.objects.all()
+    manufactor = TextileManufact.objects.all()
+    return render(request, 'common/textile_collection_list.html', context={'collection': collection, 'manufactor': manufactor})
+
+
+
 @login_required(login_url='login')
 def TextileCollectionAdd(request):
     if request.method == 'GET':
@@ -561,9 +619,42 @@ def TextileCollectionAdd(request):
             )
             instance.manufacturer = manufacturer_obj
             instance.save()
-            return redirect('common:textile_list')
+            return redirect('common:collection_textile_list')
         return render(request, 'common/collection_create.html', context={'form': form})
 
+@login_required(login_url='login')
+def TextileCollectionEdit(request, id):
+    if request.method == 'GET':
+        textile_collection = TextileCollection.objects.get(pk=id)
+        form = TextileCollectionForm({'name': textile_collection.name, 'manufacturer': textile_collection.manufacturer})
+        return render(request, 'common/collection_edit.html', context={'form': form, 'collection': textile_collection.name})
+
+    if request.method == 'POST':
+        form = TextileCollectionForm(request.POST)
+        name = request.POST.get("name", None)
+        manufacturer = request.POST.get("manufacturer", None)
+
+        if name != None and manufacturer != None:
+            manufacturer_obj = TextileManufact.objects.get(pk=manufacturer)
+            instance = TextileCollection.objects.get(pk=id)
+            instance.name = name
+            instance.manufacturer = manufacturer_obj
+            instance.save(update_fields=['name', 'manufacturer'])
+            return redirect('common:collection_textile_list')
+        return render(request, 'common/collection_edit.html', context={'form': form})
+
+@login_required(login_url='login')
+def TextileCollectionRemove(request, id):
+    obj = TextileCollection.objects.get(pk=id)
+    obj.delete()
+    return redirect('common:collection_textile_list')
+
+
+@login_required(login_url='login')
+def CorniceCollectionList(request):
+    collection = CorniceCollection.objects.all()
+    manufactor = CorniceManufact.objects.all()
+    return render(request, 'common/cornice_collection_list.html', context={'collection': collection, 'manufactor': manufactor})
 
 @login_required(login_url='login')
 def CorniceCollectionAdd(request):
@@ -583,8 +674,91 @@ def CorniceCollectionAdd(request):
             )
             instance.manufacturer = manufacturer_obj
             instance.save()
-            return redirect('common:cornice_list')
+            return redirect('common:collection_cornice_list')
         return render(request, 'common/collection_create.html', context={'form': form})
+
+@login_required(login_url='login')
+def CorniceCollectionEdit(request, id):
+    if request.method == 'GET':
+        cornice_collection = CorniceCollection.objects.get(pk=id)
+        form = CorniceCollectionForm({'name': cornice_collection.name, 'manufacturer': cornice_collection.manufacturer})
+        return render(request, 'common/collection_edit.html', context={'form': form, 'collection': cornice_collection.name})
+
+    if request.method == 'POST':
+        form = CorniceCollectionForm(request.POST)
+        name = request.POST.get("name", None)
+        manufacturer = request.POST.get("manufacturer", None)
+
+        if name != None and manufacturer != None:
+            manufacturer_obj = CorniceManufact.objects.get(pk=manufacturer)
+            instance = CorniceCollection.objects.get(pk=id)
+            instance.manufacturer = manufacturer_obj
+            instance.name = name
+            instance.save(update_fields=['name', 'manufacturer'])
+            return redirect('common:collection_cornice_list')
+        return render(request, 'common/collection_edit.html', context={'form': form})
+
+@login_required(login_url='login')
+def CorniceCollectionRemove(request, id):
+    obj = CorniceCollection.objects.get(pk=id)
+    obj.delete()
+    return redirect('common:collection_cornice_list')
+
+
+@login_required(login_url='login')
+def CorniceCollectionColorAdd(request, id):
+    if request.method == 'GET':
+        collection = CorniceCollection.objects.get(pk=id)
+        form = CorniceCollectionColorForm()
+        return render(request, 'common/collection_color_create.html', context={'form': form, 'collection': collection})
+
+    if request.method == 'POST':
+        form = CorniceCollectionForm(request.POST)
+        color = request.POST.get("color", None)
+
+        if color != None:
+            collection_obj = CorniceCollection.objects.get(pk=id)
+            instance = CorniceCollectionColor.objects.create(
+                color=color
+            )
+            collection_obj.color.add(instance)
+            return redirect('common:collection_cornice_list')
+        return render(request, 'common/collection_color_create.html', context={'form': form})
+
+
+@login_required(login_url='login')
+def CorniceCollectionColorEdit(request, id, color_id):
+    if request.method == 'GET':
+        collection = CorniceCollection.objects.get(pk=id)
+        color = CorniceCollectionColor.objects.get(pk=color_id)
+        form = CorniceCollectionColorForm({'color': color.color})
+        return render(request, 'common/collection_color_edit.html', context={'form': form, 'collection': collection})
+
+    if request.method == 'POST':
+        form = CorniceCollectionForm(request.POST)
+        color = request.POST.get("color", None)
+
+        if color != None:
+            collection_obj = CorniceCollection.objects.get(pk=id)
+            instance = CorniceCollectionColor.objects.get(pk=color_id)
+            instance.color = color
+            instance.save(update_fields=['color'])
+            return redirect('common:collection_cornice_color_list', id=collection_obj.id)
+        return render(request, 'common/collection_color_edit.html', context={'form': form})
+
+
+@login_required(login_url='login')
+def CorniceCollectionColorRemove(request, id, color_id):
+    collection = CorniceCollection.objects.get(pk=id)
+    color = CorniceCollectionColor.objects.get(pk=color_id)
+    collection.color.remove(color)
+    return redirect('common:collection_cornice_color_list', id=collection.id)
+
+
+@login_required(login_url='login')
+def CorniceCollectionColorList(request, id):
+    collection = CorniceCollection.objects.get(pk=id)
+    return render(request, 'common/cornice_collection_color_list.html', context={'color': collection})
 
 @login_required(login_url='login')
 def ReportOrders(request):

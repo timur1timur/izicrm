@@ -61,24 +61,41 @@ class CorniceManufact(models.Model):
         self.name = str(self.name).upper()
         super(CorniceManufact, self).save(*args, **kwargs)
 
+class CorniceCollectionColor(models.Model):
+    color = models.CharField(verbose_name='Цвет', max_length=100, blank=True)
+
+    def __str__(self):
+        return str(self.color)
+
 class CorniceCollection(models.Model):
     name = models.CharField(verbose_name='Коллекция', max_length=100, blank=True)
     manufacturer = models.ForeignKey(CorniceManufact, null=True, on_delete=models.CASCADE,
                                      verbose_name='Производитель', blank=True)
+    color = models.ManyToManyField(CorniceCollectionColor, verbose_name='Цвета')
 
     def __str__(self):
-        return str(self.name).upper()
+        return str(self.name)
+
+
 
 
 class CorniceAdditional(models.Model):
+    collection = models.ForeignKey(CorniceCollection, null=True, on_delete=models.CASCADE, verbose_name='Коллекция')
     category = models.CharField(verbose_name='Категория', max_length=100, default=None)
     name = models.CharField(verbose_name='Наименование', max_length=100)
+    date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+class CorniceAdditionalOptions(models.Model):
+    additional = models.ForeignKey(CorniceAdditional, null=True, on_delete=models.CASCADE, verbose_name='Доп')
     type_p = models.CharField(verbose_name='Тип', max_length=100, default=None)
     price = models.FloatField(verbose_name='Цена', null=True, blank=True)
     date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.additional.name
 
 #Корнизы
 class Cornice(models.Model):
@@ -88,7 +105,6 @@ class Cornice(models.Model):
     model = models.CharField(verbose_name='Модель', max_length=100)
     long = models.IntegerField(verbose_name='Длина, мм')
     price_opt = models.FloatField(verbose_name='Цена отп', null=True, blank=True)
-    additional = models.ManyToManyField(CorniceAdditional, verbose_name='Допы')
     date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
 
     def __str__(self):

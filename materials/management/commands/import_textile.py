@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         print(os.getcwd())
-        wb = openpyxl.load_workbook(filename='materials/mat.xlsx')
+        wb = openpyxl.load_workbook(filename='materials/cat.xlsx')
         sheetnames = wb.sheetnames
 
         for s in sheetnames:
@@ -76,6 +76,7 @@ class Command(BaseCommand):
                     instance.save(update_fields=['article'])
                     print(z, instance.article, model, color, height, price)
                 z += 1
+
 
 
 

@@ -1,6 +1,8 @@
 {% extends "main/base.html" %}
 
-{% block title_h1 %}Текстиль{% endblock %}
+{% block title_h1 %}
+<a href="{% url 'common:textile_filter' collection_id='all' model_id='all'%}">Текстиль</a> / <a href="{% url 'common:collection_textile_list'%}">Коллекции</a>
+{% endblock %}
 {% block breadcrumb_buttons %}
 {% if user.is_authenticated %}
     {% if request.user|has_group:"designer" %}
@@ -14,8 +16,6 @@
         {% endif %}
         <button onclick="location.href='{% url 'common:textile_add' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
         <i data-feather="plus" class="wd-16 mr-2"></i>Добавить ткань</button>
-        <button onclick="location.href='{% url 'common:collection_textile_add' %}'" type="button" class="btn btn-secondary mr-2 mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force">
-        <i data-feather="plus" class="wd-16 mr-2"></i>Добавить коллекцию</button>
     {% endif %}
 {% endif %}
 {% endblock %}
@@ -28,7 +28,13 @@
                          <div class="card-body pd-0">
                            <div class="row">
                              <div class="mg-20 form-inline wd-100p">
-                                <div class="col-sm-8">
+                                <div
+                                        {% if current_c == 'all' %}
+                                            class="col-sm-5">
+                                        {% else %}
+                                            class="col-sm-8">
+                                        {% endif %}
+
                                     <div class="input-group mb-3">
                                        <div class="input-group-prepend">
                                           <span class="input-group-text">Коллекция</span>
@@ -44,10 +50,10 @@
                                             {% endif %}
                                           {% endfor %}
                                       </select>
-                                        <div class="input-group-prepend mg-l-10">
+                                        <div class="input-group-prepend mg-l-10" {% if current_c != 'all' %} {%else%} hidden {%endif%}>
                                           <span class="input-group-text">Модель</span>
                                        </div>
-                                       <select id="textile_model" class="custom-select">
+                                       <select id="textile_model" class="custom-select" {% if current_c != 'all' %} {%else%} hidden {%endif%}>
                                          <option value="all">Показать все</option>
                                           {% for m in models %}
                                             {% if m.model == current_m %}

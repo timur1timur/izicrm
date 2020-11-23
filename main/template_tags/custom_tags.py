@@ -23,10 +23,6 @@ def get_discount():
     result = Order.objects.filter(status__lte=3, discount_status=1, discount_view=0).count()
     return result
 
-@register.simple_tag()
-def get_finish_orders():
-    result = Order.objects.filter(status=9).count()
-    return result
 
 @register.simple_tag()
 def get_status_order():
@@ -47,7 +43,7 @@ def get_markup(markup):
     markup_p = markup*100 - 100
     return f'{round(markup_p,2)} %'
 
-from materials.models import Cornice, CorniceAdditional
+from materials.models import Cornice, CorniceAdditional, CorniceAdditionalOptions, Textile
 
 @register.filter(name='get_additional')
 def get_additional(cornice):
@@ -57,6 +53,22 @@ def get_additional(cornice):
     else:
         add_count = 0
     return add_count
+
+
+@register.filter(name='get_textile_count')
+def get_textile_count(collection):
+    textile_count = Textile.objects.filter(collection=collection).count()
+    return textile_count
+
+@register.filter(name='get_cornice_count')
+def get_cornice_count(collection):
+    cornice_count = Cornice.objects.filter(collection=collection).count()
+    return cornice_count
+
+@register.filter(name='get_additional_options_count')
+def get_additional_options_count(additional):
+    options_count = CorniceAdditionalOptions.objects.filter(additional=additional).count()
+    return options_count
 
 @register.simple_tag()
 def get_profit_position(total, price, quantity):
@@ -98,3 +110,44 @@ def get_currency_price(price, type):
         f_price = float(price) * float(eur.value) * 1.03
 
     return round(f_price, 2)
+
+
+from orders.models import Room, Specification, OfferVersion, Offer, OrderItemWorkSewing, OrderItemWorkAssembly, \
+    OrderItemWorkHanging, OrderItemWorkDelivery
+
+@register.filter(name='get_f_order')
+def get_f_order(id):
+    order = Order.objects.get(pk=id)
+    work = 0
+    if order.status == 7:
+        mass = []
+        offers = Offer.objects.filter(order=order)
+        for offer in offers:
+            mass.append(offer.version.version)
+        sewing = OrderItemWorkSewing.objects.filter(order=order, version=mass[0]).count()
+        assembly = OrderItemWorkAssembly.objects.filter(order=order, version=mass[0]).count()
+        hanging = OrderItemWorkHanging.objects.filter(order=order, version=mass[0]).count()
+        delivery = OrderItemWorkDelivery.objects.filter(order=order, version=mass[0]).count()
+        work += sewing+assembly+hanging+delivery
+    return work
+
+@register.simple_tag()
+def get_finish_orders():
+    result = Order.objects.filter(status=9).count()
+    all_orders = Order.objects.filter(status=8)
+    count_n = 0
+
+    for ord in all_orders:
+        work = 0
+        mass = []
+        offers = Offer.objects.filter(order=ord)
+        for offer in offers:
+            mass.append(offer.version.version)
+        sewing = OrderItemWorkSewing.objects.filter(order=ord, version=mass[0]).count()
+        assembly = OrderItemWorkAssembly.objects.filter(order=ord, version=mass[0]).count()
+        hanging = OrderItemWorkHanging.objects.filter(order=ord, version=mass[0]).count()
+        delivery = OrderItemWorkDelivery.objects.filter(order=ord, version=mass[0]).count()
+        work += sewing + assembly + hanging + delivery
+        if work == 0:
+            count_n += 1
+    return result+count_n

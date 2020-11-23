@@ -6,7 +6,7 @@ class SupplierOrderedTextileForm(forms.ModelForm):
 
     class Meta:
         model = SupplierOrderedTextile
-        fields = ['order', 'item', 'price', 'receipt', 'status']
+        fields = ['order', 'item', 'price', 'receipt', 'status', 'date_shipped']
         widgets = {
             "item": forms.Select(
                 attrs={
@@ -21,6 +21,12 @@ class SupplierOrderedTextileForm(forms.ModelForm):
                 }
             ),
             "receipt": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Введите номер счета"
+                }
+            ),
+            "date_shipped": forms.TextInput(
                 attrs={
                     "class": "form-control form-control-sm",
                     "placeholder": "Введите номер счета"
@@ -33,9 +39,15 @@ class SupplierOrderedCorniceForm(forms.ModelForm):
 
     class Meta:
         model = SupplierOrderedCornice
-        fields = ['order', 'item', 'price', 'receipt', 'status']
+        fields = ['order', 'item', 'additional', 'price', 'receipt', 'status', 'date_shipped']
         widgets = {
             "item": forms.Select(
+                attrs={
+                    "type": "Select",
+                    "class": "custom-select",
+                }
+            ),
+            "additional": forms.Select(
                 attrs={
                     "type": "Select",
                     "class": "custom-select",
@@ -51,6 +63,12 @@ class SupplierOrderedCorniceForm(forms.ModelForm):
                 attrs={
                     "class": "form-control form-control-sm",
                     "placeholder": "Введите номер счета"
+                }
+            ),
+            "date_shipped": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Введите дату отгрузки"
                 }
             )
         }

@@ -328,7 +328,7 @@ class OrderCorniceForm(forms.ModelForm):
 class OrderCorniceAdditionalForm(forms.ModelForm):
     class Meta:
         model = OrderItemCorniceAdditional
-        fields = ['specification', 'order', 'item', 'quantity', 'markup']
+        fields = ['specification', 'order', 'item', 'quantity', 'color', 'markup']
         widgets = {
             "quantity": forms.TextInput(
                 attrs={
@@ -336,6 +336,11 @@ class OrderCorniceAdditionalForm(forms.ModelForm):
                 }
             ),
             "item": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                }
+            ),
+            "color": forms.TextInput(
                 attrs={
                     "class": "form-control form-control-sm",
                 }

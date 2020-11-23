@@ -143,7 +143,7 @@ def mailanalytics(order1, email1):
     return finish_flag
 
 
-from orders.models import Offer, OrderItemTextile1, OrderItemCornice
+from orders.models import Offer, OrderItemTextile1, OrderItemCornice, OrderItemCorniceAdditional
 
 
 def M_StatusMaterialsCheck(order):
@@ -151,19 +151,25 @@ def M_StatusMaterialsCheck(order):
     offer_version = offer.version.get_version_display()
     textile_all = OrderItemTextile1.objects.filter(order=order, version=offer_version)
     cornice_all = OrderItemCornice.objects.filter(order=order, version=offer_version)
-    return [textile_all.count(), cornice_all.count()]
+    additional_all = OrderItemCorniceAdditional.objects.filter(order=order, version=offer_version)
+    return [textile_all.count(), cornice_all.count()+additional_all.count()]
 
 def M_GetStatusMaterialOrder(order, state):
     offer = Offer.objects.get(order=order)
     offer_version = offer.version.get_version_display()
     textile_all = OrderItemTextile1.objects.filter(order=order, version=offer_version)
     cornice_all = OrderItemCornice.objects.filter(order=order, version=offer_version)
+    additional_all = OrderItemCorniceAdditional.objects.filter(order=order, version=offer_version)
     textile_curr = textile_all.filter(ordered=state).count()
     textile_stock = textile_all.filter(ordered=5).count()
     cornice_curr = cornice_all.filter(ordered=state).count()
     cornice_stock = cornice_all.filter(ordered=5).count()
+    additional_curr = additional_all.filter(ordered=state).count()
+    additional_stock = additional_all.filter(ordered=5).count()
+
     textile_curr += textile_stock
-    cornice_curr += cornice_stock
+    cornice_curr += (cornice_stock + additional_curr + additional_stock)
+
     return [textile_curr, cornice_curr]
 
 def M_ChangeOrderState(order, state, state1, state2):

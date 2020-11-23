@@ -1,0 +1,90 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}
+<a href="{% url 'common:cornice_list' %}">Карнизы</a> / <a href="{% url 'common:cornice_additional_list'%}">Допы</a> / <a href="{% url 'common:collection_cornice_list'%}">Коллекции</a>
+{% endblock %}
+{% block breadcrumb_buttons %}
+{% if user.is_authenticated %}
+    {% if request.user|has_group:"designer" %}
+    {% else %}
+        <button onclick="location.href='{% url 'common:cornice_additional_add' %}'" type="button" class="btn btn-secondary mr-2 mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force">
+        <i data-feather="plus" class="wd-16 mr-2"></i>Добавить доп</button>
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block body_content %}
+                     <!-- Filtering FooTable Start -->
+                     <!--================================-->
+                     <div class="col-md-12 col-lg-12">
+                        <div class="card mg-b-30">
+
+                           <div class="card-body pd-0">
+                            <div class="row">
+                                 <div class="mg-20 form-inline wd-100p">
+                                    <div class="col-sm-6">
+                                       <div class="form-group">
+                                           <span>Поставщик:</span>
+
+                                          <select id="foo-filter-status" class="custom-select custom-select-sm mg-l-10">
+                                             <option value="">Показать все</option>
+                                              {% for c in collection %}
+                                                <option value="{{c.name}}">{{c.name|title}}</option>
+                                              {% endfor %}
+
+                                          </select>
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-group ft-right">
+                                          <input id="foo-search" type="text" placeholder="Поиск" class="form-control form-control-sm" autocomplete="off">
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="50">
+                                  <thead class="tx-10 tx-uppercase">
+                                     <tr>
+                                         <th>ID</th>
+                                         <th>Коллекция</th>
+                                         <th>Категория</th>
+                                         <th>Наименование</th>
+                                         <th class="tx-center">Варианты</th>
+                                         <th class="tx-right">Действия</th>
+                                     </tr>
+                                  </thead>
+                                  {% load mathfilters %}
+                                 <tbody>
+                                    {% for q in additional %}
+
+                                        <tr class="odd gradeX">
+                                            <td>{{q.id}}</td>
+                                            <td>{{ q.collection.name }}</td>
+                                            <td>{{ q.category }}</td>
+                                            <td>{{ q.name }}</td>
+                                            <td class="tx-center"><a href="{% url 'common:cornice_additional_options_list' id=q.id %}">{{q|get_additional_options_count}}</a></td>
+                                            <td class="tx-right">
+                                                <a href="{% url 'common:cornice_additional_options_add' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Добавить вариант"><i data-feather="plus" class="wd-16 mr-2"></i></a>
+                                                <a href="{% url 'common:cornice_additional_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                <a href="{% url 'common:cornice_additional_remove' id=q.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                 </tbody>
+                                 <tfoot>
+                                    <tr>
+                                       <td colspan="5">
+                                          <div class="ft-right">
+                                             <ul class="pagination"></ul>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </tfoot>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                     <!--/ Filtering FooTable End -->
+{% endblock %}
+

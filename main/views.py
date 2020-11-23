@@ -7,7 +7,8 @@ from orders.models import Specification, OrderItemTextile1, OrderItemCornice, Or
     OrderItemWorkAssembly, Order, Room, Customer, Contract, OfferVersion, Offer, OrderDoc, Payment, \
     OrderItemWorkHanging, OrderItemWorkDelivery, PaymentCategory, OrderItemCorniceAdditional
 from works.models import Work
-from materials.models import Textile, Cornice, TextileCollection, CorniceAdditional
+from materials.models import Textile, Cornice, TextileCollection, CorniceAdditional, CorniceAdditionalOptions, \
+    CorniceCollectionColor
 
 from django.contrib.auth.decorators import login_required
 
@@ -47,7 +48,7 @@ def SpecificationAdd(request, id):
 
         if source != None:
             instance = Specification.objects.create(order=sp.order, room=sp, version=source)
-            return redirect('main:order_view', id=sp.order.pk)
+            return redirect('main:spec', pk=instance.pk)
         return render(request, 'main/create_specification.html', context={'form': bound_form})
 
 @login_required(login_url='login')
@@ -568,47 +569,52 @@ def SpecificationCorniceAdd(request, id, prod_id):
                 quantity=quantity,
                 markup=markup,
             )
-            return redirect('main:sp_review_cornice_additional', id=prod_name.id, order_item_id=instance.id)
+            return redirect('main:spec', pk=sp.pk)
 
 @login_required(login_url='login')
-def SpecificationCorniceAdditionalReview(request, id, order_item_id):
-    order_item = OrderItemCornice.objects.get(pk=order_item_id)
-    cornice_g = Cornice.objects.get(pk=id)
-    additional = CorniceAdditional.objects.filter(cornice=cornice_g)
-    return render(request, 'main/add_cornice_additional_review.html', context={'additional': additional, 'cornice': cornice_g, 'order_item': order_item})
+def SpecificationCorniceAdditionalReview(request, id):
+    sp = Specification.objects.get(pk=id)
+    additional = CorniceAdditionalOptions.objects.all()
+    return render(request, 'main/add_cornice_additional_review.html', context={'additional': additional, 'sp': sp})
 
 @login_required(login_url='login')
-def SpecificationCorniceAdditionalAdd(request, id, prod_id, order_item_id):
+def SpecificationCorniceAdditionalAdd(request, id, prod_id, color_id):
     if request.method == 'GET':
-        order_item = OrderItemCornice.objects.get(pk=order_item_id)
-        additional = CorniceAdditional.objects.get(cornice=id)
-        markup = GetMarkupMaterials(order_item.order, 1)
-        form = OrderCorniceAdditionalForm({'specification': order_item.specification,
-                                           'order': order_item.order,
+        sp = Specification.objects.get(pk=id)
+        additional = CorniceAdditionalOptions.objects.get(pk=prod_id)
+        color = CorniceCollectionColor.objects.get(pk=color_id)
+        markup = GetMarkupMaterials(sp.order, 1)
+        form = OrderCorniceAdditionalForm({'specification': sp,
+                                           'order': sp.order,
                                            'item': additional,
+                                           'color': color,
                                            'markup': markup
                                            })
         return render(request, 'main/add_cornice_additional_order2.html', context={'form': form,
-                                                                                  'order_item': order_item,
-                                                                                  'additional': additional})
+                                                                                  'order': sp.order,
+                                                                                  'additional': additional,
+                                                                                   'color': color})
 
     if request.method == 'POST':
         form = OrderCorniceAdditionalForm(request.POST)
         specification = request.POST.get("specification", None)
         order = request.POST.get("order", None)
         item = request.POST.get("item", None)
+        color = request.POST.get("item", None)
         quantity = request.POST.get("quantity", None)
         markup = request.POST.get("markup", None)
         print(specification, order, item, quantity, markup)
         if specification != None and order != None and item != None and quantity != None and markup != None:
             specification_g = Specification.objects.get(pk=specification)
             order_g = Order.objects.get(pk=order)
-            item_g = CorniceAdditional.objects.get(pk=item)
+            item_g = CorniceAdditionalOptions.objects.get(pk=item)
+            color_g = CorniceCollectionColor.objects.get(pk=color)
             instance = OrderItemCorniceAdditional.objects.create(
                 specification=specification_g,
                 order=order_g,
                 item=item_g,
                 quantity=quantity,
+                color = color_g,
                 markup=markup,
             )
             return redirect('main:spec', pk=specification_g.pk)

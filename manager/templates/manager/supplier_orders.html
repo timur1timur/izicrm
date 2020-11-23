@@ -35,7 +35,6 @@
                                               <thead class="tx-10 tx-uppercase">
                                                  <tr>
                                                     <th>Заказ</th>
-                                                     <th>Дата</th>
                                                      <th>Поставщик</th>
                                                     <th>Тип</th>
                                                     <th>Материал</th>
@@ -43,6 +42,7 @@
                                                      <th>Цена план</th>
                                                      <th>Цена поставки</th>
                                                      <th>Счет-фактура</th>
+                                                     <th>Дата отгрузки</th>
                                                      <th>Статус</th>
 
                                                  </tr>
@@ -52,22 +52,29 @@
                                                 {% for q in orders %}
                                                     <tr class="table table-bordered table-hover">
 
-                                                        <td><a href="{% url 'manager:order_view' q.order.id %}">{{q.order.number}}</a></td>
-                                                        <td>{{q.date_created|date:'d.m.Y H:i'}}</td>
-                                                        <td>{{q.item.item.manufacturer.name}}</td>
+                                                        <td>{{q.order.number}}</td>
+                                                        <td>{{q.item.item.manufacturer.name}} {{q.additional.item.additional.collection.manufacturer.name}}</td>
                                                         <td><span class="badge badge-dark">{{ q.type }}</span></td>
-                                                        <td>{{ q.item.item.collection }} {{ q.item.item.model }} {{ q.item.item.color }}</td>
-                                                        <td>{{ q.item.quantity }}</td>
-                                                        <td>{{ q.item.item.price_opt }}</td>
+                                                        <td>{{ q.item.item.collection }} {{ q.item.item.model }} {{ q.item.item.color }}
+                                                        {{q.additional.item.additional.category}} {{q.additional.item.additional.name}} {{q.additional.item.type_p}}
+                                                        </td>
+                                                        <td>{{ q.item.quantity }} {{q.additional.quantity}}</td>
+                                                        <td>{{ q.item.item.price_opt }} {{q.additional.item.price}}</td>
                                                         <td>{{ q.price }}</td>
                                                         <td>{{ q.receipt }}</td>
+                                                        <td>{{ q.date_shipped }}</td>
                                                         <td>
-                                                            {% if q.item.ordered == 2 %}
-                                                                <span class="badge badge-secondary">{{ q.item.get_ordered_display }}</span>
-                                                            {% elif q.item.ordered == 3 %}
-                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }}</span>
-                                                            {% elif q.item.ordered == 4 %}
-                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }}</span>
+                                                            {% if q.additional %}
+                                                                <a href="{{q.edit_additional}}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                            {% else %}
+                                                                <a href="{{q.edit}}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                            {% endif %}
+                                                            {% if q.item.ordered == 2 or q.additional.ordered == 2 %}
+                                                                <span class="badge badge-secondary">{{ q.item.get_ordered_display }} {{ q.additional.get_ordered_display }}</span>
+                                                            {% elif q.item.ordered == 3 or q.additional.ordered == 3 %}
+                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }} {{ q.additional.get_ordered_display }}</span>
+                                                            {% elif q.item.ordered == 4 or q.additional.ordered == 4 %}
+                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }} {{ q.additional.get_ordered_display }}</span>
                                                             {% endif %}
                                                         </td>
 

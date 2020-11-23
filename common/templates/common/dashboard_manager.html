@@ -201,7 +201,7 @@
                                     <tr>
 
                                        <th>Заказ</th>
-                                       <th class="text-left">Дата</th>
+                                       <th class="text-left">Дата отгрузки</th>
                                        <th class="text-left">Материал</th>
                                         <th class="text-left">Количество</th>
                                        <th class="text-left">Статус</th>
@@ -212,16 +212,18 @@
                                         <tr>
 
                                            <td><a href="{% url 'manager:order_view' q.order.id %}">#{{q.order.number}}</a></td>
-                                            <td class="text-left">{{q.date_created|date:'d.m.Y'}}</td>
-                                           <td class="text-left">{{ q.item.item.collection }} {{ q.item.item.model }} {{ q.item.item.color }}</td>
-                                            <td class="text-center">{{ q.item.quantity }}</td>
+                                            <td class="text-left">{{q.date_shipped}}</td>
+                                           <td class="text-left">{{ q.item.item.collection }} {{ q.item.item.model }} {{ q.item.item.color }}
+                                           {{q.additional.item.additional.category}} {{q.additional.item.additional.name}} {{q.additional.item.type_p}}
+                                           </td>
+                                            <td class="text-center">{{ q.item.quantity }} {{q.additional.quantity}}</td>
                                            <td class="text-left tx-gray-700">
-                                               {% if q.item.ordered == 2 %}
-                                                                <span class="badge badge-secondary">{{ q.item.get_ordered_display }}</span>
-                                                            {% elif q.item.ordered == 3 %}
-                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }}</span>
-                                                            {% elif q.item.ordered == 4 %}
-                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }}</span>
+                                               {% if q.item.ordered == 2 or q.additional.ordered == 2 %}
+                                                                <span class="badge badge-secondary">{{ q.item.get_ordered_display }} {{ q.additional.get_ordered_display }}</span>
+                                                            {% elif q.item.ordered == 3 or q.additional.ordered == 3 %}
+                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }} {{ q.additional.get_ordered_display }}</span>
+                                                            {% elif q.item.ordered == 4 or q.additional.ordered == 4 %}
+                                                                <span class="badge badge-success">{{ q.item.get_ordered_display }} {{ q.additional.get_ordered_display }}</span>
                                                {% endif %}
                                            </td>
                                         </tr>

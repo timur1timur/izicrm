@@ -64,7 +64,7 @@
 
                      <!-- BEGIN -->
                      <div class="card mg-b-30">
-                        {% if cornice %}
+                        {% if cornice or additional %}
                               <div class="card-header d-flex align-items-center justify-content-between">
                                  <h6 class="tx-15 tx-semibold mg-b-0">Карнизы</h6>
                               </div>
@@ -79,38 +79,42 @@
                                                 <td>{{ t.total_price }} руб.</td>
                                                 <td><a href="{{ t.remove_cornice }}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
                                              </tr>
+
+                                             <tr>
+                                                <td>ИТОГ КАРНИЗЫ: {{summ_c}}</td>
+                                             </tr>
+                                          {% endfor %}
+                                       </tbody>
+                                    </table>
+                                 </div>
+                              {% if additional %}
+                                 <div class="col-md-6 col-lg-6">
+                                    <table class="table">
+                                       <tbody>
+                                          {% for t in additional %}
+                                             <tr>
+                                                <td>{{t.item.additional.category}}: {{t.item.additional.name}} ({{t.item.type_p}}) - {{t.color}}</td>
+                                                <td>{{ t.quantity }} шт.</td>
+                                                <td>{{ t.total_price }} руб.</td>
+                                                <td><a href="{% url 'main:sp_remove_cornice_additional' id=t.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
+                                             </tr>
                                           {% endfor %}
                                           <tr>
-                                             <td>ИТОГ КАРНИЗЫ: {{summ_c}}</td>
+                                             <td>ИТОГ ДОПЫ: {{summ_ad}}</td>
                                           </tr>
                                        </tbody>
                                     </table>
                                  </div>
-                                 {% if additional %}
-                                    <div class="col-md-6 col-lg-6">
-                                       <table class="table">
-                                          <tbody>
-                                             {% for t in additional %}
-                                                <tr>
-                                                   <td>{{t.item.name}}</td>
-                                                   <td>{{ t.quantity }} шт.</td>
-                                                   <td>{{ t.total_price }} руб.</td>
-                                                   <td><a href="{% url 'main:sp_remove_cornice_additional' id=t.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
-                                                </tr>
-                                             {% endfor %}
-                                             <tr>
-                                                <td>ИТОГ ДОПЫ: {{summ_ad}}</td>
-                                             </tr>
-                                          </tbody>
-                                       </table>
-                                    </div>
-                                 {% endif %}
+                              {% endif %}
                               </div>
                         {% endif %}
 
                         <div class="card-footer bg-transparent">
                            <nav class="nav nav-with-icon tx-13">
                               <a href="{{ qs.review_cornice }}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить карнизы</a>
+                           </nav>
+                           <nav class="nav nav-with-icon tx-13">
+                              <a href="{% url 'main:sp_review_cornice_additional' id=qs.id %}" class="nav-link pd-0"><span data-feather="plus" class="wd-16"></span> Добавить допы</a>
                            </nav>
                         </div>
                         <!-- card-footer -->

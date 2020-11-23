@@ -11,12 +11,13 @@
                <p class="mg-b-30 tx-gray-700">Введите данные по доп.материалу</p>
 
                <!-- row -->
-               <div class="row mg-t-20">
-                  <label class="col-sm-4 form-control-label">Карниз:</label>
+                <div class="row mg-t-20">
+                  <label class="col-sm-4 form-control-label">Коллекция:</label>
                   <div class="col-sm-8 mg-t-10 mg-sm-t-0">
-                     {{ form.cornice }}
+                     {{ form.collection }}
                   </div>
                </div>
+
                 <div class="row mg-t-20">
                   <label class="col-sm-4 form-control-label">Категория:</label>
                   <div class="col-sm-8 mg-t-10 mg-sm-t-0">
@@ -29,25 +30,12 @@
                      {{ form.name }}
                   </div>
                </div>
-                <div class="row mg-t-20">
-                  <label class="col-sm-4 form-control-label">Тип:</label>
-                  <div class="col-sm-8 mg-t-10 mg-sm-t-0">
-                     {{ form.type_p }}
-                  </div>
-               </div>
-                <div class="row mg-t-20">
-                  <label class="col-sm-4 form-control-label">Цена:</label>
-                  <div class="col-sm-8 mg-t-10 mg-sm-t-0">
-                     {{ form.price }}
-                  </div>
-               </div>
                <!-- row -->
                <div class="row mg-t-30">
                   <div class="col-sm-10">
                      <div class="form-layout-footer">
                          <button type="Submit" class="btn btn-primary">Сохранить</button>
-                         <a href="{% url 'common:cornice_additional' id=cornice.id %}" class="btn btn-secondary">Сохранить и добавить ещё</a>
-                         <a href="{% url 'common:cornice_list' %}" class="btn btn-secondary">Пропустить</a>
+                         <a href="{% url 'common:cornice_list' %}" class="btn btn-secondary">Отменить</a>
                      </div>
                      <!-- form-layout-footer -->
                   </div>

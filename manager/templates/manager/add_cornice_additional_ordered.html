@@ -1,0 +1,72 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Заказ доп.материала у {{manufacturer}} ({{ order }}){% endblock %}
+
+{% block body_content %}
+
+<form method="POST" class="post-form">{% csrf_token %}
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="form-layout form-layout-4">
+                <div class="col-sm-8 mg-t-10 mg-sm-t-0" hidden>
+                    {{ form.order }}  {{ form.additional }} {{ form.status }}
+                </div>
+                <p class="mg-b-30 tx-gray-700">Введите количество материала. {{ cus }}</p>
+                <div class="row">
+                    <label class="col-sm-4 form-control-label">Доп.материал:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                        {{item.item.additional.category}}: {{item.item.additional.name}} ({{item.item.type_p}}) - ({{item.color}})
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Количество:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                        {{ item.quantity }} шт.
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Цена поставщика:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                        <input id="check-price-additional" type="text" class="form-control form-control-sm" name="price" placeholder="Стоимость материала из счета за 1 м.">
+                    </div>
+                </div>
+                <div id="result-price" class="row mg-t-20" hidden>
+                    <label class="col-sm-4 form-control-label">Бюджет:</label>
+                    <div id="result-budget" class="col-sm-6 mg-t-10 mg-sm-t-0">
+
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Счет-фактура:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                        {{ form.receipt }}
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Дата отгрузки:</label>
+                    <div class="col-sm-6 mg-t-10 mg-sm-t-0">
+                        {{ form.date_shipped }}
+                    </div>
+                </div>
+                <br>
+               <!-- row -->
+
+               <!-- row -->
+               <div class="row mg-t-30">
+                  <div class="col-sm-8">
+                     <div class="form-layout-footer">
+                        <button type="Submit" class="btn btn-primary">Добавить</button>
+                         <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Отменить</a>
+                     </div>
+                     <!-- form-layout-footer -->
+                  </div>
+                  <!-- col-8 -->
+               </div>
+            </div>
+            <!-- form-layout -->
+         </div>
+
+    </div>
+ </form>
+</br>
+{% endblock %}

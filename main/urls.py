@@ -29,8 +29,8 @@ urlpatterns = [
 
     path('textile/add/<id>/<prod_id>/', SpecificationTextileAdd, name="sp_add_textile"),
     path('cornice/add/<id>/<prod_id>/', SpecificationCorniceAdd, name="sp_add_cornice"),
-    path('cornice/additional/review/<id>/<order_item_id>/', SpecificationCorniceAdditionalReview, name="sp_review_cornice_additional"),
-    path('cornice/additional/add/<id>/<prod_id>/<order_item_id>/', SpecificationCorniceAdditionalAdd, name="sp_add_cornice_additional"),
+    path('cornice/additional/review/<id>/', SpecificationCorniceAdditionalReview, name="sp_review_cornice_additional"),
+    path('cornice/additional/add/<id>/<prod_id>/<color_id>/', SpecificationCorniceAdditionalAdd, name="sp_add_cornice_additional"),
     path('cornice/additional/remove/<id>/', SpecificationCorniceAdditionalRemove, name="sp_remove_cornice_additional"),
 
     path('sewing/add/<id>/', SpecificationSewingAdd, name="sp_add_sewing"),

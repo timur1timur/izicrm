@@ -196,6 +196,95 @@
         window.location.href = link;
     });
   </script>
+    <script>
+    $("#button-choose-additional").click(function() {
+        var data_id = $(this).attr("data-id")
+        var sp_id = document.getElementById( 'sp-id' );
+        var link = '{% url 'main:sp_add_cornice_additional' 'ID' 'NEWVALUESTUB' 'NEWVALUESTUB2' %}';
+        link = link.replace('NEWVALUESTUB', data_id);
+        link = link.replace('NEWVALUESTUB2', $("#select-color-cornice-" + data_id + "").val());
+        link = link.replace('ID', data_id);
+        window.location.href = link;
+    });
+  </script>
+
+  <script>
+  function ChoiceAdditional(id) {
+      var sp_id = document.getElementById( 'sp-id' );
+      var link = '{% url 'main:sp_add_cornice_additional' 'ID' 'NEWVALUESTUB' 'NEWVALUESTUB2' %}';
+      link = link.replace('NEWVALUESTUB', id);
+      link = link.replace('NEWVALUESTUB2', $("#select-color-cornice-" + id + "").val());
+      link = link.replace('ID', sp_id.textContent);
+      window.location.href = link;
+  }
+  </script>
+
+  <script>
+    $("#check-price-item").on('keyup',function(){
+      var $this = $(this),
+          val = $this.val();
+
+      if(val.length >= 1){
+        var link = 'check_price/PRICE/'
+        link = link.replace('PRICE', val);
+        $.ajax({
+                url: link,
+                datatype: 'json',
+                type: 'GET',
+                success: function(data) {
+
+
+                    $('#result-price').removeAttr('hidden');
+                    $('#result-budget').html('<p class="mg-b-5 tx-gray-500">Цена продажи: '+data.price_c+' руб.</p><p class="mg-b-5 tx-gray-500">Рентабельность: '+data.rent+'%</p><p class="mg-b-5 tx-gray-500">Плюс по заработку: '+data.plus+' руб.</p>')
+                }
+            });
+      }
+    });
+  </script>
+  <script>
+    $("#check-price-cornice").on('keyup',function(){
+      var $this = $(this),
+          val = $this.val();
+
+      if(val.length >= 1){
+        var link = 'check_price_cornice/PRICE/'
+        link = link.replace('PRICE', val);
+        $.ajax({
+                url: link,
+                datatype: 'json',
+                type: 'GET',
+                success: function(data) {
+
+
+                    $('#result-price').removeAttr('hidden');
+                    $('#result-budget').html('<p class="mg-b-5 tx-gray-500">Цена продажи: '+data.price_c+' руб.</p><p class="mg-b-5 tx-gray-500">Рентабельность: '+data.rent+'%</p><p class="mg-b-5 tx-gray-500">Плюс по заработку: '+data.plus+' руб.</p>')
+                }
+            });
+      }
+    });
+  </script>
+  <script>
+    $("#check-price-additional").on('keyup',function(){
+      var $this = $(this),
+          val = $this.val();
+
+      if(val.length >= 1){
+        var link = 'check_price_additional/PRICE/'
+        link = link.replace('PRICE', val);
+        $.ajax({
+                url: link,
+                datatype: 'json',
+                type: 'GET',
+                success: function(data) {
+
+
+                    $('#result-price').removeAttr('hidden');
+                    $('#result-budget').html('<p class="mg-b-5 tx-gray-500">Цена продажи: '+data.price_c+' руб.</p><p class="mg-b-5 tx-gray-500">Рентабельность: '+data.rent+'%</p><p class="mg-b-5 tx-gray-500">Плюс по заработку: '+data.plus+' руб.</p>')
+                }
+            });
+      }
+    });
+  </script>
 
   <!-- footable Script -->
   <script src="/static/main/assets/plugins/footable/footable.all.min.js"></script>

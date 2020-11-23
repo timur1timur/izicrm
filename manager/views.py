@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from orders.models import Order, Offer, Room, Specification, OrderItemTextile1, OrderItemCornice, OrderItemWorkSewing, \
     OrderItemWorkAssembly, SupplierOrder, SupplierOrderCornice, Customer, Contract, OrderItemWorkHanging, \
     OrderItemWorkDelivery, Payment, PaymentCategory, TrackedOrder, OrderItemCorniceAdditional
@@ -45,7 +46,6 @@ def M_OrderViewD(request, id):
     if created:
         qs.user_view = 1
         qs.save()
-    print(request.user.id)
 
     work_quantity = \
         sewing.count() + \
@@ -297,65 +297,123 @@ def SupplierOrderCorniceSend(request, id):
     return redirect('manager:order_view', id=order.order.pk)
 
 @login_required(login_url='login')
-def M_TextileOrder(request, id):
-    qs = OrderItemTextile1.objects.get(pk=id)
-    curr_state = qs.ordered
-    if curr_state == 0:
-        qs.ordered = 1
-        qs.ordered_icon = 1
-        qs.save(update_fields=['ordered', 'ordered_icon'])
-
-    return redirect('manager:order_view', id=qs.order.pk)
-
-@login_required(login_url='login')
-def M_TextileOrdered(request, id):
-    qs = OrderItemTextile1.objects.get(pk=id)
-    curr_state = qs.ordered
-    if curr_state == 1:
-        qs.ordered = 2
-        qs.ordered_icon = 2
-        qs.save(update_fields=['ordered', 'ordered_icon'])
-
-    offer = Offer.objects.get(order=qs.order)
-    offer_version = offer.version.get_version_display()
-    textile_all = OrderItemTextile1.objects.filter(order=qs.order, version=offer_version)
-    textile_curr = textile_all.filter(ordered=2).count()
-
-
-    if textile_curr == textile_all.count():
-        curr_state = qs.order.textile_state
-        if curr_state == 0:
-            qs.order.textile_state = 1
-            qs.order.save(update_fields=['textile_state'])
-
-    M_ChangeOrderState(qs.order, 2, 5, 6)
-
-    return redirect('manager:order_view', id=qs.order.pk)
+def m_check_price(request,id, price_s):
+    item = OrderItemTextile1.objects.get(pk=id)
+    price_c = item.total_price()
+    price_sup = item.quantity * float(price_s)
+    result = round(price_c*100/float(price_sup), 2)
+    rentab = round(((price_c - float(price_sup))/price_c)*100, 2)
+    plus_p = round((price_c - float(price_sup)) - price_c/100*50, 2)
+    print(result)
+    return JsonResponse({'price_c': price_c, 'rent': rentab, 'plus': plus_p})
 
 @login_required(login_url='login')
-def M_TextilePayed(request, id):
-    qs = OrderItemTextile1.objects.get(pk=id)
-    curr_state = qs.ordered
-    if curr_state == 2:
-        qs.ordered = 3
-        qs.ordered_icon = 3
-        qs.save(update_fields=['ordered', 'ordered_icon'])
+def M_TextileOrderedF(request, id):
 
+    if request.method == 'GET':
+        item = OrderItemTextile1.objects.get(pk=id)
+        form = SupplierOrderedTextileForm({'order':item.order, 'item':item, 'status':0})
+        return render(request, 'manager/add_textile_ordered.html',
+                      context={'form': form,
+                               'manufacturer': item.item.manufacturer.name,
+                               'order': item.order.number,
+                               'item': item})
 
-    offer = Offer.objects.get(order=qs.order)
-    offer_version = offer.version.get_version_display()
-    textile_all = OrderItemTextile1.objects.filter(order=qs.order, version=offer_version)
-    textile_curr = textile_all.filter(ordered=3).count()
+    if request.method == 'POST':
+        form = SupplierOrderedTextileForm(request.POST)
+        order = request.POST.get("order", None)
+        item = request.POST.get("item", None)
+        price = request.POST.get("price", None)
+        receipt = request.POST.get("receipt", None)
+        status = request.POST.get("status", None)
+        date_shipped = request.POST.get("date_shipped", None)
 
-    if textile_curr == textile_all.count():
-        curr_state = qs.order.textile_state
-        if curr_state == 1:
-            qs.order.textile_state = 2
-            qs.order.save(update_fields=['textile_state'])
+        if order != None and item != None and price != None and receipt != None and status != None:
+            order_id = Order.objects.get(pk=order)
+            item_id = OrderItemTextile1.objects.get(pk=item)
+            instance = SupplierOrderedTextile.objects.create(
+                order=order_id,
+                item=item_id,
+                price=price,
+                receipt=receipt,
+                status=status,
+                date_shipped=date_shipped
+            )
 
-    M_ChangeOrderState(qs.order, 3, 6, 7)
+            qs = item_id
+            curr_state = qs.ordered
+            if curr_state == 1:
+                qs.ordered = 2
+                qs.ordered_icon = 2
+                qs.save(update_fields=['ordered', 'ordered_icon'])
 
-    return redirect('manager:order_view', id=qs.order.pk)
+            offer = Offer.objects.get(order=qs.order)
+            offer_version = offer.version.get_version_display()
+            textile_all = OrderItemTextile1.objects.filter(order=qs.order, version=offer_version)
+            textile_curr = textile_all.filter(ordered=2).count()
+
+            if textile_curr == textile_all.count():
+                curr_state = qs.order.textile_state
+                if curr_state == 0:
+                    qs.order.textile_state = 1
+                    qs.order.save(update_fields=['textile_state'])
+
+            M_ChangeOrderState(qs.order, 2, 5, 6)
+
+            return redirect('manager:order_view', id=order_id.pk)
+        return render(request, 'manager/add_textile_ordered.html', context={'form': form})
+
+@login_required(login_url='login')
+def M_TextilePayedF(request, id):
+
+    if request.method == 'GET':
+        item = OrderItemTextile1.objects.get(pk=id)
+        category = PaymentCategory.objects.get(name='Оплата поставщику')
+        detail = SupplierOrderedTextile.objects.get(item=id)
+        form = PaymentFormManager({'order': item.order, 'category': category, 'price': detail.price * item.quantity})
+        return render(request, 'manager/payment_create.html',
+                      context={'form': form, 'category': category, 'detail': detail, 'price': detail.price * item.quantity})
+
+    if request.method == 'POST':
+        item = OrderItemTextile1.objects.get(pk=id)
+        form = PaymentFormManager(request.POST)
+        category = request.POST.get("category", None)
+        type_money = request.POST.get("type_money", None)
+        price = request.POST.get("price", None)
+        receipt = request.POST.get("receipt", None)
+        if category != None and type_money != None and price != None and receipt != None:
+            cat = PaymentCategory.objects.get(pk=category)
+            instance = Payment.objects.create(
+                order=item.order,
+                category=cat,
+                type_money=type_money,
+                price=price,
+                receipt=receipt,
+                user=request.user
+            )
+
+            qs = OrderItemTextile1.objects.get(pk=id)
+            curr_state = qs.ordered
+            if curr_state == 2:
+                qs.ordered = 3
+                qs.ordered_icon = 3
+                qs.save(update_fields=['ordered', 'ordered_icon'])
+
+            offer = Offer.objects.get(order=qs.order)
+            offer_version = offer.version.get_version_display()
+            textile_all = OrderItemTextile1.objects.filter(order=qs.order, version=offer_version)
+            textile_curr = textile_all.filter(ordered=3).count()
+
+            if textile_curr == textile_all.count():
+                curr_state = qs.order.textile_state
+                if curr_state == 1:
+                    qs.order.textile_state = 2
+                    qs.order.save(update_fields=['textile_state'])
+
+            M_ChangeOrderState(qs.order, 3, 6, 7)
+
+            return redirect('manager:order_view', id=item.order.pk)
+        return render(request, 'manager/payment_create.html', context={'form': form})
 
 @login_required(login_url='login')
 def M_TextileShipped(request, id):
@@ -436,65 +494,304 @@ def SupplierCornice(request, id):
     return redirect('manager:order_view', id=order.pk)
 
 @login_required(login_url='login')
-def M_CorniceOrder(request, id):
-    qs = OrderItemCornice.objects.get(pk=id)
-    curr_state = qs.ordered
-    if curr_state == 0:
-        qs.ordered = 1
-        qs.ordered_icon = 1
-        qs.save(update_fields=['ordered', 'ordered_icon'])
+def SupplierCorniceAddition(request, id):
+    item = OrderItemCorniceAdditional.objects.get(pk=id)
+    order = item.order
+    supplier = item.item.additional.collection.manufacturer
 
-    return redirect('manager:order_view', id=qs.order.pk)
+    SuppOrder = SupplierOrderCornice.objects.filter(order=order, supplier=supplier).count()
 
-@login_required(login_url='login')
-def M_CorniceOrdered(request, id):
-    qs = OrderItemCornice.objects.get(pk=id)
-    curr_state = qs.ordered
-    if curr_state == 1:
-        qs.ordered = 2
-        qs.ordered_icon = 2
-        qs.save(update_fields=['ordered', 'ordered_icon'])
+    if SuppOrder > 0:
+        check_SuppOrder = SupplierOrderCornice.objects.get(order=order, supplier=supplier)
+        check_SuppOrder.additional.add(item)
+    else:
+        instance = SupplierOrderCornice.objects.create(order=order, supplier=supplier)
+        instance.additional.add(item)
 
-    offer = Offer.objects.get(order=qs.order)
-    offer_version = offer.version.get_version_display()
-    cornice_all = OrderItemCornice.objects.filter(order=qs.order, version=offer_version)
-    cornice_curr = cornice_all.filter(ordered=2).count()
-
-    if cornice_curr == cornice_all.count():
-        curr_state = qs.order.cornice_state
-        if curr_state == 0:
-            qs.order.cornice_state = 1
-            qs.order.save(update_fields=['cornice_state'])
-
-    M_ChangeOrderState(qs.order, 2, 5, 6)
-
-    return redirect('manager:order_view', id=qs.order.pk)
+    # render(request, 'manager/index.html', context={})
+    return redirect('manager:order_view', id=order.pk)
 
 @login_required(login_url='login')
-def M_CornicePayed(request, id):
-    qs = OrderItemCornice.objects.get(pk=id)
-    curr_state = qs.ordered
-    if curr_state == 2:
-        qs.ordered = 3
-        qs.ordered_icon = 3
-        qs.save(update_fields=['ordered', 'ordered_icon'])
+def m_check_price_additional(request ,id, price_s):
+    item = OrderItemCorniceAdditional.objects.get(pk=id)
+    price_c = item.total_price()
+    price_sup = item.quantity * float(price_s)
+    result = round(price_c*100/float(price_sup), 2)
+    rentab = round(((price_c - float(price_sup))/price_c)*100, 2)
+    plus_p = round((price_c - float(price_sup)) - price_c/100*50, 2)
+    print(result)
+    return JsonResponse({'price_c': price_c, 'rent': rentab, 'plus': plus_p})
 
+@login_required(login_url='login')
+def M_CorniceAdditionOrderedF(request, id):
+
+    if request.method == 'GET':
+        item = OrderItemCorniceAdditional.objects.get(pk=id)
+        form = SupplierOrderedCorniceForm({'order':item.order, 'additional':item, 'status':0})
+        return render(request, 'manager/add_cornice_additional_ordered.html',
+                      context={'form': form,
+                               'manufacturer': item.item.additional.collection.manufacturer.name,
+                               'order': item.order.number,
+                               'item': item})
+
+    if request.method == 'POST':
+        form = SupplierOrderedCorniceForm(request.POST)
+        order = request.POST.get("order", None)
+        additional = request.POST.get("additional", None)
+        price = request.POST.get("price", None)
+        receipt = request.POST.get("receipt", None)
+        date_shipped = request.POST.get("date_shipped", None)
+        status = request.POST.get("status", None)
+        if order != None and additional != None and price != None and receipt != None and status != None:
+            order_id = Order.objects.get(pk=order)
+            item_id = OrderItemCorniceAdditional.objects.get(pk=additional)
+            instance = SupplierOrderedCornice.objects.create(
+                order=order_id,
+                additional=item_id,
+                price=price,
+                receipt=receipt,
+                status=status,
+                date_shipped = date_shipped
+            )
+
+            qs = item_id
+            curr_state = qs.ordered
+            if curr_state == 1:
+                qs.ordered = 2
+                qs.ordered_icon = 2
+                qs.save(update_fields=['ordered', 'ordered_icon'])
+
+            offer = Offer.objects.get(order=qs.order)
+            offer_version = offer.version.get_version_display()
+            textile_all = OrderItemCornice.objects.filter(order=qs.order, version=offer_version)
+            textile_curr = textile_all.filter(ordered=2).count()
+
+            if textile_curr == textile_all.count():
+                curr_state = qs.order.cornice_state
+                if curr_state == 0:
+                    qs.order.cornice_state = 1
+                    qs.order.save(update_fields=['cornice_state'])
+
+            M_ChangeOrderState(qs.order, 2, 5, 6)
+
+            return redirect('manager:order_view', id=order_id.pk)
+        return render(request, 'manager/add_textile_ordered.html', context={'form': form})
+
+@login_required(login_url='login')
+def M_CorniceAdditionalPayedF(request, id):
+
+    if request.method == 'GET':
+        item = OrderItemCorniceAdditional.objects.get(pk=id)
+        category = PaymentCategory.objects.get(name='Оплата поставщику')
+        detail = SupplierOrderedCornice.objects.get(additional=id)
+        form = PaymentFormManager({'order': item.order, 'category': category, 'price': detail.price * item.quantity})
+        return render(request, 'manager/payment_create_additional.html',
+                      context={'form': form, 'category': category, 'detail': detail, 'price': detail.price * item.quantity})
+
+    if request.method == 'POST':
+        item = OrderItemCorniceAdditional.objects.get(pk=id)
+        form = PaymentFormManager(request.POST)
+        category = request.POST.get("category", None)
+        type_money = request.POST.get("type_money", None)
+        price = request.POST.get("price", None)
+        receipt = request.POST.get("receipt", None)
+        if category != None and type_money != None and price != None and receipt != None:
+            cat = PaymentCategory.objects.get(pk=category)
+            instance = Payment.objects.create(
+                order=item.order,
+                category=cat,
+                type_money=type_money,
+                price=price,
+                receipt=receipt,
+                user=request.user
+            )
+
+            qs = OrderItemCorniceAdditional.objects.get(pk=id)
+            curr_state = qs.ordered
+            if curr_state == 2:
+                qs.ordered = 3
+                qs.ordered_icon = 3
+                qs.save(update_fields=['ordered', 'ordered_icon'])
+
+            offer = Offer.objects.get(order=qs.order)
+            offer_version = offer.version.get_version_display()
+            textile_all = OrderItemCornice.objects.filter(order=qs.order, version=offer_version)
+            textile_curr = textile_all.filter(ordered=3).count()
+
+            if textile_curr == textile_all.count():
+                curr_state = qs.order.cornice_state
+                if curr_state == 1:
+                    qs.order.cornice_state = 2
+                    qs.order.save(update_fields=['cornice_state'])
+
+            M_ChangeOrderState(qs.order, 3, 6, 7)
+
+            return redirect('manager:order_view', id=item.order.pk)
+        return render(request, 'manager/payment_create.html', context={'form': form})
+
+@login_required(login_url='login')
+def M_CorniceAdditionalShipped(request, id):
+    qs = OrderItemCorniceAdditional.objects.get(pk=id)
+    curr_state = qs.ordered
+    if curr_state == 3:
+        qs.ordered = 4
+        qs.ordered_icon = 4
+        qs.save(update_fields=['ordered', 'ordered_icon'])
 
     offer = Offer.objects.get(order=qs.order)
     offer_version = offer.version.get_version_display()
     textile_all = OrderItemCornice.objects.filter(order=qs.order, version=offer_version)
-    textile_curr = textile_all.filter(ordered=3).count()
+    textile_curr = textile_all.filter(ordered=4).count()
 
     if textile_curr == textile_all.count():
         curr_state = qs.order.cornice_state
-        if curr_state == 1:
-            qs.order.cornice_state = 2
+        if curr_state == 2:
+            qs.order.cornice_state = 3
             qs.order.save(update_fields=['cornice_state'])
 
-    M_ChangeOrderState(qs.order, 3, 6, 7)
+    M_ChangeOrderState(qs.order, 4, 7, 8)
 
     return redirect('manager:order_view', id=qs.order.pk)
 
+@login_required(login_url='login')
+def M_CorniceAdditionalStock(request, id):
+    qs = OrderItemCorniceAdditional.objects.get(pk=id)
+    curr_state = qs.ordered
+    if curr_state == 0:
+        qs.ordered = 5
+        qs.ordered_icon = 5
+        qs.save(update_fields=['ordered', 'ordered_icon'])
+    return redirect('manager:order_view', id=qs.order.pk)
+
+@login_required(login_url='login')
+def M_CorniceAdditionalStayOut(request, id):
+    qs = OrderItemCorniceAdditional.objects.get(pk=id)
+    curr_state = qs.ordered
+    if curr_state == 1:
+        qs.ordered = 6
+        qs.ordered_icon = 6
+        qs.save(update_fields=['ordered', 'ordered_icon'])
+    return redirect('manager:order_view', id=qs.order.pk)
+
+@login_required(login_url='login')
+def m_check_price_cornice(request ,id, price_s):
+    item = OrderItemCornice.objects.get(pk=id)
+    price_c = item.total_price()
+    price_sup = item.quantity * float(price_s)
+    result = round(price_c*100/float(price_sup), 2)
+    rentab = round(((price_c - float(price_sup))/price_c)*100, 2)
+    plus_p = round((price_c - float(price_sup)) - price_c/100*50, 2)
+    print(result)
+    return JsonResponse({'price_c': price_c, 'rent': rentab, 'plus': plus_p})
+
+@login_required(login_url='login')
+def M_CorniceOrderedF(request, id):
+
+    if request.method == 'GET':
+        item = OrderItemCornice.objects.get(pk=id)
+        form = SupplierOrderedCorniceForm({'order':item.order, 'item':item, 'status':0})
+        return render(request, 'manager/add_cornice_ordered.html',
+                      context={'form': form,
+                               'manufacturer': item.item.manufacturer.name,
+                               'order': item.order.number,
+                               'item': item})
+
+    if request.method == 'POST':
+        form = SupplierOrderedCorniceForm(request.POST)
+        order = request.POST.get("order", None)
+        item = request.POST.get("item", None)
+        price = request.POST.get("price", None)
+        receipt = request.POST.get("receipt", None)
+        status = request.POST.get("status", None)
+        date_shipped = request.POST.get("date_shipped", None)
+
+        if order != None and item != None and price != None and receipt != None and status != None:
+            order_id = Order.objects.get(pk=order)
+            item_id = OrderItemCornice.objects.get(pk=item)
+            instance = SupplierOrderedCornice.objects.create(
+                order=order_id,
+                item=item_id,
+                price=price,
+                receipt=receipt,
+                status=status,
+                date_shipped=date_shipped
+            )
+
+            qs = item_id
+            curr_state = qs.ordered
+            if curr_state == 1:
+                qs.ordered = 2
+                qs.ordered_icon = 2
+                qs.save(update_fields=['ordered', 'ordered_icon'])
+
+            offer = Offer.objects.get(order=qs.order)
+            offer_version = offer.version.get_version_display()
+            textile_all = OrderItemCornice.objects.filter(order=qs.order, version=offer_version)
+            textile_curr = textile_all.filter(ordered=2).count()
+
+            if textile_curr == textile_all.count():
+                curr_state = qs.order.cornice_state
+                if curr_state == 0:
+                    qs.order.cornice_state = 1
+                    qs.order.save(update_fields=['cornice_state'])
+
+            M_ChangeOrderState(qs.order, 2, 5, 6)
+
+            return redirect('manager:order_view', id=order_id.pk)
+        return render(request, 'manager/add_cornice_ordered.html', context={'form': form})
+
+
+@login_required(login_url='login')
+def M_CornicePayedF(request, id):
+
+    if request.method == 'GET':
+        item = OrderItemCornice.objects.get(pk=id)
+        category = PaymentCategory.objects.get(name='Оплата поставщику')
+        detail = SupplierOrderedCornice.objects.get(item=id)
+        form = PaymentFormManager({'order': item.order, 'category': category, 'price': detail.price * item.quantity})
+        return render(request, 'manager/payment_create.html',
+                      context={'form': form, 'category': category, 'detail': detail, 'price': detail.price * item.quantity})
+
+    if request.method == 'POST':
+        item = OrderItemCornice.objects.get(pk=id)
+        form = PaymentFormManager(request.POST)
+        category = request.POST.get("category", None)
+        type_money = request.POST.get("type_money", None)
+        price = request.POST.get("price", None)
+        receipt = request.POST.get("receipt", None)
+        if category != None and type_money != None and price != None and receipt != None:
+            cat = PaymentCategory.objects.get(pk=category)
+            instance = Payment.objects.create(
+                order=item.order,
+                category=cat,
+                type_money=type_money,
+                price=price,
+                receipt=receipt,
+                user=request.user
+            )
+
+            qs = OrderItemCornice.objects.get(pk=id)
+            curr_state = qs.ordered
+            if curr_state == 2:
+                qs.ordered = 3
+                qs.ordered_icon = 3
+                qs.save(update_fields=['ordered', 'ordered_icon'])
+
+            offer = Offer.objects.get(order=qs.order)
+            offer_version = offer.version.get_version_display()
+            textile_all = OrderItemCornice.objects.filter(order=qs.order, version=offer_version)
+            textile_curr = textile_all.filter(ordered=3).count()
+
+            if textile_curr == textile_all.count():
+                curr_state = qs.order.cornice_state
+                if curr_state == 1:
+                    qs.order.cornice_state = 2
+                    qs.order.save(update_fields=['cornice_state'])
+
+            M_ChangeOrderState(qs.order, 3, 6, 7)
+
+            return redirect('manager:order_view', id=item.order.pk)
+        return render(request, 'manager/payment_create.html', context={'form': form})
 
 @login_required(login_url='login')
 def M_CorniceShipped(request, id):
@@ -616,6 +913,88 @@ def M_SupplierOrders(request):
         key=attrgetter('date_created'), reverse=True)
     return render(request, 'manager/supplier_orders.html', context={'orders': result_list})
 
+@login_required(login_url='login')
+def M_SupplierOrderedTextileEdit(request, id):
+    if request.method == 'GET':
+        qs = SupplierOrderedTextile.objects.get(pk=id)
+        form = SupplierOrderedTextileForm({'order': qs.order,
+                                           'item': qs.item,
+                                           'price': qs.price,
+                                           'receipt': qs.receipt,
+                                           'date_shipped': qs.date_shipped})
+        return render(request, 'manager/edit_textile_ordered.html', context={'form': form,
+                                                                             'qs': qs,
+                                                                             'manufacturer': qs.item.item.collection.manufacturer.name,
+                                                                             'order': qs.order.number})
+    if request.method == 'POST':
+        form = SupplierOrderedTextileForm(request.POST)
+        price = request.POST.get("price", None)
+        receipt = request.POST.get("receipt", None)
+        date_shipped = request.POST.get("date_shipped", None)
+
+        if price != None and receipt != None and date_shipped != None:
+            instance = SupplierOrderedTextile.objects.get(pk=id)
+            instance.price = price
+            instance.receipt = receipt
+            instance.date_shipped = date_shipped
+            instance.save(update_fields=['price', 'receipt', 'date_shipped'])
+            return redirect('manager:supplier_orders')
+        return render(request, 'manager/edit_textile_ordered.html', context={'form': form})
+
+@login_required(login_url='login')
+def M_SupplierOrderedCorniceEdit(request, id):
+    if request.method == 'GET':
+        qs = SupplierOrderedCornice.objects.get(pk=id)
+        form = SupplierOrderedCorniceForm({'order': qs.order,
+                                           'item': qs.item,
+                                           'price': qs.price,
+                                           'receipt': qs.receipt,
+                                           'date_shipped': qs.date_shipped})
+        return render(request, 'manager/edit_textile_ordered.html', context={'form': form,
+                                                                             'qs': qs,
+                                                                             'manufacturer': qs.item.item.collection.manufacturer.name,
+                                                                             'order': qs.order.number})
+    if request.method == 'POST':
+        form = SupplierOrderedCorniceForm(request.POST)
+        price = request.POST.get("price", None)
+        receipt = request.POST.get("receipt", None)
+        date_shipped = request.POST.get("date_shipped", None)
+
+        if price != None and receipt != None and date_shipped != None:
+            instance = SupplierOrderedCornice.objects.get(pk=id)
+            instance.price = price
+            instance.receipt = receipt
+            instance.date_shipped = date_shipped
+            instance.save(update_fields=['price', 'receipt', 'date_shipped'])
+            return redirect('manager:supplier_orders')
+        return render(request, 'manager/edit_textile_ordered.html', context={'form': form})
+
+def M_SupplierOrderedAdditEdit(request, id):
+    if request.method == 'GET':
+        qs = SupplierOrderedCornice.objects.get(pk=id)
+        form = SupplierOrderedCorniceForm({'order': qs.order,
+                                           'item': qs.additional,
+                                           'price': qs.price,
+                                           'receipt': qs.receipt,
+                                           'date_shipped': qs.date_shipped})
+        return render(request, 'manager/edit_cornice_additional_ordered.html', context={'form': form,
+                                                                             'qs': qs,
+                                                                             'manufacturer': qs.additional.item.additional.collection.manufacturer.name,
+                                                                             'order': qs.order.number})
+    if request.method == 'POST':
+        form = SupplierOrderedCorniceForm(request.POST)
+        price = request.POST.get("price", None)
+        receipt = request.POST.get("receipt", None)
+        date_shipped = request.POST.get("date_shipped", None)
+
+        if price != None and receipt != None and date_shipped != None:
+            instance = SupplierOrderedCornice.objects.get(pk=id)
+            instance.price = price
+            instance.receipt = receipt
+            instance.date_shipped = date_shipped
+            instance.save(update_fields=['price', 'receipt', 'date_shipped'])
+            return redirect('manager:supplier_orders')
+        return render(request, 'manager/edit_cornice_additional_ordered.html', context={'form': form})
 
 @login_required(login_url='login')
 def SupplierOrderSend2(request, id):
@@ -625,7 +1004,7 @@ def SupplierOrderSend2(request, id):
         materials = order.materials.all()
         materials_mass = []
         for m in materials:
-            mat = f'{m.item.collection} {m.item.model} {m.item.color} в количестве ?x? метров'
+            mat = f'{m.item.collection} {m.item.model} {m.item.color} в количестве {m.quantity} метров'
             materials_mass.append(mat)
 
         return render(request, 'manager/supplier_send.html', context={'materials': materials_mass, 'supplier': order.supplier, 'order': order.order})
@@ -652,110 +1031,7 @@ def SupplierOrderSend2(request, id):
         return redirect('manager:order_view', id=order.order.pk)
     return render(request, 'manager/supplier_send.html')
 
-@login_required(login_url='login')
-def M_TextileOrderedF(request, id):
 
-    if request.method == 'GET':
-        item = OrderItemTextile1.objects.get(pk=id)
-        form = SupplierOrderedTextileForm({'order':item.order, 'item':item, 'status':0})
-        return render(request, 'manager/add_textile_ordered.html',
-                      context={'form': form,
-                               'manufacturer': item.item.manufacturer.name,
-                               'order': item.order.number,
-                               'item': item})
-
-    if request.method == 'POST':
-        form = SupplierOrderedTextileForm(request.POST)
-        order = request.POST.get("order", None)
-        item = request.POST.get("item", None)
-        price = request.POST.get("price", None)
-        receipt = request.POST.get("receipt", None)
-        status = request.POST.get("status", None)
-        if order != None and item != None and price != None and receipt != None and status != None:
-            order_id = Order.objects.get(pk=order)
-            item_id = OrderItemTextile1.objects.get(pk=item)
-            instance = SupplierOrderedTextile.objects.create(
-                order=order_id,
-                item=item_id,
-                price=price,
-                receipt=receipt,
-                status=status
-            )
-
-            qs = item_id
-            curr_state = qs.ordered
-            if curr_state == 1:
-                qs.ordered = 2
-                qs.ordered_icon = 2
-                qs.save(update_fields=['ordered', 'ordered_icon'])
-
-            offer = Offer.objects.get(order=qs.order)
-            offer_version = offer.version.get_version_display()
-            textile_all = OrderItemTextile1.objects.filter(order=qs.order, version=offer_version)
-            textile_curr = textile_all.filter(ordered=2).count()
-
-            if textile_curr == textile_all.count():
-                curr_state = qs.order.textile_state
-                if curr_state == 0:
-                    qs.order.textile_state = 1
-                    qs.order.save(update_fields=['textile_state'])
-
-            M_ChangeOrderState(qs.order, 2, 5, 6)
-
-            return redirect('manager:order_view', id=order_id.pk)
-        return render(request, 'manager/add_textile_ordered.html', context={'form': form})
-
-@login_required(login_url='login')
-def M_TextilePayedF(request, id):
-
-    if request.method == 'GET':
-        item = OrderItemTextile1.objects.get(pk=id)
-        category = PaymentCategory.objects.get(name='Оплата поставщику')
-        detail = SupplierOrderedTextile.objects.get(item=id)
-        form = PaymentFormManager({'order': item.order, 'category': category, 'price': detail.price * item.quantity})
-        return render(request, 'manager/payment_create.html',
-                      context={'form': form, 'category': category, 'detail': detail, 'price': detail.price * item.quantity})
-
-    if request.method == 'POST':
-        item = OrderItemTextile1.objects.get(pk=id)
-        form = PaymentFormManager(request.POST)
-        category = request.POST.get("category", None)
-        type_money = request.POST.get("type_money", None)
-        price = request.POST.get("price", None)
-        receipt = request.POST.get("receipt", None)
-        if category != None and type_money != None and price != None and receipt != None:
-            cat = PaymentCategory.objects.get(pk=category)
-            instance = Payment.objects.create(
-                order=item.order,
-                category=cat,
-                type_money=type_money,
-                price=price,
-                receipt=receipt,
-                user=request.user
-            )
-
-            qs = OrderItemTextile1.objects.get(pk=id)
-            curr_state = qs.ordered
-            if curr_state == 2:
-                qs.ordered = 3
-                qs.ordered_icon = 3
-                qs.save(update_fields=['ordered', 'ordered_icon'])
-
-            offer = Offer.objects.get(order=qs.order)
-            offer_version = offer.version.get_version_display()
-            textile_all = OrderItemTextile1.objects.filter(order=qs.order, version=offer_version)
-            textile_curr = textile_all.filter(ordered=3).count()
-
-            if textile_curr == textile_all.count():
-                curr_state = qs.order.textile_state
-                if curr_state == 1:
-                    qs.order.textile_state = 2
-                    qs.order.save(update_fields=['textile_state'])
-
-            M_ChangeOrderState(qs.order, 3, 6, 7)
-
-            return redirect('manager:order_view', id=item.order.pk)
-        return render(request, 'manager/payment_create.html', context={'form': form})
 
 @login_required(login_url='login')
 def SupplierOrderSend3(request, id):
@@ -763,140 +1039,50 @@ def SupplierOrderSend3(request, id):
     if request.method == 'GET':
         order = SupplierOrderCornice.objects.get(pk=id)
         materials = order.materials.all()
+        additional = order.additional.all()
         materials_mass = []
-        for m in materials:
-            mat = f'{m.item.collection} {m.item.model} {m.item.long} в количестве ?x? метров'
-            materials_mass.append(mat)
+        if materials.count() > 0:
+            for m in materials:
+                mat = f'{m.item.collection} {m.item.model} {m.item.long} в количестве {m.quantity} шт.'
+                materials_mass.append(mat)
+        if additional.count() > 0:
+            for m in additional:
+                mat = f'{m.item.additional.category}: {m.item.additional.name} ({m.item.type_p}) - ({m.color}) в количестве {m.quantity} шт.'
+                materials_mass.append(mat)
 
         return render(request, 'manager/supplier_send.html', context={'materials': materials_mass, 'supplier': order.supplier, 'order': order.order})
     if request.method == 'POST':
         order = SupplierOrderCornice.objects.get(pk=id)
         materials = order.materials.all()
+        additional = order.additional.all()
         email = request.POST['email']
         subject = request.POST['subject']
         text = request.POST['text']
-        print(email, subject, text)
 
         SendTo(text, email, subject)
         curr_state = order.status
         if curr_state == 0:
             order.status = 1
             order.save(update_fields=['status'])
-        for mat in materials:
-            mat_curr_state = mat.ordered
-            if mat_curr_state == 0:
-                mat.ordered = 1
-                mat.ordered_icon = 1
-                mat.save(update_fields=['ordered', 'ordered_icon'])
+        if materials.count() > 0:
+            for mat in materials:
+                mat_curr_state = mat.ordered
+                if mat_curr_state == 0:
+                    mat.ordered = 1
+                    mat.ordered_icon = 1
+                    mat.save(update_fields=['ordered', 'ordered_icon'])
+        if additional.count() > 0:
+            for mat in additional:
+                mat_curr_state = mat.ordered
+                if mat_curr_state == 0:
+                    mat.ordered = 1
+                    mat.ordered_icon = 1
+                    mat.save(update_fields=['ordered', 'ordered_icon'])
 
         return redirect('manager:order_view', id=order.order.pk)
     return render(request, 'manager/supplier_send.html')
 
-@login_required(login_url='login')
-def M_CorniceOrderedF(request, id):
 
-    if request.method == 'GET':
-        item = OrderItemCornice.objects.get(pk=id)
-        form = SupplierOrderedCorniceForm({'order':item.order, 'item':item, 'status':0})
-        return render(request, 'manager/add_textile_ordered.html',
-                      context={'form': form,
-                               'manufacturer': item.item.manufacturer.name,
-                               'order': item.order.number,
-                               'item': item})
-
-    if request.method == 'POST':
-        form = SupplierOrderedCorniceForm(request.POST)
-        order = request.POST.get("order", None)
-        item = request.POST.get("item", None)
-        price = request.POST.get("price", None)
-        receipt = request.POST.get("receipt", None)
-        status = request.POST.get("status", None)
-        if order != None and item != None and price != None and receipt != None and status != None:
-            order_id = Order.objects.get(pk=order)
-            item_id = OrderItemCornice.objects.get(pk=item)
-            instance = SupplierOrderedCornice.objects.create(
-                order=order_id,
-                item=item_id,
-                price=price,
-                receipt=receipt,
-                status=status
-            )
-
-            qs = item_id
-            curr_state = qs.ordered
-            if curr_state == 1:
-                qs.ordered = 2
-                qs.ordered_icon = 2
-                qs.save(update_fields=['ordered', 'ordered_icon'])
-
-            offer = Offer.objects.get(order=qs.order)
-            offer_version = offer.version.get_version_display()
-            textile_all = OrderItemCornice.objects.filter(order=qs.order, version=offer_version)
-            textile_curr = textile_all.filter(ordered=2).count()
-
-            if textile_curr == textile_all.count():
-                curr_state = qs.order.cornice_state
-                if curr_state == 0:
-                    qs.order.cornice_state = 1
-                    qs.order.save(update_fields=['cornice_state'])
-
-            M_ChangeOrderState(qs.order, 2, 5, 6)
-
-            return redirect('manager:order_view', id=order_id.pk)
-        return render(request, 'manager/add_textile_ordered.html', context={'form': form})
-
-
-@login_required(login_url='login')
-def M_CornicePayedF(request, id):
-
-    if request.method == 'GET':
-        item = OrderItemCornice.objects.get(pk=id)
-        category = PaymentCategory.objects.get(name='Оплата поставщику')
-        detail = SupplierOrderedCornice.objects.get(item=id)
-        form = PaymentFormManager({'order': item.order, 'category': category, 'price': detail.price * item.quantity})
-        return render(request, 'manager/payment_create.html',
-                      context={'form': form, 'category': category, 'detail': detail, 'price': detail.price * item.quantity})
-
-    if request.method == 'POST':
-        item = OrderItemCornice.objects.get(pk=id)
-        form = PaymentFormManager(request.POST)
-        category = request.POST.get("category", None)
-        type_money = request.POST.get("type_money", None)
-        price = request.POST.get("price", None)
-        receipt = request.POST.get("receipt", None)
-        if category != None and type_money != None and price != None and receipt != None:
-            cat = PaymentCategory.objects.get(pk=category)
-            instance = Payment.objects.create(
-                order=item.order,
-                category=cat,
-                type_money=type_money,
-                price=price,
-                receipt=receipt,
-                user=request.user
-            )
-
-            qs = OrderItemCornice.objects.get(pk=id)
-            curr_state = qs.ordered
-            if curr_state == 2:
-                qs.ordered = 3
-                qs.ordered_icon = 3
-                qs.save(update_fields=['ordered', 'ordered_icon'])
-
-            offer = Offer.objects.get(order=qs.order)
-            offer_version = offer.version.get_version_display()
-            textile_all = OrderItemCornice.objects.filter(order=qs.order, version=offer_version)
-            textile_curr = textile_all.filter(ordered=3).count()
-
-            if textile_curr == textile_all.count():
-                curr_state = qs.order.cornice_state
-                if curr_state == 1:
-                    qs.order.cornice_state = 2
-                    qs.order.save(update_fields=['cornice_state'])
-
-            M_ChangeOrderState(qs.order, 3, 6, 7)
-
-            return redirect('manager:order_view', id=item.order.pk)
-        return render(request, 'manager/payment_create.html', context={'form': form})
 
 @login_required(login_url='login')
 def M_SewingPayedF(request, id):

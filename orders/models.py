@@ -1,6 +1,6 @@
 from django.db import models
 from .utils import decimal2text
-from materials.models import Cornice, Textile, TextileManufact, CorniceManufact, CorniceAdditional
+from materials.models import Cornice, Textile, TextileManufact, CorniceManufact, CorniceAdditional, CorniceAdditionalOptions, CorniceCollectionColor
 from works.models import Work
 from django.shortcuts import reverse
 from markup.models import MarkupMaterialCategory, MarkupWorkCategory
@@ -472,14 +472,15 @@ class OrderItemCorniceAdditional(models.Model):
     specification = models.ForeignKey(Specification, null=True, on_delete=models.CASCADE, verbose_name='Спецификация')
     version = models.CharField(verbose_name='Версия', max_length=100, blank=True)
     order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Заказ')
-    item = models.ForeignKey(CorniceAdditional, null=True, on_delete=models.CASCADE, verbose_name='Доп', )
+    item = models.ForeignKey(CorniceAdditionalOptions, null=True, on_delete=models.CASCADE, verbose_name='Доп', )
     quantity = models.FloatField(default=1, verbose_name='Количество')
+    color = models.ForeignKey(CorniceCollectionColor, null=True, on_delete=models.CASCADE, verbose_name='Цвет')
     markup = models.FloatField(verbose_name='Наценка', max_length=100, default=1)
     ordered = models.IntegerField(verbose_name="Состояние заказа", choices=ORDER_STATE, default=0)
     ordered_icon = models.IntegerField(verbose_name="Состояние заказа icon", choices=ORDER_STATE_ICON, default=0)
 
     def __str__(self):
-        return str(self.item.name) + '-' + str(self.quantity)
+        return str(self.item) + '-' + str(self.quantity)
 
     def save(self, *args, **kwargs):
         self.version = self.specification.get_version_display()
@@ -488,6 +489,24 @@ class OrderItemCorniceAdditional(models.Model):
     def total_price(self):
         t_price = self.item.price * self.quantity * self.markup * self.order.discount_c
         return round(t_price, 2)
+
+    def get_order(self):
+        return reverse('manager:cornice_additional_ready', kwargs={"id": self.pk})
+
+    def get_ordered(self):
+        return reverse('manager:cornice_additional_ordered', kwargs={"id": self.pk})
+
+    def get_payed(self):
+        return reverse('manager:cornice_additional_payed', kwargs={"id": self.pk})
+
+    def get_shipped(self):
+        return reverse('manager:cornice_additional_shipped', kwargs={"id": self.pk})
+
+    def get_stock(self):
+        return reverse('manager:cornice_additional_stock', kwargs={"id": self.pk})
+
+    def get_stay_out(self):
+        return reverse('manager:cornice_additional_stay_out', kwargs={"id": self.pk})
 
 class OrderItemCornice(models.Model):
     ORDER_STATE = (
@@ -715,6 +734,7 @@ class SupplierOrder(models.Model):
     supplier = models.ForeignKey(TextileManufact, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Поставщик')
     email = models.CharField(verbose_name='email', max_length=100, blank=True, null=True, default='')
     materials = models.ManyToManyField(OrderItemTextile1, verbose_name='Заказанный материал')
+
     status = models.IntegerField(verbose_name="Состояние заказа", choices=ORDER_STATE, default=0)
 
     def __str__(self):
@@ -738,6 +758,7 @@ class SupplierOrderCornice(models.Model):
     supplier = models.ForeignKey(CorniceManufact, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Поставщик')
     email = models.CharField(verbose_name='email', max_length=100, blank=True, null=True, default='')
     materials = models.ManyToManyField(OrderItemCornice, verbose_name='Заказанный материал')
+    additional = models.ManyToManyField(OrderItemCorniceAdditional, verbose_name='Заказанный доп материал')
     status = models.IntegerField(verbose_name="Состояние заказа", choices=ORDER_STATE, default=0)
 
     def __str__(self):

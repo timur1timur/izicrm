@@ -1,5 +1,6 @@
 from django import forms
-from .models import TextileManufact, CorniceManufact, Textile, Cornice, TextileCollection, CorniceCollection, CorniceAdditional
+from .models import TextileManufact, CorniceManufact, Textile, Cornice, TextileCollection, CorniceCollection, \
+    CorniceAdditional, CorniceCollectionColor, CorniceAdditionalOptions
 
 
 class TextileManufactForm(forms.ModelForm):
@@ -227,10 +228,16 @@ class CorniceForm(forms.ModelForm):
 class CorniceAdditionalForm(forms.ModelForm):
     class Meta:
         model = CorniceAdditional
-        fields = ['category', 'name', 'type_p', 'price']
+        fields = ['collection', 'category', 'name']
 
         widgets = {
+            "collection": forms.Select(
+                attrs={
+                    "type": "Select",
+                    "class": "custom-select",
 
+                }
+            ),
             "category": forms.TextInput(
                 attrs={
                     "class": "form-control form-control-sm",
@@ -242,17 +249,40 @@ class CorniceAdditionalForm(forms.ModelForm):
                     "class": "form-control form-control-sm",
                     "placeholder": "Наименование"
                 }
-            ),
+            )
+        }
+
+class CorniceCollectionColorForm(forms.ModelForm):
+    class Meta:
+        model = CorniceCollectionColor
+        fields = ['color']
+
+        widgets = {
+            "color": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Цвет"
+                }
+            )
+        }
+
+
+class CorniceAdditionalOptionsForm(forms.ModelForm):
+    class Meta:
+        model = CorniceAdditionalOptions
+        fields = ['type_p', 'price']
+
+        widgets = {
             "type_p": forms.TextInput(
                 attrs={
                     "class": "form-control form-control-sm",
-                    "placeholder": "Тип (Диаметр)"
+                    "placeholder": "Тип"
                 }
             ),
             "price": forms.TextInput(
                 attrs={
                     "class": "form-control form-control-sm",
-                    "placeholder": "Цена"
+                    "placeholder": "Стоимость"
                 }
             )
         }

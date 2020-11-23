@@ -53,8 +53,12 @@
                                         <tr class="odd gradeX">
                                             <td><a href="{{ q.get_absolute_url}}">{{q.number}}
                                             {% if q.status == 9 %}
-                                                <span class="badge badge-pill badge-success">ready</span>
+                                                <span class="badge badge-pill badge-success">Готово!</span>
                                             {% endif %}
+                                            {% if q.status == 8 and q.id|get_f_order == 0 %}
+                                                <span class="badge badge-pill badge-success">Готово!</span>
+                                            {% endif %}
+
 
                                             </a></td>
                                             <td>
@@ -86,6 +90,9 @@
                                             </td>
                                             <td class="tx-right">
                                                 {% if q.status == 9 %}
+                                                    <a href="{% url 'manager:order_ready' id=q.id%}"  title="" data-toggle="tooltip" data-original-title="Заказ выдан"><i data-feather="check-circle" class="wd-16 mr-2"></i></a>
+                                                {% endif %}
+                                                {% if q.status == 8 and q.id|get_f_order == 0 %}
                                                     <a href="{% url 'manager:order_ready' id=q.id%}"  title="" data-toggle="tooltip" data-original-title="Заказ выдан"><i data-feather="check-circle" class="wd-16 mr-2"></i></a>
                                                 {% endif %}
                                                 {% if q.status == 11 %}
