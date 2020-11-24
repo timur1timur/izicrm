@@ -608,7 +608,7 @@ def SpecificationCorniceAdditionalAdd(request, id, prod_id, color_id):
             specification_g = Specification.objects.get(pk=specification)
             order_g = Order.objects.get(pk=order)
             item_g = CorniceAdditionalOptions.objects.get(pk=item)
-            color_g = CorniceCollectionColor.objects.get(pk=color)
+            color_g = CorniceCollectionColor.objects.get(pk=color_id)
             instance = OrderItemCorniceAdditional.objects.create(
                 specification=specification_g,
                 order=order_g,

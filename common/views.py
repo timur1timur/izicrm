@@ -329,6 +329,7 @@ def TextileListFilter(request, collection_id, model_id):
                                                                 'models': models,
                                                                 'settings': settings})
 
+from materials.utils import transliterate
 
 @login_required(login_url='login')
 def TextileAdd(request):
@@ -349,6 +350,7 @@ def TextileAdd(request):
             collection_obj = TextileCollection.objects.get(pk=collection)
             manufacturer_obj = collection_obj.manufacturer
             instance = Textile.objects.create(
+                
                 model=model,
                 color=color,
                 height=height,
@@ -358,6 +360,10 @@ def TextileAdd(request):
             instance.manufacturer = manufacturer_obj
             instance.collection = collection_obj
             instance.save()
+            obj = Textile.objects.get(pk=instance.pk)
+            obj.article = transliterate(str(obj.collection.name)[0]).upper() + transliterate(str(obj.model)[0]).upper()[0] + str(obj.pk)
+            obj.save(update_fields=['article'])
+            
             return redirect('common:textile_list')
         return render(request, 'common/textile_create.html', context={'form': form})
 
@@ -369,7 +375,8 @@ def TextileEdit(request, id):
                             'model': textile_id.model,
                             'color': textile_id.color,
                             'height': textile_id.height,
-                            'price_opt': textile_id.price_opt})
+                            'price_opt': textile_id.price_opt,
+                            'article': textile_id.article})
         return render(request, 'common/textile_edit.html', context={'form': form})
 
     if request.method == 'POST':
@@ -379,6 +386,7 @@ def TextileEdit(request, id):
         color = request.POST.get("color", None)
         height = request.POST.get("height", None)
         price_opt = request.POST.get("price_opt", None)
+        article = request.POST.get("article", None)
 
         if collection != None and model != None and price_opt != None:
             collection_g = TextileCollection.objects.get(pk=collection)
@@ -388,7 +396,8 @@ def TextileEdit(request, id):
             instance.color = color
             instance.height = height
             instance.price_opt = price_opt
-            instance.save(update_fields=['model', 'color', 'height', 'price_opt'])
+            instance.article = article
+            instance.save(update_fields=['model', 'color', 'height', 'price_opt', 'article'])
             return redirect('common:textile_filter', collection_id=collection_g.id, model_id=instance.model)
         return render(request, 'common/textile_edit.html', context={'form': form})
 
@@ -561,12 +570,11 @@ def CorniceAdditionalOptionsRemove(request, id):
 def CorniceEdit(request, id):
     if request.method == 'GET':
         textile_id = Cornice.objects.get(pk=id)
-        additional = CorniceAdditional.objects.filter(cornice=textile_id)
         form = CorniceForm({'collection': textile_id.collection,
                             'model': textile_id.model,
                             'long': textile_id.long,
                             'price_opt': textile_id.price_opt})
-        return render(request, 'common/cornice_edit.html', context={'form': form, 'cornice': textile_id, 'additional': additional})
+        return render(request, 'common/cornice_edit.html', context={'form': form, 'cornice': textile_id})
 
     if request.method == 'POST':
         form = TextileForm(request.POST)

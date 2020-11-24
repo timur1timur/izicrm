@@ -122,7 +122,7 @@ class CorniceCollectionForm(forms.ModelForm):
 class TextileForm(forms.ModelForm):
     class Meta:
         model = Textile
-        fields = ['manufacturer', 'collection', 'model', 'color', 'height', 'price_opt']
+        fields = ['manufacturer', 'collection', 'model', 'color', 'height', 'price_opt', 'article']
 
         widgets = {
             "manufacturer": forms.Select(
@@ -137,6 +137,12 @@ class TextileForm(forms.ModelForm):
                     "type": "Select",
                     "class": "custom-select",
 
+                }
+            ),
+            "article": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Артикул"
                 }
             ),
             "model": forms.TextInput(

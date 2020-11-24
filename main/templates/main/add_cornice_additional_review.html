@@ -14,6 +14,7 @@
                                     <div class="col-sm-6">
                                        <div class="form-group">
                                            <span>Категория:</span>
+                                           <span id="sp-id" hidden>{{sp.id}}</span>
 
                                           <select id="foo-filter-status" class="custom-select custom-select-sm mg-l-10">
                                              <option value="">Показать все</option>
@@ -67,7 +68,7 @@
                                             <td>{{ q.price }}</td>
 
                                             <td class="tx-right">
-                                                <span id="sp-id" hidden>{{sp.id}}</span>
+                                                
                                                 <a  href="#" onclick="ChoiceAdditional({{q.id}});" title="" data-toggle="tooltip" data-original-title="Добавить"><i data-feather="plus" class="wd-16 mr-2"></i></a>
                                             </td>
 
