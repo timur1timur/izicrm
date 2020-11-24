@@ -15,8 +15,8 @@ import imaplib
 
 
 def send_email(addr_to, msg_subj, msg_text, files):
-    addr_from = "timur1307timur@yandex.ru"
-    password  = "K1r2m3v1307!"
+    addr_from = "zakaz@izidecor.ru"
+    password  = "iz0dec0r"
     msg = MIMEMultipart()
     msg['From']    = addr_from
     msg['To']      = addr_to

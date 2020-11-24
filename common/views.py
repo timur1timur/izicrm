@@ -344,6 +344,7 @@ def TextileAdd(request):
         color = request.POST.get("color", None)
         height = request.POST.get("height", None)
         price_opt = request.POST.get("price_opt", None)
+        currency = request.POST.get("currency", None)
 
 
         if collection != None and model != None and price_opt != None:
@@ -355,6 +356,7 @@ def TextileAdd(request):
                 color=color,
                 height=height,
                 price_opt=price_opt,
+                currency=currency
 
             )
             instance.manufacturer = manufacturer_obj
@@ -363,8 +365,8 @@ def TextileAdd(request):
             obj = Textile.objects.get(pk=instance.pk)
             obj.article = transliterate(str(obj.collection.name)[0]).upper() + transliterate(str(obj.model)[0]).upper()[0] + str(obj.pk)
             obj.save(update_fields=['article'])
-            
-            return redirect('common:textile_list')
+
+            return redirect('common:textile_filter', collection_id=collection_obj.id, model_id=instance.model)
         return render(request, 'common/textile_create.html', context={'form': form})
 
 @login_required(login_url='login')
@@ -375,6 +377,7 @@ def TextileEdit(request, id):
                             'model': textile_id.model,
                             'color': textile_id.color,
                             'height': textile_id.height,
+                            'currency': textile_id.currency,
                             'price_opt': textile_id.price_opt,
                             'article': textile_id.article})
         return render(request, 'common/textile_edit.html', context={'form': form})
@@ -387,6 +390,8 @@ def TextileEdit(request, id):
         height = request.POST.get("height", None)
         price_opt = request.POST.get("price_opt", None)
         article = request.POST.get("article", None)
+        currency = request.POST.get("currency", None)
+
 
         if collection != None and model != None and price_opt != None:
             collection_g = TextileCollection.objects.get(pk=collection)
@@ -397,16 +402,19 @@ def TextileEdit(request, id):
             instance.height = height
             instance.price_opt = price_opt
             instance.article = article
-            instance.save(update_fields=['model', 'color', 'height', 'price_opt', 'article'])
+            instance.currency = currency
+
+            instance.save(update_fields=['model', 'color', 'height', 'price_opt', 'article', 'currency'])
             return redirect('common:textile_filter', collection_id=collection_g.id, model_id=instance.model)
         return render(request, 'common/textile_edit.html', context={'form': form})
 
 
 @login_required(login_url='login')
 def TextileRemove(request, id):
+    qs_callback = Textile.objects.get(pk=id)
     qs = Textile.objects.get(pk=id)
     qs.delete()
-    return redirect('common:textile_list')
+    return redirect('common:textile_filter', collection_id=qs_callback.collection.id, model_id='all')
 
 
 @login_required(login_url='login')

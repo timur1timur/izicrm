@@ -45,7 +45,7 @@
                                              </tr>
                                           {% endfor %}
                                              <tr>
-                                                <td>ИТОГ ТЕКСТИЛЬ: {{summ_t}}</td>
+                                                <td>ИТОГ ТЕКСТИЛЬ: {{summ_t}} руб</td>
                                              </tr>
                                        </tbody>
                                     </table>
@@ -74,16 +74,15 @@
                                        <tbody>
                                           {% for t in cornice %}
                                              <tr>
-                                                <td>{{t.item.model}} {{t.item.long}}</td>
+                                                <td>{{t.item.collection}} {{t.item.model}} {{t.item.long}}</td>
                                                 <td>{{ t.quantity }} шт.</td>
                                                 <td>{{ t.total_price }} руб.</td>
                                                 <td><a href="{{ t.remove_cornice }}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a></td>
                                              </tr>
-
-                                             <tr>
-                                                <td>ИТОГ КАРНИЗЫ: {{summ_c}}</td>
-                                             </tr>
                                           {% endfor %}
+                                          <tr>
+                                             <td>ИТОГ КАРНИЗЫ: {{summ_c}} руб</td>
+                                          </tr>
                                        </tbody>
                                     </table>
                                  </div>
@@ -100,7 +99,7 @@
                                              </tr>
                                           {% endfor %}
                                           <tr>
-                                             <td>ИТОГ ДОПЫ: {{summ_ad}}</td>
+                                             <td>ИТОГ ДОПЫ: {{summ_ad}} руб</td>
                                           </tr>
                                        </tbody>
                                     </table>
@@ -140,7 +139,7 @@
                                              </tr>
                                           {% endfor %}
                                           <tr>
-                                             <td>ИТОГ ПОШИВ: {{summ_s}}</td>
+                                             <td>ИТОГ ПОШИВ: {{summ_s}} руб</td>
                                           </tr>
                                        </tbody>
                                     </table>
@@ -176,7 +175,7 @@
                                              </tr>
                                           {% endfor %}
                                           <tr>
-                                             <td>ИТОГ МОНТАЖ: {{summ_a}}</td>
+                                             <td>ИТОГ МОНТАЖ: {{summ_a}} руб</td>
                                           </tr>
                                        </tbody>
                                     </table>
@@ -212,7 +211,7 @@
                                              </tr>
                                           {% endfor %}
                                           <tr>
-                                             <td>ИТОГ РАЗВЕСКА: {{summ_h}}</td>
+                                             <td>ИТОГ РАЗВЕСКА: {{summ_h}} руб</td>
                                           </tr>
                                        </tbody>
                                     </table>
@@ -247,7 +246,7 @@
                                              </tr>
                                           {% endfor %}
                                           <tr>
-                                             <td>ИТОГ ДОСТАВКА: {{summ_d}}</td>
+                                             <td>ИТОГ ДОСТАВКА: {{summ_d}} руб</td>
                                           </tr>
                                        </tbody>
                                     </table>
