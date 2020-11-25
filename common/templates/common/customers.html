@@ -64,8 +64,7 @@
                                                 {% endfor %}
                                             </td>
                                             <td class="tx-right">
-                                                <a href=""  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
-                                                <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                <a href="{% url 'common:customer_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
                                             </td>
                                         </tr>
                                     {% endfor %}

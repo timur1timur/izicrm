@@ -8,7 +8,7 @@ from .views import CustomerList, CustomerCreate, TextileManufactList, TextileMan
     CorniceAdditionalDelete, CorniceAdditionalEdit, TextileCollectionList, TextileCollectionEdit, TextileCollectionRemove, \
     CorniceCollectionList, CorniceCollectionEdit, CorniceCollectionRemove, CorniceAdditionalList, CorniceCollectionColorAdd,\
     CorniceCollectionColorList, CorniceCollectionColorRemove, CorniceCollectionColorEdit, CorniceAdditionalOptionsAdd, \
-    CorniceAdditionalOptionsEdit, CorniceAdditionalOptionsList, CorniceAdditionalOptionsRemove
+    CorniceAdditionalOptionsEdit, CorniceAdditionalOptionsList, CorniceAdditionalOptionsRemove, CustomerEdit
 
 app_name = 'common'
 
@@ -17,6 +17,9 @@ urlpatterns = [
 
     path('customers/list/', CustomerList, name="customers_list"),
     path('customers/create/', CustomerCreate, name="customer_create"),
+    path('customers/edit/<id>/', CustomerEdit, name="customer_edit"),
+
+
     path('payments/list/', PaymentsList, name="payments_list"),
     path('payments/create/', PaymentCreate, name="payment_create"),
 

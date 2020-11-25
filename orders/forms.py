@@ -249,6 +249,69 @@ class CustomerForm(forms.ModelForm):
         }
 
 
+class CustomerEditForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = '__all__'
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Введите ФИО"
+                }
+            ),
+            "phone": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Введите телефон"
+                }
+            ),
+            "email": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Введите email"
+                }
+            ),
+            "address": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Введите адрес заказчика"
+                }
+            ),
+            "pass_series": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Серия"
+                }
+            ),
+            "pass_number": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Номер"
+                }
+            ),
+            "pass_date": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Дата выдачи"
+                }
+            ),
+            "pass_issued": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Кем выдан"
+                }
+            ),
+
+            "source_t": forms.Select(
+                attrs={
+                    "type": "Select",
+                    "class": "custom-select custom-select-sm",
+                }
+            )
+
+        }
+
 
 class RoomForm(forms.ModelForm):
     class Meta:

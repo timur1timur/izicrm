@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from orders.models import Customer, Payment, Order, Contract, Offer, OrderItemTextile1, OrderItemCornice, \
     OrderItemWorkSewing, OrderItemWorkAssembly, OrderItemWorkHanging, OrderItemWorkDelivery, PaymentCategory, Contract
 from manager.models import SupplierOrderedTextile, SupplierOrderedCornice
-from orders.forms import CustomerForm, PaymentForm
+from orders.forms import CustomerForm, PaymentForm, CustomerEditForm
 from materials.models import TextileManufact, CorniceManufact, Textile, Cornice, TextileCollection, CorniceCollection, \
     CorniceAdditional, CorniceCollectionColor, CorniceAdditionalOptions
 from materials.forms import TextileManufactForm, CorniceManufactForm, TextileForm, CorniceForm, TextileCollectionForm, \
@@ -52,6 +52,50 @@ def CustomerCreate(request):
             )
             return redirect('common:customers_list')
     return render(request, 'common/create_customer.html', context={'form': form})
+
+@login_required(login_url='login')
+def CustomerEdit(request, id):
+    if request.method == 'GET':
+        cus = Customer.objects.get(pk=id)
+        form = CustomerEditForm({
+            'name': cus.name,
+            'phone': cus.phone,
+            'email': cus.email,
+            'address': cus.address,
+            'pass_series': cus.pass_series,
+            'pass_number': cus.pass_number,
+            'pass_date': cus.pass_date,
+            'pass_issued': cus.pass_issued,
+            'source_t': cus.source_t
+        })
+        return render(request, 'common/edit_customer.html', context={'form': form})
+
+    if request.method == 'POST':
+        form = CustomerEditForm(request.POST)
+        source_t = request.POST.get("source_t", None)
+        name = request.POST.get("name", None)
+        email = request.POST.get("email", None)
+        phone = request.POST.get("phone", None)
+        address = request.POST.get("address", None)
+        pass_series = request.POST.get("pass_series", None)
+        pass_number = request.POST.get("pass_number", None)
+        pass_date = request.POST.get("pass_date", None)
+        pass_issued = request.POST.get("pass_issued", None)
+
+        if source_t != None and name != None:
+            instance = Customer.objects.get(pk=id)
+            instance.name = name
+            instance.email = email
+            instance.phone = phone
+            instance.address = address
+            instance.pass_series = pass_series
+            instance.pass_number = pass_number
+            instance.pass_date = pass_date
+            instance.pass_issued = pass_issued
+            instance.source_t = source_t
+            instance.save(update_fields=['name', 'email', 'phone', 'address', 'pass_series', 'pass_number', 'pass_date', 'pass_issued', 'source_t'])
+            return redirect('common:customers_list')
+    return render(request, 'common/edit_customer.html', context={'form': form})
 
 @login_required(login_url='login')
 def PaymentsList(request):
