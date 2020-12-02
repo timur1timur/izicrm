@@ -84,7 +84,7 @@ def StorageTextileAdd(request, id):
 def StorageTextileEdit(request, id):
     if request.method == 'GET':
         prod_g = StorageItemTextile.objects.get(pk=id)
-        form = StorageTextileForm({'item': prod_g.item, 'price': prod_g.price, 'quantity': prod_g.quantity, 'type_p': prod_g.type_p})
+        form = StorageTextileForm({'item': prod_g.item, 'price': prod_g.price, 'quantity': prod_g.quantity, 'type_p': prod_g.type_p, 'price_f': prod_g.price_f})
         return render(request, 'storage/edit_textile_storage.html', context={'form': form, 'item': prod_g})
 
     if request.method == 'POST':
@@ -92,12 +92,14 @@ def StorageTextileEdit(request, id):
         item = request.POST.get("item", None)
         quantity = request.POST.get("quantity", None)
         price = request.POST.get("price", None)
+        price_f = request.POST.get("price_f", None)
         if quantity != None and price != None:
             instance = StorageItemTextile.objects.get(pk=id)
             instance.price = price
             instance.quantity = quantity
+            instance.price_f = price_f
             instance.date_created = datetime.now()
-            instance.save(update_fields=['quantity', 'price', 'date_created'])
+            instance.save(update_fields=['quantity', 'price', 'date_created', 'price_f'])
             return redirect('storage:storage')
         return render(request, 'storage/edit_textile_storage.html', context={'form': form})
 

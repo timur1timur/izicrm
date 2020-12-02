@@ -410,7 +410,7 @@ def TextileAdd(request):
             obj.article = transliterate(str(obj.collection.name)[0]).upper() + transliterate(str(obj.model)[0]).upper()[0] + str(obj.pk)
             obj.save(update_fields=['article'])
 
-            return redirect('common:textile_filter', collection_id=collection_obj.id, model_id=instance.model)
+            return redirect('common:textile_filter', collection_id=collection_obj.id, model_id='all')
         return render(request, 'common/textile_create.html', context={'form': form})
 
 @login_required(login_url='login')
@@ -449,7 +449,7 @@ def TextileEdit(request, id):
             instance.currency = currency
 
             instance.save(update_fields=['model', 'color', 'height', 'price_opt', 'article', 'currency'])
-            return redirect('common:textile_filter', collection_id=collection_g.id, model_id=instance.model)
+            return redirect('common:textile_filter', collection_id=collection_g.id, model_id='all')
         return render(request, 'common/textile_edit.html', context={'form': form})
 
 
