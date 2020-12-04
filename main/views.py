@@ -12,7 +12,8 @@ from materials.models import Textile, Cornice, TextileCollection, CorniceAdditio
 
 from django.contrib.auth.decorators import login_required
 
-from .utils import ObjectRemove, ObjectRemove2, ShortName, ObjectRemove3, GetMarkupMaterials, GetMarkupWorks
+from .utils import ObjectRemove, ObjectRemove2, ShortName, ObjectRemove3, GetMarkupMaterials, GetMarkupWorks, \
+    GetContractP, create_contract
 import openpyxl
 from django.core.files import File
 from os.path import join
@@ -936,55 +937,14 @@ def ContractCreate(request, id):
             return redirect('main:contract_create_xls', id=sp.pk)
         return render(request, 'main/create_contract.html', context={'form': bound_form, 'title': 'Добавить договор'})
 
+import os
+
 @login_required(login_url='login')
 def ContractCreateXls(request, id):
-    order_id = Order.objects.get(pk=id)
-    customer_qs = Customer.objects.filter(order=order_id)[0]
-
-    wb = openpyxl.load_workbook(filename='contract_test.xlsx')
-    sheet = wb['Договор']
-
-    # Номер договора
-    sheet_order_name = 'A2'
-    # Дата договора
-    sheet_order_date_created = 'F4'
-
-    # ФИО заказчика
-    sheet_customer_name = 'A6'
-    # ФИО заказчика
-    sheet_customer_name2 = 'A80'
-    # Телефон заказчика
-    sheet_customer_phone = 'A84'
-    # Адрес заказчика
-    sheet_customer_address = 'A82'
-    # Серия заказчика
-    sheet_customer_pass_series = 'A86'
-    # Номер заказчика
-    sheet_customer_pass_number = 'A87'
-    # Дата выдачи заказчика
-    sheet_customer_pass_date = 'A88'
-    # Выдан заказчика
-    sheet_customer_pass_issued = 'A89'
-    # Подпись/ФИО заказчика
-    sheet_customer_short_name = 'A100'
-
-    sheet[sheet_order_name] = sheet[sheet_order_name].value + ' ' + order_id.number
-    sheet[sheet_order_date_created] = order_id.date_created
-
-    sheet[sheet_customer_name] = customer_qs.name + sheet[sheet_customer_name].value
-    sheet[sheet_customer_name2] = customer_qs.name
-    sheet[sheet_customer_phone] = customer_qs.phone
-    sheet[sheet_customer_address] = customer_qs.address
-    sheet[sheet_customer_pass_series] = sheet[sheet_customer_pass_series].value + ' ' + customer_qs.pass_series
-    sheet[sheet_customer_pass_number] = sheet[sheet_customer_pass_number].value + ' ' + customer_qs.pass_number
-    sheet[sheet_customer_pass_date] = sheet[sheet_customer_pass_date].value + ' ' + customer_qs.pass_date
-    sheet[sheet_customer_pass_issued] = sheet[sheet_customer_pass_issued].value + ' ' + customer_qs.pass_issued
-    sheet[sheet_customer_short_name] = sheet[sheet_customer_short_name].value + ' ' + ShortName(customer_qs.name) + ' /'
-
-    wb.save(f'contract_{order_id.number}.xlsx')
+    n = GetContractP(id)
 
     context = {
-        'test': 'Договор сохранен'
+        'test': n
     }
     return render(request, 'main/contract.html', context)
 
@@ -1044,51 +1004,12 @@ def OfferSelect(request, id):
     return redirect('main:order_view', id=sp.order.pk)
 
 
-from docxtpl import DocxTemplate
-import convertapi
-
-@login_required(login_url='login')
 def ContractCreateWord(request, id):
-
     order_id = Order.objects.get(pk=id)
-    customer_id = Customer.objects.filter(order=order_id)[0]
-    contract_id = Contract.objects.filter(order=order_id)[0]
-
-    path = join(settings.MEDIA_ROOT, f'conract_{order_id.number}.docx')
-    f = open(path, "w+b")
-
-    doc = DocxTemplate("contract_template.docx")
-    context = {
-        'contract_number': order_id.number,
-        'contract_date': order_id.date_created.strftime('%d.%m.%Y'),
-        'contract_garant': contract_id.garant,
-        'contract_price': contract_id.price,
-        'contract_price2': contract_id.price_w,
-        'contract_prepay': contract_id.prepay,
-        'contract_prepay_duration': contract_id.prepay_duration,
-        'contract_work_start': contract_id.work_start,
-        'contract_work_duration': contract_id.work_duration,
-        'customer_name': customer_id.name,
-        'customer_phone': customer_id.phone,
-        'customer_address': customer_id.address,
-        'cus_pass_series': customer_id.pass_series,
-        'cus_pass_number': customer_id.pass_number,
-        'cus_pass_date': customer_id.pass_date,
-        'cus_pass_issued': customer_id.pass_issued,
-        # 'customer_name_short': ShortName(customer_id.name)
-    }
-
-    doc.render(context)
-    doc.save(f)
-    convertapi.api_secret = 'JP1PQL3pMArtbl1P'
-    result = convertapi.convert('pdf', {'File': f'{path}'})
-    name_pdf = f'contract_{order_id.number}.pdf'
-    result.file.save(f'{join(settings.MEDIA_ROOT, name_pdf)}')
-    contract_file = OrderDoc()
-    contract_file.order = order_id
-    contract_file.contract_doc.name = join(settings.MEDIA_ROOT, name_pdf)
-    contract_file.save()
-
+    n = create_contract(id)
+    print(f'Contract {order_id.number} created')
+    m = GetContractP(id)
+    print(f'App Contract {order_id.number} created')
     curr_state = order_id.status
     if curr_state == 2:
         order_id.status = 3
@@ -1098,22 +1019,14 @@ def ContractCreateWord(request, id):
 
     return redirect('main:order_view', id=order_id.pk)
 
+
 import convertapi
 
 @login_required(login_url='login')
 def ViewContract(request, id):
     order_id = Order.objects.get(pk=id)
-    doc_contract = OrderDoc.objects.get(order=order_id)
-    convertapi.api_secret = 'JP1PQL3pMArtbl1P'
-    result = convertapi.convert('pdf', {'File': f'{doc_contract.contract_doc}'})
-    result.file.save(f'media/contract_{order_id.number}.pdf')
-    return render(request, 'main/view_contract.html', context={'order_id': order_id})
-
-
-@login_required(login_url='login')
-def ViewContract(request, id):
-    order_id = Order.objects.get(pk=id)
-    return render(request, 'main/view_contract.html', context={'order_id': order_id})
+    doc_state = OrderDoc.objects.get(order=order_id)
+    return render(request, 'main/view_contract.html', context={'order_id': order_id, 'doc_state': doc_state})
 
 
 @login_required(login_url='login')
@@ -1135,7 +1048,25 @@ def GetContractPDF(request, id):
     response['Content-Disposition'] = f'filename={contract_date}_contract_{order_id.number}.pdf'
     return response
 
+@login_required(login_url='login')
+def GetContractAppPDF(request, id, p):
+    order_id = Order.objects.get(pk=id)
+    obj = OrderDoc.objects.get(order=order_id)
+    contract_date = order_id.date_created.strftime('%Y%m%d')
+    if p == '1':
+        doc_app = obj.contract_p1
+    elif p == '2':
+        doc_app = obj.contract_p2
+    elif p == '3':
+        doc_app = obj.contract_p3
+    elif p == '4':
+        doc_app = obj.contract_p4
+    elif p == '5':
+        doc_app = obj.contract_p5
 
+    response = HttpResponse(doc_app, content_type='application/pdf')
+    response['Content-Disposition'] = f'filename={contract_date}_contract_{order_id.number}_{p}.pdf'
+    return response
 
 @login_required(login_url='login')
 def ContractReady(request, id):

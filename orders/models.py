@@ -198,8 +198,8 @@ class Contract(models.Model):
     garant = models.IntegerField(verbose_name='Гарантийный срок)', default=1)
     prepay = models.IntegerField(verbose_name='Размер предоплаты')
     prepay_duration = models.IntegerField(verbose_name='Предоплата в течение')
-    work_start = models.IntegerField(verbose_name='Начало работ (через)', default=5)
-    work_duration = models.IntegerField(verbose_name='Длительность работ')
+    work_start = models.CharField(verbose_name='Начало работ (через)', default=5, max_length=100, blank=True, null=True)
+    work_duration = models.CharField(verbose_name='Длительность работ', max_length=100, blank=True, null=True)
     date_acceptance = models.CharField(verbose_name='Дата приемки', max_length=100, blank=True, null=True)
     date_finish = models.CharField(verbose_name='Дата выполнения', max_length=100, blank=True)
     date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
@@ -218,6 +218,11 @@ class Contract(models.Model):
 class OrderDoc(models.Model):
     order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Заказ')
     contract_doc = models.FileField(blank=True, upload_to='contract')
+    contract_p1 = models.FileField(blank=True, upload_to='contract')
+    contract_p2 = models.FileField(blank=True, upload_to='contract')
+    contract_p3 = models.FileField(blank=True, upload_to='contract')
+    contract_p4 = models.FileField(blank=True, upload_to='contract')
+    contract_p5 = models.FileField(blank=True, upload_to='contract')
 
 
 class Room(models.Model):

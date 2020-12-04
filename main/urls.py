@@ -7,7 +7,8 @@ from .views import  SpecificationTextileAdd, SpecificationViewD, \
     ContractCreate, OfferCreate, OfferSelect, ContractCreateWord, GetContract, PaymentCreate, ContractReady, TestTemplate,\
     OrderCreateCustomer, SpecificationCopy, TextileReview, CorniceReview, SpecificationHangingAdd, SpecificationDeliveryAdd, \
     SpecificationHangingRemove, SpecificationDeliveryRemove, OrderArchive, GetDiscount, RefreshDiscount, home, SpecificationTextileEdit, \
-    SpecificationCorniceAdditionalReview, SpecificationCorniceAdditionalAdd, SpecificationCorniceAdditionalRemove, ViewContract, GetContractPDF
+    SpecificationCorniceAdditionalReview, SpecificationCorniceAdditionalAdd, SpecificationCorniceAdditionalRemove, ViewContract, \
+    GetContractPDF, GetContractAppPDF
 
 
 app_name = 'main'
@@ -60,7 +61,12 @@ urlpatterns = [
     path('contract/view/<id>/', ViewContract, name="contract_view"),
     path('contract/get/<id>/', GetContract, name="contract_get"),
     path('contract/get-pdf/<id>/', GetContractPDF, name="contract_get_pdf"),
+    path('app/get-pdf/<id>/<p>/', GetContractAppPDF, name="app_get_pdf"),
+
+
     path('contract/ready/<id>/', ContractReady, name="contract_ready"),
+
+    path('p/<id>/', ContractCreateXls, name="contract_create_xls11"),
 
     path('customer/create/<id>/', CustomerCreate, name="customer_create"),
     path('customer/add/', CustomerCreate, name="customer_create"),
