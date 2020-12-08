@@ -176,8 +176,8 @@ def SpecificationChangeStatus(request, id):
         sp.cornice_total = round(summ_c + summ_ad, 2)
         sp.sewing_total = round(summ_s, 2)
         sp.assembly_total = round(summ_a, 2)
-        sp.hanging_total = round(summ_s, 2)
-        sp.delivery_total = round(summ_a, 2)
+        sp.hanging_total = round(summ_h, 2)
+        sp.delivery_total = round(summ_d, 2)
         sp.total = total
         sp.save(update_fields=['textile_total', 'cornice_total', 'sewing_total',
                                'assembly_total', 'hanging_total', 'delivery_total', 'total'])

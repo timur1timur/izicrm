@@ -65,7 +65,7 @@ import convertapi
 from os.path import join
 from django.conf import settings
 from docxtpl import DocxTemplate
-
+import time
 
 def delete_row_with_merged_ranges(sheet, idx):
     sheet.delete_rows(idx)
@@ -75,8 +75,25 @@ def delete_row_with_merged_ranges(sheet, idx):
         elif idx <= mcr.max_row:
             mcr.shrink(bottom=1)
 
+def find_value_sheet(col, value, sheet):
+    start_v = 1
+    while sheet[f'{col}{start_v}'].value != value:
+        start_v += 1
+    return start_v
+
+
+def RemoveEmptyRow(col, start, stop, sheet):
+    start_v = find_value_sheet(col, start, sheet) + 1
+    finish_v = find_value_sheet(col, stop, sheet) - 1
+    while sheet[f'{col}{start_v}'].value != stop:
+        if sheet[f'{col}{start_v}'].value is None:
+            delete_row_with_merged_ranges(sheet, start_v)
+            finish_v -= 1
+        else:
+            start_v += 1
 
 def GetContractP(id):
+    time_start = time.time()
     order_id = Order.objects.get(pk=id)
     offer = Offer.objects.get(order=order_id)
     rooms = Room.objects.filter(order=order_id, status=1)
@@ -104,8 +121,63 @@ def GetContractP(id):
         customer = 'C7'
         name_d = 'J2'
 
-        contract_date = contract.date_created.strftime('%d.%m.%Y')
+        total = 'C101'
+        textile_t = 'F51'
+        cornice_t = 'F81'
+        sewing_t = 'L51'
+        assembly_t = 'L81'
+        hanging_t = 'L90'
+        delivery_t = 'L98'
 
+        discount_t = 'A52'
+        discount_c = 'A82'
+        discount_w_s = 'I52'
+        discount_w_a = 'I82'
+        discount_w_h = 'I91'
+        discount_w_d = 'I99'
+
+
+        sheet[total] = sp.total
+        sheet[textile_t] = sp.textile_total
+        sheet[cornice_t] = sp.cornice_total
+        sheet[sewing_t] = sp.sewing_total
+        sheet[assembly_t] = sp.assembly_total
+        sheet[hanging_t] = sp.hanging_total
+        sheet[delivery_t] = sp.delivery_total
+
+        sheet[discount_t] = f'СКИДКА: {round(((1 - float(order_id.discount_t)) * 100),2)}%'
+        sheet[discount_c] = f'СКИДКА: {round(((1 - float(order_id.discount_c)) * 100),2)}%'
+        sheet[discount_w_s] = f'СКИДКА: {round(((1 - float(order_id.discount_w)) * 100),2)}%'
+        sheet[discount_w_a] = f'СКИДКА: {round(((1 - float(order_id.discount_w)) * 100),2)}%'
+        sheet[discount_w_h] = f'СКИДКА: {round(((1 - float(order_id.discount_w)) * 100),2)}%'
+        sheet[discount_w_d] = f'СКИДКА: {round(((1 - float(order_id.discount_w)) * 100),2)}%'
+
+        if order_id.discount_t == 1:
+            sheet['A52'].value = None
+            sheet['A53'].value = None
+            sheet['C52'].value = None
+
+
+        if order_id.discount_c == 1:
+            sheet['A82'].value = None
+            sheet['C82'].value = None
+            sheet['A83'].value = None
+
+        if order_id.discount_w == 1:
+            sheet['I52'].value = None
+            sheet['K52'].value = None
+            sheet['I53'].value = None
+            sheet['I82'].value = None
+            sheet['K82'].value = None
+            sheet['I83'].value = None
+            sheet['I91'].value = None
+            sheet['K91'].value = None
+            sheet['I92'].value = None
+            sheet['I99'].value = None
+            sheet['K99'].value = None
+            sheet['I100'].value = None
+
+        contract_date = contract.date_created.strftime('%d.%m.%Y')
 
         sheet[room_value] = room.name
         sheet[order_num] = order_id.number
@@ -116,15 +188,19 @@ def GetContractP(id):
         sheet[customer] = contract.customer.name
         sheet[name_d] = f'Приложение {id_doc}'
 
-
         i = 25
         s_i = 25
+        a_i = 55
         c_i = 55
+        h_i = 85
+        d_i = 94
 
         t_num = 1
         c_num = 1
         s_num = 1
-
+        a_num = 1
+        h_num = 1
+        d_num = 1
 
         for t in textile:
             textile_num = f'A{i}'
@@ -136,7 +212,7 @@ def GetContractP(id):
             textile_quantity = f'G{i}'
 
             sheet[textile_num] = t_num
-            sheet[textile_model] = t.item.model
+            sheet[textile_model] = f'{t.item.collection.name} {t.item.model}'
             sheet[textile_color] = t.item.color
             sheet[textile_price] = round(float(t.total_price())/float(t.quantity),2)
             sheet[textile_type] = t.item.type_i
@@ -155,8 +231,8 @@ def GetContractP(id):
             textile_total = f'H{c_i}'
             textile_quantity = f'G{c_i}'
 
-            sheet[textile_num] = t_num
-            sheet[textile_model] = t.item.model
+            sheet[textile_num] = c_num
+            sheet[textile_model] = f'{t.item.collection.name} {t.item.model}'
             sheet[textile_color] = t.item.long
             sheet[textile_price] = round(float(t.total_price())/float(t.quantity),2)
             sheet[textile_type] = 'шт.'
@@ -178,22 +254,66 @@ def GetContractP(id):
             sheet[sewing_price] = round(float(s.total_price()) / float(s.quantity), 2)
             sheet[sewing_total] = s.total_price()
             sheet[sewing_quantity] = s.quantity
-
-
             s_i += 1
             s_num += 1
 
+        for s in assembly:
+            sewing_num = f'I{a_i}'
+            sewing_name = f'J{a_i}'
+            sewing_price = f'K{a_i}'
+            sewing_total = f'M{a_i}'
+            sewing_quantity = f'L{a_i}'
 
-        i_check = 25
-        i_fin = 50
-        while sheet[f'A{i_check}'].value != 999:
-            if sheet[f'A{i_check}'].value is None:
-                delete_row_with_merged_ranges(sheet, i_check)
-                print(f'Delete {i_check} row')
-                i_fin -= 1
-            else:
-                print(f'{i_check} not empty')
-                i_check += 1
+            sheet[sewing_num] = a_num
+            sheet[sewing_name] = s.item.name
+            sheet[sewing_price] = round(float(s.total_price()) / float(s.quantity), 2)
+            sheet[sewing_total] = s.total_price()
+            sheet[sewing_quantity] = s.quantity
+            a_i += 1
+            a_num += 1
+
+        for s in hanging:
+            sewing_num = f'I{h_i}'
+            sewing_name = f'J{h_i}'
+            sewing_price = f'K{h_i}'
+            sewing_total = f'M{h_i}'
+            sewing_quantity = f'L{h_i}'
+
+            sheet[sewing_num] = h_num
+            sheet[sewing_name] = s.item.name
+            sheet[sewing_price] = round(float(s.total_price()) / float(s.quantity), 2)
+            sheet[sewing_total] = s.total_price()
+            sheet[sewing_quantity] = s.quantity
+            h_i += 1
+            h_num += 1
+
+        for s in delivery:
+            sewing_num = f'I{d_i}'
+            sewing_name = f'J{d_i}'
+            sewing_price = f'K{d_i}'
+            sewing_total = f'M{d_i}'
+            sewing_quantity = f'L{d_i}'
+
+            sheet[sewing_num] = d_num
+            sheet[sewing_name] = s.item.name
+            sheet[sewing_price] = round(float(s.total_price()) / float(s.quantity), 2)
+            sheet[sewing_total] = s.total_price()
+            sheet[sewing_quantity] = s.quantity
+            d_i += 1
+            d_num += 1
+
+        if textile.count() > sewing.count():
+            RemoveEmptyRow('A','Ткани', 'Всего стоимость тканей:', sheet=sheet)
+        else:
+            RemoveEmptyRow('I','Пошив', 'Всего стоимость пошива:', sheet=sheet)
+
+        if cornice.count() > assembly.count():
+            RemoveEmptyRow('A', 'Карнизы', 'Всего стоимость карнизов:', sheet=sheet)
+        else:
+            RemoveEmptyRow('I', 'Монтаж', 'Всего стоимость монтажа:', sheet=sheet)
+
+        RemoveEmptyRow('I', 'Развеска штор', 'Всего стоимость развески:', sheet=sheet)
+        RemoveEmptyRow('I', 'Доставка', 'Всего стоимость доставки:', sheet=sheet)
 
 
         path = join(settings.MEDIA_ROOT, f'contract_{order_id.number}_Приложение{id_doc}.xlsx')
@@ -219,11 +339,9 @@ def GetContractP(id):
 
 
         id_doc += 1
-
-    if OrderDoc.objects.get(order=order_id):
-        return 1
-    else:
-        return 0
+    time_finish = time.time()
+    res_time = time_finish - time_start
+    print(res_time)
 
 def create_contract(id):
     order_id = Order.objects.get(pk=id)
