@@ -50,11 +50,11 @@
                            <div class="col-md-3 ml-md-auto text-md-right">
                               <h6 class="text-dark">Заказчик:</h6>
                               <address>
-                                 <strong>Иванов Иван Иванович</strong><br>
-                                 Спб, Рубинштейна 32-54<br>
-                                 <abbr title="Email"></abbr> info@customer.com
+                                 <strong>{{customer.name}}</strong><br>
+                                 {{customer.address}}<br>
+                                 <abbr title="Email"></abbr> {{customer.email}}
                                  <br>
-                                 <abbr title="Phone"></abbr> +7(917)9883567
+                                 <abbr title="Phone"></abbr> {{customer.phone}}
                               </address>
                               <br><br>
                               <span><strong>Дата заказа:</strong> {{ order.date_created|date:'Y-m-d' }}</span>

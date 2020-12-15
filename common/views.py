@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect, HttpResponse
+from django.http import JsonResponse
+
 from orders.models import Customer, Payment, Order, Contract, Offer, OrderItemTextile1, OrderItemCornice, \
     OrderItemWorkSewing, OrderItemWorkAssembly, OrderItemWorkHanging, OrderItemWorkDelivery, PaymentCategory, Contract
 from manager.models import SupplierOrderedTextile, SupplierOrderedCornice
-from orders.forms import CustomerForm, PaymentForm, CustomerEditForm
+from orders.forms import CustomerForm, PaymentForm, CustomerEditForm, PaymentCategoryForm
 from materials.models import TextileManufact, CorniceManufact, Textile, Cornice, TextileCollection, CorniceCollection, \
     CorniceAdditional, CorniceCollectionColor, CorniceAdditionalOptions
 from materials.forms import TextileManufactForm, CorniceManufactForm, TextileForm, CorniceForm, TextileCollectionForm, \
     CorniceCollectionForm, CorniceAdditionalForm, CorniceCollectionColorForm, CorniceAdditionalOptionsForm
 from works.models import Work, TypeWork
 from works.forms import WorkForm
-from markup.models import MarkupWorkCategory, MarkupCommon, MarkupMaterialCategory, MarkupSetting
+from markup.models import MarkupWorkCategory, MarkupCommon, MarkupMaterialCategory, MarkupSetting, MarkupCustomerCategory
 from .utils import Get_Budget, GetStatusOrder, GetStatOrderPeriod, GetStatOrderFinishPeriod, GetCusPay
 from django.contrib.auth.decorators import login_required
 
@@ -101,6 +103,30 @@ def CustomerEdit(request, id):
 def PaymentsList(request):
     qs = Payment.objects.filter(user=request.user)
     return render(request, 'common/payments.html', context={'qs': qs})
+
+
+
+@login_required(login_url='login')
+def PaymentCategoryCreate(request):
+
+    if request.method == 'GET':
+        form = PaymentCategoryForm()
+        return render(request, 'common/payment_category_create.html', context={'form': form})
+
+    if request.method == 'POST':
+        form = PaymentCategoryForm(request.POST)
+        name = request.POST.get("name", None)
+        type_p = request.POST.get("type_p", None)
+
+        if name != None and type_p !=None:
+            instance = PaymentCategory.objects.create(
+                name=name,
+                type_p=type_p,
+
+            )
+            return redirect('director:payments_list')
+        return render(request, 'main/payment_category_create.html', context={'form': form})
+
 
 @login_required(login_url='login')
 def PaymentCreate(request):
@@ -335,17 +361,64 @@ def TextileList(request):
     print(settings.value)
     return render(request, 'common/textile_list.html', context={'qs': qs, 'markup': markup.markup, 'markup_c': markup_c.markup, 'collection': collection, 'settings': settings})
 
+
+def test_textile(request):
+    return render(request, 'common/textile_l.html')
+
+
+def get_json_collection(request):
+    qs = list(TextileCollection.objects.values().order_by('name'))
+    return JsonResponse({'data': qs})
+
+
+def get_markup_customer(request):
+    qs = list(MarkupCustomerCategory.objects.values())
+    return JsonResponse({'data': qs})
+
+
+def get_json_models(request):
+    selected_collection = request.GET.get('collection')
+    obj = TextileCollection.objects.get(pk=selected_collection)
+    qs = list(Textile.objects.filter(collection=obj).order_by().values('model').distinct())
+    return JsonResponse({'data': qs})
+
+from django.utils.safestring import mark_safe
+
+def get_json_qs(request):
+    if request.is_ajax:
+        collection = request.GET.get('collection')
+        collection_g = TextileCollection.objects.get(pk=collection)
+        model = request.GET.get('model')
+        if model == 'all':
+            model_g = list(Textile.objects.filter(collection=collection_g).values())
+        else:
+            model_g = list(Textile.objects.filter(collection=collection_g, model__icontains=model).values())
+
+        mass = []
+        for item in model_g:
+            ff = '<a href="%s" title="" data-toggle="tooltip" data-original-title="Изменить">%s</a>' % (f"edit/{item['id']}/", '<i data-feather="edit-3" class="wd-16 mr-2"></i>')
+            item['link'] = ff
+            mass.append(item)
+        print(mass)
+        return JsonResponse({'data': mass})
+    return JsonResponse({'data': False})
+
+
+
+
+
+
 @login_required(login_url='login')
 def TextileListFilter(request, collection_id, model_id):
     if collection_id != 'all':
         if model_id != 'all':
             m_id = model_id.replace('%20', ' ')
             get_collection = TextileCollection.objects.get(pk=collection_id)
-            current_c = get_collection.name
+            current_c = get_collection.id
             qs = Textile.objects.filter(collection=get_collection, model__icontains=m_id)
         else:
             get_collection = TextileCollection.objects.get(pk=collection_id)
-            current_c = get_collection.name
+            current_c = get_collection.id
             qs = Textile.objects.filter(collection=get_collection)
             m_id = 'all'
     else:
@@ -360,7 +433,7 @@ def TextileListFilter(request, collection_id, model_id):
         models = Textile.objects.filter(collection=get_collection).order_by().values('model').distinct()
     else:
         models = None
-    
+
     markup = MarkupMaterialCategory.objects.get(source_t=0)
     markup_c = MarkupCommon.objects.get(name='Общая')
     settings = MarkupSetting.objects.get(name='markup_view')
@@ -372,6 +445,7 @@ def TextileListFilter(request, collection_id, model_id):
                                                                 'collection': collection,
                                                                 'models': models,
                                                                 'settings': settings})
+
 
 from materials.utils import transliterate
 

@@ -43,6 +43,19 @@ def get_markup(markup):
     markup_p = markup*100 - 100
     return f'{round(markup_p,2)} %'
 
+from storage.models import StorageItemTextile
+from materials.models import Textile
+
+@register.filter(name='get_storage_price')
+def get_storage_price(item):
+    obj = Textile.objects.get(pk=item)
+    storage = StorageItemTextile.objects.all().values_list('item', flat=True)
+    if obj.pk in storage:
+        g_obj_price = StorageItemTextile.objects.get(item=obj)
+        return g_obj_price.price_f
+    else:
+        return None
+
 from materials.models import Cornice, CorniceAdditional, CorniceAdditionalOptions, Textile
 
 @register.filter(name='get_additional')

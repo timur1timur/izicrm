@@ -8,7 +8,8 @@ from .views import CustomerList, CustomerCreate, TextileManufactList, TextileMan
     CorniceAdditionalDelete, CorniceAdditionalEdit, TextileCollectionList, TextileCollectionEdit, TextileCollectionRemove, \
     CorniceCollectionList, CorniceCollectionEdit, CorniceCollectionRemove, CorniceAdditionalList, CorniceCollectionColorAdd,\
     CorniceCollectionColorList, CorniceCollectionColorRemove, CorniceCollectionColorEdit, CorniceAdditionalOptionsAdd, \
-    CorniceAdditionalOptionsEdit, CorniceAdditionalOptionsList, CorniceAdditionalOptionsRemove, CustomerEdit
+    CorniceAdditionalOptionsEdit, CorniceAdditionalOptionsList, CorniceAdditionalOptionsRemove, CustomerEdit,\
+    PaymentCategoryCreate, test_textile, get_json_collection, get_json_models, get_json_qs, get_markup_customer
 
 app_name = 'common'
 
@@ -22,6 +23,7 @@ urlpatterns = [
 
     path('payments/list/', PaymentsList, name="payments_list"),
     path('payments/create/', PaymentCreate, name="payment_create"),
+    path('payments_category/create/', PaymentCategoryCreate, name="payment_category_create"),
 
     path('works/list/', WorksList, name="works_list"),
     path('works/create/', WorksAdd, name="works_create"),
@@ -52,6 +54,13 @@ urlpatterns = [
     path('collection/cornice/color/list/<id>/', CorniceCollectionColorList, name="collection_cornice_color_list"),
 
     path('textile/list/', TextileList, name="textile_list"),
+    path('textile/test/', test_textile, name="textile_test"),
+
+    path('textile/test/markup-json/', get_markup_customer, name="markup_json"),
+    path('textile/test/collection-json/', get_json_collection, name="collection_json"),
+    path('textile/test/model-json/', get_json_models, name="model_json"),
+    path('textile/test/get-json/', get_json_qs, name="get_json"),
+
     path('textile/filter/<collection_id>/<model_id>/', TextileListFilter, name="textile_filter"),
     path('textile/add/', TextileAdd, name="textile_add"),
     path('textile/edit/<id>/', TextileEdit, name="textile_edit"),

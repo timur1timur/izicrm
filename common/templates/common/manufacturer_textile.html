@@ -35,8 +35,6 @@
                                         <th>email</th>
                                          <th>Телефон</th>
                                          <th>Менеджер</th>
-                                        <th>Коллекции</th>
-                                         <th>Ткани</th>
                                         <th class="tx-right">Действия</th>
                                      </tr>
                                   </thead>
@@ -48,8 +46,6 @@
                                             <td>{{ q.email }}</td>
                                             <td>{{ q.manager }}</td>
                                             <td>{{ q.phone }}</td>
-                                            <td></td>
-                                            <td></td>
                                             <td class="tx-right">
                                                 {% if q.type_p == 'Текстиль' %}
                                                     <a href="{% url 'common:manufacturer_textile_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>

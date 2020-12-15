@@ -2,8 +2,10 @@
 
 {% block title_h1 %}Контроль расходов{% endblock %}
 {% block breadcrumb_buttons %}
-    <button onclick="location.href='{% url 'director:payment_create' %}'" type="button" class="btn btn-secondary mb-2 mb-md-0 d-none d-lg-block pd-t-6-force pd-b-5-force" >
+    <button onclick="location.href='{% url 'director:payment_create' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force" >
     <i data-feather="file-plus" class="wd-16 mr-2"></i>Создать платеж</button>
+    <button onclick="location.href='{% url 'common:payment_category_create' %}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force" >
+    <i data-feather="file-plus" class="wd-16 mr-2"></i>Создать категорию</button>
 {% endblock %}
 
 {% block body_content %}

@@ -85,10 +85,33 @@ class PaymentForm(forms.ModelForm):
             )
         }
 
+class PaymentCategoryForm(forms.ModelForm):
+
+    class Meta:
+        model = PaymentCategory
+        fields = ['name', 'type_p']
+        widgets = {
+            "type_p": forms.Select(
+                attrs={
+                    "type": "Select",
+                    "class": "custom-select",
+                }
+            ),
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-sm",
+                    "placeholder": "Введите название"
+                }
+            )
+        }
+
+
+
 class PaymentFormDirector(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PaymentFormDirector, self).__init__(*args, **kwargs)
         self.fields['category'].queryset = PaymentCategory.objects.filter(type_p=1)
+        self.fields['order'].queryset = Order.objects.all()
 
     class Meta:
         model = Payment
@@ -98,6 +121,7 @@ class PaymentFormDirector(forms.ModelForm):
                 attrs={
                     "type": "Select",
                     "class": "custom-select",
+                    "id": "select_category"
                 }
             ),
             "type_money": forms.Select(
@@ -105,6 +129,12 @@ class PaymentFormDirector(forms.ModelForm):
                     "type": "Select",
                     "class": "custom-select custom-select-sm",
 
+                }
+            ),
+            "order": forms.Select(
+                attrs={
+                    "type": "Select",
+                    "class": "custom-select custom-select-sm",
                 }
             ),
             "price": forms.TextInput(

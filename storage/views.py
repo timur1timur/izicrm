@@ -26,11 +26,11 @@ def TextileReview(request, collection_id, model_id):
         if model_id != 'all':
             m_id = model_id.replace('%20', ' ')
             get_collection = TextileCollection.objects.get(id=collection_id)
-            current_c = get_collection.name
+            current_c = get_collection.id
             qs = Textile.objects.filter(collection=get_collection, model=m_id)
         else:
             get_collection = TextileCollection.objects.get(id=collection_id)
-            current_c = get_collection.name
+            current_c = get_collection.id
             qs = Textile.objects.filter(collection=get_collection)
             m_id = 'all'
     else:

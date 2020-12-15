@@ -1,0 +1,50 @@
+{% extends "main/base.html" %}
+
+{% block title_h1 %}Создание категории платежей{% endblock %}
+
+
+
+{% block body_content %}
+
+<form method="POST" class="post-form">{% csrf_token %}
+    <div class="row">
+        <div class="col-xl-5">
+            <div class="form-layout form-layout-4">
+
+                <p class="mg-b-30 tx-gray-700">Заполните форму создания категории.</p>
+                <div class="row">
+                    <label class="col-sm-4 form-control-label">Тип:</label>
+                    <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                    {{ form.type_p }}
+                    </div>
+                </div>
+
+                <div class="row mg-t-20">
+                    <label class="col-sm-4 form-control-label">Название:</label>
+                    <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                     {{ form.name }}
+                    </div>
+                </div>
+
+                <br>
+               <!-- row -->
+
+               <!-- row -->
+               <div class="row mg-t-30">
+                  <div class="col-sm-8">
+                     <div class="form-layout-footer">
+                        <button type="Submit" class="btn btn-primary">Добавить</button>
+                         <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-secondary">Отменить</a>
+                     </div>
+                     <!-- form-layout-footer -->
+                  </div>
+                  <!-- col-8 -->
+               </div>
+            </div>
+            <!-- form-layout -->
+         </div>
+
+    </div>
+ </form>
+</br>
+{% endblock %}

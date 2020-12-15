@@ -1002,6 +1002,13 @@ def SupplierOrderSend2(request, id):
     if request.method == 'GET':
         order = SupplierOrder.objects.get(pk=id)
         materials = order.materials.all()
+        text_d = f'_________________________' \
+                  f'С Уважением' \
+                  f'IZOBRETATELI DECORA' \
+                  f'Менеджер Алеся, 8-911-720-19-88' \
+                  f'СПБ, Парфеновская д.9 кор.1' \
+                  f'izidecor.ru' \
+                  f'izidecor.shop'
         materials_mass = []
         for m in materials:
             mat = f'{m.item.collection} {m.item.model} {m.item.color} в количестве {m.quantity} метров'
@@ -1056,7 +1063,14 @@ def SupplierOrderSend3(request, id):
         materials_mass = []
         if materials.count() > 0:
             for m in materials:
-                mat = f'{m.item.collection} {m.item.model} {m.item.long} в количестве {m.quantity} шт.'
+                mat = f'{m.item.collection} {m.item.model} {m.item.long} в количестве {m.quantity} шт.' \
+                      f'_________________________' \
+                      f'С Уважением' \
+                      f'IZOBRETATELI DECORA' \
+                      f'Менеджер Алеся, 8-911-720-19-88' \
+                      f'СПБ, Парфеновская д.9 кор.1' \
+                      f'izidecor.ru' \
+                      f'izidecor.shop'
                 materials_mass.append(mat)
         if additional.count() > 0:
             for m in additional:

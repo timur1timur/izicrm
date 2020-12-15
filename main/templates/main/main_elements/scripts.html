@@ -9,7 +9,6 @@
   <script src="/static/main/assets/plugins/pace/pace.min.js"></script>
   <script src="/static/main/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
   <script src="/static/main/assets/plugins/highlight/highlight.min.js"></script>
-
   <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
   <!-- Dashboard Script -->
   <script src="/static/main/assets/plugins/daterangepicker/daterangepicker.js"></script>
@@ -174,24 +173,24 @@
   <script>
     $("#button-textile").click(function() {
         var link = '{% url 'common:textile_filter' 'NEWVALUESTUB' 'NEWVALUESTUB2' %}';
-        link = link.replace('NEWVALUESTUB', $("#textile_collection").val());
-        link = link.replace('NEWVALUESTUB2', $("#textile_model").val());
+        link = link.replace('NEWVALUESTUB', $("#collection-data-box").val());
+        link = link.replace('NEWVALUESTUB2', $("#model-data-box").val());
         window.location.href = link;
     });
   </script>
   <script>
     $("#button-textile-storage").click(function() {
         var link = '{% url 'storage:review_textile' 'NEWVALUESTUB' 'NEWVALUESTUB2' %}';
-        link = link.replace('NEWVALUESTUB', $("#textile_collection").val());
-        link = link.replace('NEWVALUESTUB2', $("#textile_model").val());
+        link = link.replace('NEWVALUESTUB', $("#collection-data-box").val());
+        link = link.replace('NEWVALUESTUB2', $("#model-data-box").val());
         window.location.href = link;
     });
   </script>
   <script>
     $("#button-textile-designer").click(function() {
         var link = '{% url 'main:review_textile' 'ID' 'NEWVALUESTUB' 'NEWVALUESTUB2' %}';
-        link = link.replace('NEWVALUESTUB', $("#textile_collection").val());
-        link = link.replace('NEWVALUESTUB2', $("#textile_model").val());
+        link = link.replace('NEWVALUESTUB', $("#collection-data-box").val());
+        link = link.replace('NEWVALUESTUB2', $("#model-data-box").val());
         link = link.replace('ID', $("#button-textile-designer").val());
         window.location.href = link;
     });
@@ -217,6 +216,21 @@
       link = link.replace('ID', sp_id.textContent);
       window.location.href = link;
   }
+  </script>
+
+  <script>
+    $("#select_category").on('change', function() {
+      var $this = $(this),
+          val = $this.val();
+      if(val == 9){
+        $('#order_payments_id').removeAttr('hidden');
+
+      } else {
+        $('#order_payments_id').attr("hidden", true);
+      }
+
+    });
+
   </script>
 
   <script>
@@ -286,8 +300,11 @@
     });
   </script>
 
+
+
   <!-- footable Script -->
   <script src="/static/main/assets/plugins/footable/footable.all.min.js"></script>
+
 
   <script>
      // Row Toggler

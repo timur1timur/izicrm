@@ -30,7 +30,17 @@
 
                               <div class="form-group mb-3">
                                  <label class="form-control-label">Текст заявки</label>
-                                 <textarea rows="10" name="text" class="form-control" placeholder="Textarea">Добрый день! Хотим заказать: {% for m in materials%}&#10; - {{m}} {%endfor%}</textarea>
+                                 <textarea rows="10" name="text" class="form-control" placeholder="Textarea">Здравствуйте! Оформите, пожалуйста, заявку от ООО "Изобретатели Декора"
+Оплата:
+Доставка:
+{% for m in materials%}&#10; - {{m}} {%endfor%}&#10;
+С Уважением
+IZOBRETATELI DECORA
+Менеджер Алеся, 8-911-720-19-88
+СПБ, Парфеновская д.9 кор.1
+izidecor.ru
+izidecor.shop
+                                 </textarea>
                               </div>
                               <br>
                               <div class="btn-toolbar form-group mb-0">

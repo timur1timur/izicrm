@@ -452,11 +452,11 @@ def TextileReview(request, id, collection_id, model_id):
         if model_id != 'all':
             m_id = model_id.replace('%20', ' ')
             get_collection = TextileCollection.objects.get(id=collection_id)
-            current_c = get_collection.name
+            current_c = get_collection.id
             qs = Textile.objects.filter(collection=get_collection, model=m_id)
         else:
             get_collection = TextileCollection.objects.get(id=collection_id)
-            current_c = get_collection.name
+            current_c = get_collection.id
             qs = Textile.objects.filter(collection=get_collection)
             m_id = 'all'
     else:
@@ -851,6 +851,8 @@ def OrderCreateKp(request, id):
             if sp == 'Premium':
                 premium_v += float(mass_rooms[q][sp]['total'])
 
+    customer = Customer.objects.get(order=qs)
+
     finish_mass = {
         'econom': round(econom_v, 2),
         'standart': round(standart_v, 2),
@@ -858,6 +860,7 @@ def OrderCreateKp(request, id):
     }
 
     context = {
+        'customer': customer,
         'order': qs,
         'rooms': rooms,
         'sps': mass_rooms,

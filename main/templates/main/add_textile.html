@@ -6,43 +6,37 @@
                      <!-- Filtering FooTable Start -->
                      <!--================================-->
                      <div class="col-md-12 col-lg-12">
+                         <p id="endpoint-collection" hidden>{% url 'common:collection_json' %}</p>
+                         <p id="endpoint-model" hidden>{% url 'common:model_json' %}</p>
+                         <p id="current-collection" hidden>{{current_c}}</p>
+                         <p id="current-model" hidden>{{current_m}}</p>
                          <div class="card-body pd-0">
                            <div class="row">
                              <div class="mg-20 form-inline wd-100p">
                                 <div class="col-sm-8">
+
                                     <div class="input-group mb-3">
-                                       <div class="input-group-prepend">
-                                          <span class="input-group-text">Коллекция</span>
-                                       </div>
-                                       <select id="textile_collection" class="custom-select">
-                                           <option value="all">Показать все</option>
+                                           <div class="input-group-prepend">
+                                              <span class="input-group-text">Коллекция</span>
+                                           </div>
+                                           <select id="collection-data-box" class="custom-select">
+                                               <option value="all">Показать все</option>
+                                           </select>
 
-                                          {% for c in collection %}
-                                            {% if c.name == current_c %}
-                                                <option selected value="{{c.id}}">{{c.name|title}}</option>
-                                            {% else %}
-                                                <option value="{{c.id}}">{{c.name|title}}</option>
-                                            {% endif %}
-                                          {% endfor %}
-                                      </select>
-                                        <div class="input-group-prepend mg-l-10">
-                                          <span class="input-group-text">Модель</span>
-                                       </div>
-                                       <select id="textile_model" class="custom-select">
-                                         <option value="all">Показать все</option>
-                                          {% for m in models %}
-                                            {% if m.model == current_m %}
-                                                <option selected>{{m.model|title}}</option>
-                                            {% else %}
-                                                <option value="{{m.model}}">{{m.model|title}}</option>
-                                            {% endif %}
-                                          {% endfor %}
-                                      </select>
-                                        <div class="form-layout-footer">
-                                            <button type="button" id="button-textile-designer" value="{{id}}" class="btn btn-primary mg-l-10">Фильтр</button>
-                                        </div>
+
+
+                                           <div class="input-group-prepend mg-l-5" >
+                                              <span class="input-group-text">Модели</span>
+                                           </div>
+                                           <select id="model-data-box" class="custom-select">
+                                               <option value="all">Показать все</option>
+                                           </select>
+                                            <div class="form-layout-footer">
+                                                 <button type="submit" id="button-textile-designer" value="{{id}}" class="btn btn-primary mg-l-10">Фильтр</button>
+                                            </div>
+
+
                                     </div>
-
 
 
                                 </div>
@@ -78,12 +72,16 @@
                                             <td>{{ q.height }}</td>
                                             <td>{{ q.color }}</td>
                                             <td>
-                                                {% if q.currency == '$' %}
-                                                    {{ q.price_opt|mul:markup|floatformat|get_currency_price:1 }} руб. (${{ q.price_opt|mul:markup|floatformat }})
-                                                {% elif q.currency == 'euro' %}
-                                                    {{ q.price_opt|mul:markup|floatformat|get_currency_price:2 }} руб. (€{{ q.price_opt|mul:markup|floatformat }})
+                                                {% if q.id|get_storage_price %}
+                                                    {{q.id|get_storage_price|mul:markup|floatformat}} {{q.currency}}
                                                 {% else %}
-                                                    {{ q.price_opt|mul:markup|floatformat }} руб.
+                                                    {% if q.currency == '$' %}
+                                                        {{ q.price_opt|mul:markup|floatformat|get_currency_price:1 }} руб. (${{ q.price_opt|mul:markup|floatformat }})
+                                                    {% elif q.currency == 'euro' %}
+                                                        {{ q.price_opt|mul:markup|floatformat|get_currency_price:2 }} руб. (€{{ q.price_opt|mul:markup|floatformat }})
+                                                    {% else %}
+                                                        {{ q.price_opt|mul:markup|floatformat }} руб.
+                                                    {% endif %}
                                                 {% endif %}
                                             </td>
                                             <td>
@@ -104,7 +102,7 @@
                                  </tbody>
                                  <tfoot>
                                     <tr>
-                                       <td colspan="5">
+                                       <td colspan="8">
                                           <div class="ft-right">
                                              <ul class="pagination"></ul>
                                           </div>
@@ -125,5 +123,10 @@
                         </div>
                      </div>
                      <!--/ Filtering FooTable End -->
+{% load static %}
+
+<script src="{% static 'main/assets/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'main/assets/plugins/jquery-ui/jquery-ui.js' %}"></script>
+<script src="{% static 'main/assets/test_textile.js' %}"></script>
 {% endblock %}
 

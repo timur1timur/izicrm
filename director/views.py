@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
-from orders.models import Payment, PaymentCategory
+from orders.models import Payment, PaymentCategory, Order
 from orders.forms import PaymentFormDirector
 import datetime
 from django.db.models import Sum
@@ -84,15 +84,29 @@ def PaymentCreate(request):
         type_money = request.POST.get("type_money", None)
         price = request.POST.get("price", None)
         receipt = request.POST.get("receipt", None)
+        order = request.POST.get("order", None)
+
         if category != None and type_money != None and price != None and receipt != None:
             cat = PaymentCategory.objects.get(pk=category)
-            instance = Payment.objects.create(
-                category=cat,
-                type_money=type_money,
-                price=price,
-                receipt=receipt,
-                user=request.user
-            )
+            if cat.pk == 9:
+                order_g = Order.objects.get(pk=order)
+                instance = Payment.objects.create(
+                    category=cat,
+                    type_money=type_money,
+                    price=price,
+                    receipt=receipt,
+                    user=request.user,
+                    order=order_g
+                )
+            else:
+                instance = Payment.objects.create(
+                    category=cat,
+                    type_money=type_money,
+                    price=price,
+                    receipt=receipt,
+                    user=request.user
+                )
+
             return redirect('director:payments_list')
         return render(request, 'director/payment_create.html', context={'form': form})
 
