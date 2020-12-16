@@ -219,6 +219,23 @@
   </script>
 
   <script>
+    $("#search-form-textile").on('keypress',function(e) {
+        if(e.which == 13) {
+            const endpointSearch = document.getElementById('endpoint-search')
+            const bla = $('#search-input-textile').val();
+            console.log(bla)
+
+            var link = endpointSearch.textContent;
+            link = link.replace('query', bla);
+            window.location.href = link;
+
+        }
+    });
+
+  </script>
+
+
+  <script>
     $("#select_category").on('change', function() {
       var $this = $(this),
           val = $this.val();

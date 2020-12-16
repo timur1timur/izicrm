@@ -1,0 +1,307 @@
+{% extends "main/base.html" %}
+
+{% block search_button %}
+<li class="list-inline-item mg-l-10"><a  href="#" id="search-button"><i data-feather="search" class="wd-20"></i></a></li>
+{% endblock %}
+
+
+{% block search %}
+
+<div class="search-form" id="search-form-textile">
+     <div class="input-group">
+        <input class="form-control search-input" id="search-input-textile" placeholder="Поиск по артикулу/коллекции/модели" type="text"/>
+        <span class="input-group-btn">
+            <span id="close-search"><i data-feather="x" class="wd-16"></i></span>
+        </span>
+     </div>
+</div>
+
+{% endblock %}
+
+
+{% block title_h1 %}
+Поиск
+{% endblock %}
+{% block breadcrumb_buttons %}
+{% if user.is_authenticated %}
+    {% if request.user|has_group:"designer" %}
+    {% else %}
+        {% if settings.value == 0 %}
+            <button onclick="location.href='{% url 'markup:markup_view' id='1'%}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
+            <i data-feather="eye" class="wd-16 mr-2"></i>Режим дизайнера</button>
+        {% else %}
+            <button onclick="location.href='{% url 'markup:markup_view' id='0'%}'" type="button" class="btn btn-secondary mr-2 d-none d-none d-lg-block pd-t-6-force pd-b-5-force">
+            <i data-feather="eye" class="wd-16 mr-2"></i>Режим менеджера</button>
+        {% endif %}
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block body_content %}
+                     <!-- Filtering FooTable Start -->
+                     <!--================================-->
+
+                     <div class="col-md-12 col-lg-12">
+                         <p id="endpoint-collection" hidden>{% url 'common:collection_json' %}</p>
+                         <p id="endpoint-model" hidden>{% url 'common:model_json' %}</p>
+                         <p id="endpoint-markup" hidden>{% url 'common:markup_json' %}</p>
+                         <p id="endpoint-set-markup" hidden>{% url 'common:set_markup_json' %}</p>
+                         <p id="endpoint-search" hidden>{% url 'common:textile_search' q='query'%}</p>
+
+                         <p id="current-collection" hidden>{{current_c}}</p>
+                         <p id="current-model" hidden>{{current_m}}</p>
+                         <p id="current-customer" hidden>{{get_m.value}}</p>
+
+                         <div class="card-body pd-0">
+                           <div class="row">
+                             <div class="mg-20 form-inline wd-100p">
+                                <div class="col-sm-10">
+
+
+                                     <div class="input-group mb-3" hidden>
+                                           <div class="input-group-prepend">
+                                              <span class="input-group-text">Тип</span>
+                                           </div>
+                                           <select id="markup-data-box" class="custom-select">
+                                           </select>
+
+                                           <div class="input-group-prepend mg-l-5">
+                                              <span class="input-group-text">Коллекция</span>
+                                           </div>
+                                           <select id="collection-data-box" class="custom-select">
+                                               <option value="all">Показать все</option>
+                                           </select>
+
+
+                                           <div class="input-group-prepend mg-l-5" >
+                                              <span class="input-group-text">Модели</span>
+                                           </div>
+                                           <select id="model-data-box" class="custom-select">
+                                               <option value="all">Показать все</option>
+                                           </select>
+                                            <div class="form-layout-footer">
+                                                 <button type="submit" id="button-textile" class="btn btn-primary mg-l-10">Фильтр</button>
+                                            </div>
+
+
+                                     </div>
+                                </div>
+
+
+                             </div>
+                          </div>
+
+                            <div class="mg-b-30">
+
+                                {% if qs_c %}
+                                    <br>
+                                    <span class="tx-14 tx-uppercase mg-l-5">Найдено в коллекциях: {{qs_c.count}}</span>
+                                    <br>
+                                    <br>
+                                  <table class="table table-bordered table-hover toggle-circle">
+                                      <thead class="tx-10 tx-uppercase">
+                                         <tr>
+                                            <th>Поставщик</th>
+                                            <th>Коллекция</th>
+                                            <th>Модели</th>
+                                         </tr>
+                                      </thead>
+                                      {% load mathfilters %}
+                                     <tbody>
+                                        {% for q in qs_c %}
+
+                                            <tr class="odd gradeX">
+                                                <td>{{ q.manufacturer }}</td>
+                                                <td>{{ q.name }}</td>
+                                                <td><a href="{% url 'common:textile_filter' collection_id=q.id model_id='all' %}">{{ q|get_textile_count }}</a></td>
+                                            </tr>
+                                        {% endfor %}
+
+                                     </tbody>
+
+                                  </table>
+                                {% endif %}
+
+                                {% if qs_m %}
+                                    <br>
+                                    <span class="tx-14 tx-uppercase mg-l-5">Найдено в моделях: {{qs_m.count}}</span>
+                                    <br>
+                                    <br>
+                                  <table class="table table-bordered table-hover toggle-circle">
+                                      <thead class="tx-10 tx-uppercase">
+                                         <tr>
+                                            <th>Артикул</th>
+                                             {% if request.user|has_group:"designer" %}
+                                             {% else %}
+                                                <th>Поставщик</th>
+                                             {% endif %}
+
+                                            <th>Коллекция</th>
+                                            <th>Модель</th>
+                                            <th>Цвет</th>
+                                             <th>СМ</th>
+                                             <th>Цена</th>
+
+                                            {% if request.user|has_group:"designer" %}
+                                             {% else %}
+                                                <th class="tx-right">Действия</th>
+                                             {% endif %}
+                                         </tr>
+                                      </thead>
+                                      {% load mathfilters %}
+                                     <tbody>
+                                        {% for q in qs_m %}
+
+                                            <tr class="odd gradeX">
+                                                <td>{{q.article}}</td>
+                                                {% if request.user|has_group:"designer" %}
+                                                {% else %}
+                                                    <td>{{ q.manufacturer }}</td>
+                                                {% endif %}
+
+                                                <td>{{ q.collection }}</td>
+                                                <td>{{ q.model }}</td>
+                                                <td>{{ q.color }}</td>
+                                                <td>{{ q.height }}</td>
+                                                <td>
+
+                                                    {% if request.user|has_group:"designer" or settings.value == 1 %}
+                                                        {% if q.id|get_storage_price %}
+                                                            {{q.id|get_storage_price|mul:markup_storage|floatformat}}
+                                                        {% else %}
+                                                            {% if q.currency == '$' %}
+                                                                {{ q.price_opt|mul:markup_common|floatformat|get_currency_price:1 }} руб. (${{ q.price_opt|mul:markup_common|floatformat }})
+                                                            {% elif q.currency == 'euro' %}
+                                                                {{ q.price_opt|mul:markup_common|floatformat|get_currency_price:2 }} руб. (€{{ q.price_opt|mul:markup_common|floatformat }})
+                                                            {% else %}
+                                                                {{ q.price_opt|mul:markup_common|floatformat }} руб.
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {% if q.currency == '$' %}
+                                                            {{ q.price_opt|get_currency_price:1 }} руб. (${{ q.price_opt }})
+                                                        {% elif q.currency == 'euro' %}
+                                                            {{ q.price_opt|get_currency_price:2 }} руб. (€{{ q.price_opt }})
+                                                        {% else %}
+                                                            {{ q.price_opt }} руб.
+                                                        {% endif %}
+                                                    {% endif %}
+
+
+                                                </td>
+                                                {% if request.user|has_group:"designer" %}
+                                                {% else %}
+
+                                                    <td class="tx-right">
+                                                        <a href="{% url 'common:textile_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                        <a href="{% url 'common:textile_remove' id=q.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+
+                                     </tbody>
+
+                                  </table>
+                                {% endif %}
+
+                                {% if qs_a %}
+                                    <br>
+                                    <span class="tx-14 tx-uppercase mg-l-5">Найдено в артикулах: {{qs_a.count}}</span>
+                                    <br>
+                                    <br>
+                                  <table class="table table-bordered table-hover toggle-circle">
+                                      <thead class="tx-10 tx-uppercase">
+                                         <tr>
+                                            <th>Артикул</th>
+                                             {% if request.user|has_group:"designer" %}
+                                             {% else %}
+                                                <th>Поставщик</th>
+                                             {% endif %}
+
+                                            <th>Коллекция</th>
+                                            <th>Модель</th>
+                                            <th>Цвет</th>
+                                             <th>СМ</th>
+                                             <th>Цена</th>
+
+                                            {% if request.user|has_group:"designer" %}
+                                             {% else %}
+                                                <th class="tx-right">Действия</th>
+                                             {% endif %}
+                                         </tr>
+                                      </thead>
+                                      {% load mathfilters %}
+                                     <tbody>
+                                        {% for q in qs_a %}
+
+                                            <tr class="odd gradeX">
+                                                <td>{{q.article}}</td>
+                                                {% if request.user|has_group:"designer" %}
+                                                {% else %}
+                                                    <td>{{ q.manufacturer }}</td>
+                                                {% endif %}
+
+                                                <td>{{ q.collection }}</td>
+                                                <td>{{ q.model }}</td>
+                                                <td>{{ q.color }}</td>
+                                                <td>{{ q.height }}</td>
+                                                <td>
+
+                                                    {% if request.user|has_group:"designer" or settings.value == 1 %}
+                                                        {% if q.id|get_storage_price %}
+                                                            {{q.id|get_storage_price|mul:markup_storage|floatformat}}
+                                                        {% else %}
+                                                            {% if q.currency == '$' %}
+                                                                {{ q.price_opt|mul:markup_common|floatformat|get_currency_price:1 }} руб. (${{ q.price_opt|mul:markup_common|floatformat }})
+                                                            {% elif q.currency == 'euro' %}
+                                                                {{ q.price_opt|mul:markup_common|floatformat|get_currency_price:2 }} руб. (€{{ q.price_opt|mul:markup_common|floatformat }})
+                                                            {% else %}
+                                                                {{ q.price_opt|mul:markup_common|floatformat }} руб.
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {% if q.currency == '$' %}
+                                                            {{ q.price_opt|get_currency_price:1 }} руб. (${{ q.price_opt }})
+                                                        {% elif q.currency == 'euro' %}
+                                                            {{ q.price_opt|get_currency_price:2 }} руб. (€{{ q.price_opt }})
+                                                        {% else %}
+                                                            {{ q.price_opt }} руб.
+                                                        {% endif %}
+                                                    {% endif %}
+
+
+                                                </td>
+                                                {% if request.user|has_group:"designer" %}
+                                                {% else %}
+
+                                                    <td class="tx-right">
+                                                        <a href="{% url 'common:textile_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                        <a href="{% url 'common:textile_remove' id=q.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+
+                                     </tbody>
+
+                                  </table>
+                                {% endif %}
+                                {% if qs_a == 0 and qs_m == 0 and qs_c == 0%}
+
+                                    <br>
+                                    <span class="tx-15 tx-uppercase mg-l-5">Ничего не найдено! :(</span>
+                                    <br>
+
+                                {% endif %}
+
+                            </div>
+                        </div>
+                     </div>
+                     <!--/ Filtering FooTable End -->
+
+{% load static %}
+
+
+{% endblock %}
+

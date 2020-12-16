@@ -8,14 +8,23 @@
                      <div class="col-md-12 col-lg-12">
                          <p id="endpoint-collection" hidden>{% url 'common:collection_json' %}</p>
                          <p id="endpoint-model" hidden>{% url 'common:model_json' %}</p>
+                         <p id="endpoint-markup" hidden>{% url 'common:markup_json' %}</p>
+                         <p id="endpoint-set-markup" hidden>{% url 'common:set_markup_json' %}</p>
                          <p id="current-collection" hidden>{{current_c}}</p>
                          <p id="current-model" hidden>{{current_m}}</p>
+                         <p id="current-customer" hidden>{{get_m.value}}</p>
                          <div class="card-body pd-0">
                            <div class="row">
                              <div class="mg-20 form-inline wd-100p">
                                 <div class="col-sm-8">
 
                                     <div class="input-group mb-3">
+                                           <div class="input-group-prepend" hidden>
+                                              <span class="input-group-text">Тип</span>
+                                           </div>
+                                           <select id="markup-data-box" class="custom-select" hidden>
+                                           </select>
+
                                            <div class="input-group-prepend">
                                               <span class="input-group-text">Коллекция</span>
                                            </div>

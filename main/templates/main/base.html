@@ -24,7 +24,7 @@
          <!--================================-->
          <div class="page-sidebar">
             <div class="logo">
-               <a class="logo-img" href="index.html">		
+               <a class="logo-img" href="{% url 'home' %}">
                <img class="desktop-logo" src="/static/main/assets/images/header_logo_w.png" alt="">
                <img class="small-logo" src="/static/main/assets/images/header__logo_small.png" alt="">
                </a>			
@@ -50,7 +50,7 @@
             <!-- Page Header Start -->
             <!--================================-->
             <div class="page-header">
-               {% include 'main/main_elements/search.html' %}
+               {% block search %}{% endblock %}
                <nav class="navbar navbar-default">
                   <!--================================-->
                   <!-- Brand and Logo Start -->
@@ -62,7 +62,8 @@
                            <li class="list-inline-item"><a class="hidden-md hidden-lg" href="#" id="sidebar-toggle-button"><i data-feather="menu" class="wd-20"></i></a></li>
                            <!-- PC Toggle and Logo -->
                            <li class="list-inline-item"><a class=" hidden-xs hidden-sm" href="#" id="collapsed-sidebar-toggle-button"><i data-feather="menu" class="wd-20"></i></a></li>
-                           <li class="list-inline-item mg-l-10"><a  href="#" id="search-button"><i data-feather="search" class="wd-20"></i></a></li>
+                           {% block search_button %}{% endblock %}
+
                         </ul>
                      </div>
                   </div>

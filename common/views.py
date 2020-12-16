@@ -366,14 +366,50 @@ def test_textile(request):
     return render(request, 'common/textile_l.html')
 
 
+def search_textile(request, q):
+    if TextileCollection.objects.filter(name__icontains=q).exists():
+        qs_collection = TextileCollection.objects.filter(name__icontains=q)
+    else:
+        qs_collection = 0
+
+    if Textile.objects.filter(model__icontains=q).exists():
+        qs_model = Textile.objects.filter(model__icontains=q)
+    else:
+        qs_model = 0
+
+    if Textile.objects.filter(article__icontains=q).exists():
+        qs_article = Textile.objects.filter(article__icontains=q)
+    else:
+        qs_article = 0
+    # return JsonResponse({'data_c': qs_collection,
+    #                      'data_m': qs_textile,
+    #                      'data_a': qs_article
+    #                      })
+    return render(request, 'common/textile_search.html', context={'qs_m': qs_model,
+                                                                  'qs_a': qs_article,
+                                                                  'qs_c': qs_collection,
+                                                                  })
+
+
 def get_json_collection(request):
     qs = list(TextileCollection.objects.values().order_by('name'))
     return JsonResponse({'data': qs})
 
 
+
 def get_markup_customer(request):
     qs = list(MarkupCustomerCategory.objects.values())
     return JsonResponse({'data': qs})
+
+
+def set_markup_customer(request):
+    if request.is_ajax:
+        set_m = MarkupSetting.objects.get(name='markup_customer')
+        get_val = request.GET.get('customer')
+        set_m.value = get_val
+        set_m.save(update_fields=['value'])
+        return JsonResponse({'data': True})
+    return JsonResponse({'data': False})
 
 
 def get_json_models(request):
@@ -433,15 +469,22 @@ def TextileListFilter(request, collection_id, model_id):
         models = Textile.objects.filter(collection=get_collection).order_by().values('model').distinct()
     else:
         models = None
-
+    get_m = MarkupSetting.objects.get(name='markup_customer')
+    markup_cus = MarkupCustomerCategory.objects.get(source_t=get_m.value)
     markup = MarkupMaterialCategory.objects.get(source_t=0)
     markup_c = MarkupCommon.objects.get(name='Общая')
+    markup_common = markup_c.markup * markup_cus.markup * markup.markup
+    markup_storage = markup_c.markup * markup_cus.markup
     settings = MarkupSetting.objects.get(name='markup_view')
     return render(request, 'common/textile_list.html', context={'qs': qs,
                                                                 'current_c': current_c,
                                                                 'current_m': current_m,
                                                                 'markup': markup.markup,
                                                                 'markup_c': markup_c.markup,
+                                                                'markup_cus': markup_cus.markup,
+                                                                'markup_common': markup_common,
+                                                                'markup_storage': markup_storage,
+                                                                'get_m': get_m,
                                                                 'collection': collection,
                                                                 'models': models,
                                                                 'settings': settings})

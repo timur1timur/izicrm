@@ -54,7 +54,7 @@ class MarkupCommon(models.Model):
 class MarkupSetting(models.Model):
 
     name = models.CharField(verbose_name='Название', max_length=100)
-    value = models.IntegerField(verbose_name='Значение', default=0)
+    value = models.FloatField(verbose_name='Значение', default=0)
 
     def __str__(self):
         return self.name

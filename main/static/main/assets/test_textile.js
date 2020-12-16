@@ -1,11 +1,57 @@
 const FormBox = document.getElementById('textile-formid')
 const CollectionBox = document.getElementById('collection-data-box')
 const ModelBox = document.getElementById('model-data-box')
+const MarkupBox = document.getElementById('markup-data-box')
 
 const endpointCollection = document.getElementById('endpoint-collection')
 const endpointModel = document.getElementById('endpoint-model')
 const endpointMarkup = document.getElementById('endpoint-markup')
+const endpointSetMarkup = document.getElementById('endpoint-set-markup')
 
+
+
+$.ajax({
+    type: 'GET',
+    url: endpointMarkup.textContent,
+    success: function(response){
+        console.log(response.data)
+        const MarkupData = response.data
+        MarkupData.map(item=>{
+            const option = document.createElement('option')
+            option.textContent = item.source_t
+            option.setAttribute('value', item.source_t)
+            MarkupBox.appendChild(option)
+            const currentMarkup = document.getElementById('current-customer').textContent
+            $("#markup-data-box").val(currentMarkup).change();
+        })
+    },
+    error: function(error){
+        console.log(error)
+    },
+
+})
+
+MarkupBox.addEventListener('change', e=>{
+    console.log(e.target.value)
+    const SelectedMarkup = e.target.value
+
+    $.ajax({
+        type: 'GET',
+        url: endpointSetMarkup.textContent,
+        data: {
+            'customer': SelectedMarkup,
+        },
+        success: function(response){
+            console.log(response)
+
+        },
+        error: function(error){
+            console.log(error)
+        },
+
+    })
+    document.location.reload()
+})
 
 $.ajax({
     type: 'GET',

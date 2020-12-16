@@ -8,8 +8,10 @@
     <!--================================-->
     {% if user.is_authenticated %}
        <li class="list-inline-item dropdown">
+
           <a  href="" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <img src="/static/main/assets/images/users-face/female_icon.png" class="img-fluid wd-30 ht-30 rounded-circle" alt="">
+             <span class="tx-13 tx-gray-600">{{ user.get_full_name }}</span>
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-profile">
              <div class="user-profile-area">
