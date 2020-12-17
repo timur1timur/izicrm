@@ -29,24 +29,20 @@
                            <div class="card-body pd-0">
                             <div class="row">
                                  <div class="mg-20 form-inline wd-100p">
-                                    <div class="col-sm-6">
-                                       <div class="form-group">
-                                           <span>Коллекция:</span>
-
-                                          <select id="foo-filter-status" class="custom-select custom-select-sm mg-l-10">
-                                             <option value="">Показать все</option>
+                                    <div class="col-sm-4">
+                                       <div class="input-group mb-3">
+                                           <div class="input-group-prepend">
+                                              <span class="input-group-text">Коллекция</span>
+                                           </div>
+                                           <select id="foo-filter-status" class="custom-select">
+                                               <option value="">Показать все</option>
                                               {% for c in collection %}
                                                 <option value="{{c.name}}">{{c.name|title}}</option>
                                               {% endfor %}
-
-                                          </select>
+                                           </select>
                                        </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                       <div class="form-group ft-right">
-                                          <input id="foo-search" type="text" placeholder="Поиск" class="form-control form-control-sm" autocomplete="off">
-                                       </div>
-                                    </div>
+                                    
                                  </div>
                               </div>
                               <table id="foo-filtering" class="table table-bordered table-hover toggle-circle" data-page-size="50">

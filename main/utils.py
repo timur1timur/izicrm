@@ -45,7 +45,15 @@ def GetMarkupMaterials(order, type_item):
     markup_id = MarkupMaterialCategory.objects.get(source_t=type_item)
     markup_common = MarkupCommon.objects.get(id=1)
     markup_full = markup_cus.markup * markup_id.markup * markup_common.markup
-    return round(markup_full, 2)
+    return markup_full
+
+def GetMarkupMaterialsStorage(order):
+    cus = Customer.objects.get(order=order)
+    markup_cus = MarkupCustomerCategory.objects.get(source_t=cus.source_t)
+    markup_common = MarkupCommon.objects.get(id=1)
+    markup_full = markup_cus.markup * markup_common.markup
+    return markup_full
+
 
 def GetMarkupWorks(order, type_item):
     cus = Customer.objects.get(order=order)
@@ -53,7 +61,7 @@ def GetMarkupWorks(order, type_item):
     markup_id = MarkupWorkCategory.objects.get(source_t=type_item)
     markup_common = MarkupCommon.objects.get(id=1)
     markup_full = markup_cus.markup * markup_id.markup * markup_common.markup
-    return round(markup_full, 2)
+    return markup_full
 
 
 import os

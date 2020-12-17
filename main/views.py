@@ -8,12 +8,12 @@ from orders.models import Specification, OrderItemTextile1, OrderItemCornice, Or
     OrderItemWorkHanging, OrderItemWorkDelivery, PaymentCategory, OrderItemCorniceAdditional
 from works.models import Work
 from materials.models import Textile, Cornice, TextileCollection, CorniceAdditional, CorniceAdditionalOptions, \
-    CorniceCollectionColor
+    CorniceCollectionColor, CorniceCollection
 
 from django.contrib.auth.decorators import login_required
 
 from .utils import ObjectRemove, ObjectRemove2, ShortName, ObjectRemove3, GetMarkupMaterials, GetMarkupWorks, \
-    GetContractP, create_contract
+    GetContractP, create_contract, GetMarkupMaterialsStorage
 import openpyxl
 from django.core.files import File
 from os.path import join
@@ -473,10 +473,14 @@ def TextileReview(request, id, collection_id, model_id):
         models = None
 
     markup = GetMarkupMaterials(sp.order, 0)
+    markup_storage = GetMarkupMaterialsStorage(sp.order,)
+    print(markup)
+    print(markup_storage)
     return render(request, 'main/add_textile.html', context={'qs': qs,
                                                              'storage': textile_storage,
                                                              'id': id,
                                                              'markup': markup,
+                                                             'markup_storage': markup_storage,
                                                              'current_c': current_c,
                                                              'current_m': current_m,
                                                              'collection': collection,
@@ -539,7 +543,8 @@ def CorniceReview(request, id):
         sp = Specification.objects.get(pk=id)
         cornice = Cornice.objects.all()
         markup = GetMarkupMaterials(sp.order, 1)
-        return render(request, 'main/add_cornice.html', context={'cornice': cornice, 'id': id, 'markup': markup})
+        collection = CorniceCollection.objects.all()
+        return render(request, 'main/add_cornice.html', context={'cornice': cornice, 'id': id, 'markup': markup, 'collection': collection})
 
 @login_required(login_url='login')
 def SpecificationCorniceAdd(request, id, prod_id):

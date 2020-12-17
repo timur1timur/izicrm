@@ -133,14 +133,14 @@
 
                                                 {% if request.user|has_group:"designer" or settings.value == 1 %}
                                                     {% if q.id|get_storage_price %}
-                                                        {{q.id|get_storage_price|mul:markup_storage|floatformat}}
+                                                        {{q.id|get_storage_price|mul:markup_storage|floatformat:2}}
                                                     {% else %}
                                                         {% if q.currency == '$' %}
-                                                            {{ q.price_opt|mul:markup_common|floatformat|get_currency_price:1 }} руб. (${{ q.price_opt|mul:markup_common|floatformat }})
+                                                            {{ q.price_opt|mul:markup_common|floatformat:2|get_currency_price:1 }} руб. (${{ q.price_opt|mul:markup_common|floatformat:2 }})
                                                         {% elif q.currency == 'euro' %}
-                                                            {{ q.price_opt|mul:markup_common|floatformat|get_currency_price:2 }} руб. (€{{ q.price_opt|mul:markup_common|floatformat }})
+                                                            {{ q.price_opt|mul:markup_common|floatformat:2|get_currency_price:2 }} руб. (€{{ q.price_opt|mul:markup_common|floatformat:2 }})
                                                         {% else %}
-                                                            {{ q.price_opt|mul:markup_common|floatformat }} руб.
+                                                            {{ q.price_opt|mul:markup_common|floatformat:2 }} руб.
                                                         {% endif %}
                                                     {% endif %}
                                                 {% else %}

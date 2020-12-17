@@ -73,7 +73,9 @@
                                             <td>{{ q.color }}</td>
                                             <td>
                                                 {% if q.id|get_storage_price %}
-                                                    {{q.id|get_storage_price|mul:markup|floatformat}} {{q.currency}}
+                                                    {{q.id|get_storage_price|mul:markup_storage|floatformat:2}} {{q.currency}}
+
+
                                                 {% else %}
                                                     {% if q.currency == '$' %}
                                                         {{ q.price_opt|mul:markup|floatformat|get_currency_price:1 }} руб. (${{ q.price_opt|mul:markup|floatformat }})
@@ -127,6 +129,6 @@
 
 <script src="{% static 'main/assets/plugins/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'main/assets/plugins/jquery-ui/jquery-ui.js' %}"></script>
-<script src="{% static 'main/assets/test_textile.js' %}"></script>
+<script src="{% static 'main/assets/order_textile.js' %}"></script>
 {% endblock %}
 

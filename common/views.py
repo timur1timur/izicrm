@@ -474,7 +474,9 @@ def TextileListFilter(request, collection_id, model_id):
     markup = MarkupMaterialCategory.objects.get(source_t=0)
     markup_c = MarkupCommon.objects.get(name='Общая')
     markup_common = markup_c.markup * markup_cus.markup * markup.markup
+    print(markup_common)
     markup_storage = markup_c.markup * markup_cus.markup
+    print(f'Markup storage: {markup_storage}')
     settings = MarkupSetting.objects.get(name='markup_view')
     return render(request, 'common/textile_list.html', context={'qs': qs,
                                                                 'current_c': current_c,

@@ -380,6 +380,7 @@ class Payment(models.Model):
 
 
 from markup.models import MarkupCurrency
+from storage.models import StorageItemTextile
 
 class OrderItemTextile1(models.Model):
     ORDER_STATE = (
@@ -422,12 +423,19 @@ class OrderItemTextile1(models.Model):
     def total_price(self):
         usd = MarkupCurrency.objects.get(name='USD')
         eur = MarkupCurrency.objects.get(name='EUR')
-        if self.item.currency == '$':
-            t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t * float(usd.value) * 1.03
-        elif self.item.currency == 'euro':
-            t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t * float(eur.value) * 1.03
+        m_textile = MarkupMaterialCategory.objects.get(source_t=0)
+
+        storage = StorageItemTextile.objects.all().values_list('item', flat=True)
+        if self.item.pk in storage:
+            g_obj_price = StorageItemTextile.objects.get(item=self.item.pk)
+            t_price = g_obj_price.price_f * self.quantity * (self.markup/m_textile.markup) * self.order.discount_t
         else:
-            t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t
+            if self.item.currency == '$':
+                t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t * float(usd.value) * 1.03
+            elif self.item.currency == 'euro':
+                t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t * float(eur.value) * 1.03
+            else:
+                t_price = self.item.price_opt * self.quantity * self.markup * self.order.discount_t
         return round(t_price, 2)
 
     def remove_textile(self):
