@@ -1009,8 +1009,28 @@ def OfferSelect(request, id):
         sp.order.status_css = 2
         sp.progress = 2
         sp.order.save(update_fields=['status', 'progress', 'status_css'])
-    return redirect('main:order_view', id=sp.order.pk)
+    return redirect('main:get_comment', id=sp.order.pk)
 
+@login_required(login_url='login')
+def CheckComment(request, id):
+    get_order = Order.objects.get(pk=id)
+    get_offer = Offer.objects.get(order=get_order)
+
+    if request.method == 'GET':
+        rooms = Room.objects.filter(order=get_order, status=1)
+        return render(request, 'main/get_comment.html', context={'rooms': rooms})
+
+    if request.method == 'POST':
+        rooms = Room.objects.filter(order=get_order, status=1)
+        for room in rooms:
+            comment1 = request.POST.get(f"comment1-{room.id}", None)
+            comment2 = request.POST.get(f"comment2-{room.id}", None)
+            print(comment1, comment2)
+            instance = Specification.objects.get(order=get_order, room=room, version=get_offer.version.version)
+            instance.comment1 = comment1
+            instance.comment2 = comment2
+            instance.save(update_fields=['comment1', 'comment2'])
+        return redirect('main:order_view', id=get_order.pk)
 
 def ContractCreateWord(request, id):
     order_id = Order.objects.get(pk=id)

@@ -230,6 +230,8 @@ class Room(models.Model):
     order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Заказ')
     status = models.BooleanField(verbose_name="Статус", max_length=1, blank=True, default=0)
 
+
+
     def __str__(self):
         return str(self.name)
 
@@ -267,6 +269,9 @@ class Specification(models.Model):
     hanging_total = models.CharField(verbose_name='Сумма развеска', max_length=100, blank=True)
     delivery_total = models.CharField(verbose_name='Сумма доставка', max_length=100, blank=True)
     total = models.CharField(verbose_name='Общая сумма', max_length=100, blank=True)
+    comment1 = models.CharField(verbose_name='Comment1', max_length=300, blank=True)
+    comment2 = models.CharField(verbose_name='Comment1', max_length=300, blank=True)
+
 
     def __str__(self):
         return str(self.get_version_display())

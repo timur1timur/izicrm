@@ -111,7 +111,7 @@ class PaymentFormDirector(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PaymentFormDirector, self).__init__(*args, **kwargs)
         self.fields['category'].queryset = PaymentCategory.objects.filter(type_p=1)
-        self.fields['order'].queryset = Order.objects.all()
+        self.fields['order'].queryset = Order.objects.filter(status__gte=5)
 
     class Meta:
         model = Payment

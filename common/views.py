@@ -155,6 +155,42 @@ def PaymentCreate(request):
         return render(request, 'main/payment_create.html', context={'form': form})
 
 @login_required(login_url='login')
+def PaymentEdit(request, id):
+
+    if request.method == 'GET':
+        pay = Payment.objects.get(pk=id)
+        form = PaymentForm({
+            'category': pay.category,
+            'type_money': pay.type_money,
+            'price': pay.price,
+            'receipt': pay.receipt,
+
+        })
+        return render(request, 'common/payment_edit.html', context={'form': form, 'category': pay.category})
+
+    if request.method == 'POST':
+        form = PaymentForm(request.POST)
+        type_money = request.POST.get("type_money", None)
+        price = request.POST.get("price", None)
+        receipt = request.POST.get("receipt", None)
+
+        if type_money !=None and price != None and receipt !=None:
+            instance = Payment.objects.get(pk=id)
+            instance.type_money = type_money
+            instance.price = price
+            instance.receipt = receipt
+            instance.save(update_fields=['type_money', 'price', 'receipt'])
+            return redirect('common:payments_list')
+        return render(request, 'main/payment_create.html', context={'form': form})
+
+@login_required(login_url='login')
+def PaymentRemove(request, id):
+    instance = Payment.objects.get(pk=id)
+    instance.delete()
+    return redirect('common:payments_list')
+
+
+@login_required(login_url='login')
 def WorksList(request):
     qs = Work.objects.all()
     markup = MarkupWorkCategory.objects.all()
@@ -388,6 +424,7 @@ def search_textile(request, q):
     return render(request, 'common/textile_search.html', context={'qs_m': qs_model,
                                                                   'qs_a': qs_article,
                                                                   'qs_c': qs_collection,
+                                                                  'q': q
                                                                   })
 
 

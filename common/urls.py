@@ -10,7 +10,7 @@ from .views import CustomerList, CustomerCreate, TextileManufactList, TextileMan
     CorniceCollectionColorList, CorniceCollectionColorRemove, CorniceCollectionColorEdit, CorniceAdditionalOptionsAdd, \
     CorniceAdditionalOptionsEdit, CorniceAdditionalOptionsList, CorniceAdditionalOptionsRemove, CustomerEdit,\
     PaymentCategoryCreate, test_textile, get_json_collection, get_json_models, get_json_qs, get_markup_customer, \
-    set_markup_customer, search_textile
+    set_markup_customer, search_textile, PaymentEdit, PaymentRemove
 
 app_name = 'common'
 
@@ -21,9 +21,11 @@ urlpatterns = [
     path('customers/create/', CustomerCreate, name="customer_create"),
     path('customers/edit/<id>/', CustomerEdit, name="customer_edit"),
 
-
     path('payments/list/', PaymentsList, name="payments_list"),
     path('payments/create/', PaymentCreate, name="payment_create"),
+    path('payments/edit/<id>/', PaymentEdit, name="payment_edit"),
+    path('payments/remove/<id>/', PaymentRemove, name="payment_remove"),
+
     path('payments_category/create/', PaymentCategoryCreate, name="payment_category_create"),
 
     path('works/list/', WorksList, name="works_list"),

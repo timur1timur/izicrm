@@ -128,6 +128,8 @@ def GetContractP(id):
         designer = 'C6'
         customer = 'C7'
         name_d = 'J2'
+        comment1 = 'A14'
+        comment2 = 'H14'
 
         total = 'C101'
         textile_t = 'F51'
@@ -143,6 +145,9 @@ def GetContractP(id):
         discount_w_a = 'I82'
         discount_w_h = 'I91'
         discount_w_d = 'I99'
+
+        sheet[comment1] = sp.comment1
+        sheet[comment2] = sp.comment2
 
 
         sheet[total] = sp.total
@@ -329,7 +334,7 @@ def GetContractP(id):
         wb.save(path)
         wb.close()
 
-        convertapi.api_secret = 'JP1PQL3pMArtbl1P'
+        convertapi.api_secret = 'YrZSC1eLpGtaesdR'
         result = convertapi.convert('pdf', {'File': f'{path}', 'PdfResolution': '60'})
         name_pdf = f'contract_{order_id.number}_Приложение{id_doc}.pdf'
         result.file.save(f'{join(settings.MEDIA_ROOT, name_pdf)}')
@@ -382,7 +387,7 @@ def create_contract(id):
 
     doc.render(context)
     doc.save(f)
-    convertapi.api_secret = 'JP1PQL3pMArtbl1P'
+    convertapi.api_secret = 'YrZSC1eLpGtaesdR'
     result = convertapi.convert('pdf', {'File': f'{path}'})
     name_pdf = f'contract_{order_id.number}.pdf'
     result.file.save(f'{join(settings.MEDIA_ROOT, name_pdf)}')

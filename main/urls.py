@@ -8,7 +8,7 @@ from .views import  SpecificationTextileAdd, SpecificationViewD, \
     OrderCreateCustomer, SpecificationCopy, TextileReview, CorniceReview, SpecificationHangingAdd, SpecificationDeliveryAdd, \
     SpecificationHangingRemove, SpecificationDeliveryRemove, OrderArchive, GetDiscount, RefreshDiscount, home, SpecificationTextileEdit, \
     SpecificationCorniceAdditionalReview, SpecificationCorniceAdditionalAdd, SpecificationCorniceAdditionalRemove, ViewContract, \
-    GetContractPDF, GetContractAppPDF
+    GetContractPDF, GetContractAppPDF, CheckComment
 
 
 app_name = 'main'
@@ -73,6 +73,7 @@ urlpatterns = [
 
     path('offer/create/<id>/', OfferCreate, name="offer_create"),
     path('offer/select/<id>/', OfferSelect, name="offer_select"),
+    path('offer/get_comment/<id>/', CheckComment, name="get_comment"),
     path('payment/create/<id>/', PaymentCreate, name="prepay_create"),
     path('test_template/', TestTemplate),
 

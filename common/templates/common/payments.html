@@ -66,8 +66,11 @@
                                             <td>{{ q.price }}</td>
                                             <td>{{ q.receipt }}</td>
                                             <td class="tx-right">
-                                                <a href=""  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
-                                                <a href="" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                {% if q.category.type_p == 0 %}
+                                                    <a href="{% url 'common:payment_edit' id=q.id %}"  title="" data-toggle="tooltip" data-original-title="Изменить"><i data-feather="edit-3" class="wd-16 mr-2"></i></a>
+                                                    <a href="{% url 'common:payment_remove' id=q.id %}" title="" data-toggle="tooltip" data-original-title="Удалить"><i data-feather="x" class="wd-16"></i></a>
+                                                {% else %}
+                                                {%endif%}
                                             </td>
                                         </tr>
                                     {% endfor %}
