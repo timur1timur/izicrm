@@ -412,6 +412,7 @@ class OrderItemTextile1(models.Model):
     version = models.CharField(verbose_name='Версия', max_length=100, blank=True)
     order = models.ForeignKey(Order, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Заказ')
     item = models.ForeignKey(Textile, null=True, on_delete=models.CASCADE, verbose_name='Материал', )
+    designation = models.CharField(verbose_name='Обозначение', max_length=100, blank=True)
     quantity = models.FloatField(default=1, verbose_name='Количество')
     markup = models.FloatField(verbose_name='Наценка', max_length=100, default=1)
     ordered = models.IntegerField(verbose_name="Состояние заказа", choices=ORDER_STATE, default=0)
@@ -423,6 +424,7 @@ class OrderItemTextile1(models.Model):
 
     def save(self, *args, **kwargs):
         self.version = self.specification.get_version_display()
+        self.designation = self.item.designation
         super(OrderItemTextile1, self).save(*args, **kwargs)
 
     def total_price(self):

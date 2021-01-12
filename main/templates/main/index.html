@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="/static/main/assets/1/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/main/assets/1/css/styles.css">
+</head>
+
+<body style="border: 0px solid var(--dark) ;">
+  
+  {% if finish.econom %}
+    <page size="A4">
+      <div class="container" style="text-align:center;"><img src="/static/main/assets/1/img/clipboard-image.png" style="width: 150px"></div>
+      <div class="container" style="text-align:center;">
+          <h4 style="margin-bottom: 10px;margin-top: 22px;margin-left: 5px;">Эконом</h4>
+      </div>
+      <div class="card-group">
+        {% for room in rooms %}
+          <div class="card" style="max-width: 310px;border-width: 0px;">
+
+              <div class="card-body" style="border-style: none;max-width: 310px;width: 310px;">
+                  <h1 style="color: rgb(131,131,131);font-size: 30px;letter-spacing: -1px;margin-bottom: 20px;">{{room.name}}</h1>
+                  <div class="card">
+                      <div class="card-body" style="background: rgb(236,213,237);border-color: var(--dark);padding-top: 20px;min-height: 140px;max-height: 212px;">
+
+                          <h4 class="card-title"></h4>
+                          {% for pos in sps|get_item:room.name|get_item:"Econom"|get_item:"position" %}
+                            <p class="card-text">{{ pos }}</p>
+                          {% endfor %}
+                      </div>
+                  </div>
+                  <div class="container" style="text-align:left;">
+
+                    <p style="font-size: 17px;margin: 10px;padding: 0px;">
+
+                      {% if sps|get_item:room.name|get_item:"Econom"|get_item:"textile" != '0'%}
+                         Ткани - {{ sps|get_item:room.name|get_item:"Econom"|get_item:"textile" }}
+                         {% if sps|get_item:room.name|get_item:"Econom"|get_item:"textile_d" %}
+                            ({{ sps|get_item:room.name|get_item:"Econom"|get_item:"textile_d" }})
+                         {% endif %}
+                      {% else %}
+                      {% endif %}
+                    </p>
+                    <p style="font-size: 17px;margin: 10px;padding: 0px;">
+
+                      {% if sps|get_item:room.name|get_item:"Econom"|get_item:"sewing" != '0'%}
+                         Пошив - {{ sps|get_item:room.name|get_item:"Econom"|get_item:"sewing" }}
+                         {% if sps|get_item:room.name|get_item:"Econom"|get_item:"sewing_d" %}
+                            ({{ sps|get_item:room.name|get_item:"Econom"|get_item:"sewing_d" }})
+                         {% endif %}
+                      {% else %}
+                      {% endif %}
+                    </p>
+                    <p style="font-size: 17px;margin: 10px;padding: 0px;">
+
+                      {% if sps|get_item:room.name|get_item:"Econom"|get_item:"hanging" != '0'%}
+                         Развеска штор - {{ sps|get_item:room.name|get_item:"Econom"|get_item:"hanging" }}
+                         {% if sps|get_item:room.name|get_item:"Econom"|get_item:"hanging_d" %}
+                            ({{ sps|get_item:room.name|get_item:"Econom"|get_item:"hanging_d" }})
+                         {% endif %}
+                      {% else %}
+                      {% endif %}
+                    </p>
+                    <p style="font-size: 17px;margin: 10px;padding: 0px;">
+
+                      {% if sps|get_item:room.name|get_item:"Econom"|get_item:"cornice" != '0'%}
+                         Карнизы - {{ sps|get_item:room.name|get_item:"Econom"|get_item:"cornice" }}
+                         {% if sps|get_item:room.name|get_item:"Econom"|get_item:"cornice_d" %}
+                            ({{ sps|get_item:room.name|get_item:"Econom"|get_item:"cornice_d" }})
+                         {% endif %}
+                      {% else %}
+                      {% endif %}
+                    </p>
+                    <p style="font-size: 17px;margin: 10px;padding: 0px;">
+
+                      {% if sps|get_item:room.name|get_item:"Econom"|get_item:"assembly" != '0'%}
+                         Установка - {{ sps|get_item:room.name|get_item:"Econom"|get_item:"assembly" }}
+                         {% if sps|get_item:room.name|get_item:"Econom"|get_item:"assembly_d" %}
+                            ({{ sps|get_item:room.name|get_item:"Econom"|get_item:"assembly_d" }})
+                         {% endif %}
+                      {% else %}
+                      {% endif %}
+                    </p>
+                    <p style="font-size: 17px;margin: 10px;padding: 0px;">
+
+                      {% if sps|get_item:room.name|get_item:"Econom"|get_item:"delivery" != '0'%}
+                         Доставка - {{ sps|get_item:room.name|get_item:"Econom"|get_item:"delivery" }}
+                         {% if sps|get_item:room.name|get_item:"Econom"|get_item:"delivery_d" %}
+                            ({{ sps|get_item:room.name|get_item:"Econom"|get_item:"delivery_d" }})
+                         {% endif %}
+                      {% else %}
+                      {% endif %}
+                    </p>
+                  </div>
+              </div>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="container" style="text-align:center;">
+          <h5 style="margin-bottom: 10px;margin-top: 22px;margin-left: 5px;">ИТОГО Эконом: {{finish.econom}}</h4>
+      </div>
+      <div class="row" style="margin-top: 60px;">
+          <div class="col" style="margin-top: 10px;margin-left: 22px;width: 30%;max-width: 30%;"><span style="margin-bottom: 0px;margin-top: 0px;padding-bottom: 0px;font-size: 12px;">IZIDECOR.RU</span></div>
+          <div class="col" style="margin-top: 10px;width: 60%;max-width: 60%;"><span style="margin-top: 0px;font-size: 12px;margin-left: 96px;margin-bottom: 0px;">СПБ, Парфеновская дом 9 строение 1</span></div>
+          <div class="col" style="margin-left: 0px;width: 10%;max-width: 10%;"><img src="/static/main/assets/1/img/clipboard-image-1.png" style="width: 45px;margin-left: -18px;"></div>
+      </div>
+    </page>
+  {% endif %}
+    <script src="/static/main/assets/js/jquery.min.js"></script>
+    <script src="/static/main/assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>

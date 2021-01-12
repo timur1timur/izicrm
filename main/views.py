@@ -787,9 +787,42 @@ def Test(request):
     }
     return render(request, 'main/pages-invoice.html', context)
 
+from django.db.models import Count, Sum, Avg
+
+
+def GetSpecPosition(sp):
+    spd = Specification.objects.get(id=sp.id)
+    textile = OrderItemTextile1.objects.filter(specification=spd)
+    dis_textile = OrderItemTextile1.objects.filter(specification=spd).values('designation').distinct()
+    mass = {}
+
+    for t in dis_textile:
+        summ = 0
+        quantity = textile.filter(designation=t['designation']).aggregate(Sum('quantity'))
+        for k in textile.filter(designation=t['designation']):
+            summ += k.total_price()
+        mass[t['designation']] = round((summ/quantity['quantity__sum']),2)
+
+
+    mass_finish = []
+    for t in mass:
+        t_fin = f'{t} - {mass[t]} м.п'
+        mass_finish.append(t_fin)
+    return (mass_finish)
+
+import imgkit
+
+def GetKPimage():
+    imgkit.from_url('http://google.com', 'out.jpg')
+
 
 @login_required(login_url='login')
 def OrderCreateKp(request, id):
+    order = Order.objects.get(pk=id)
+    if request.method == 'POST':
+        GetKPimage()
+        return redirect('main:order_view', id=order.pk)
+
     qs = Order.objects.get(pk=id)
     rooms = Room.objects.filter(order=qs, status=True)
     mass_rooms = {}
@@ -813,6 +846,7 @@ def OrderCreateKp(request, id):
                 mass_var['delivery'] = sp.delivery_total
                 mass_var['delivery_d'] = round(float(sp.delivery_total) - float(sp.delivery_total)/qs.discount_w, 2)
 
+
                 temp_var = round(float(sp.textile_total) - float(sp.textile_total)/qs.discount_t, 2) \
                            + round(float(sp.cornice_total) - float(sp.cornice_total)/qs.discount_c, 2) \
                            + round(float(sp.sewing_total) - float(sp.sewing_total)/qs.discount_w, 2) \
@@ -831,7 +865,9 @@ def OrderCreateKp(request, id):
                 mass_var['hanging'] = sp.hanging_total
                 mass_var['delivery'] = sp.delivery_total
                 mass_var['total'] = sp.total
+                mass_var['position'] = GetSpecPosition(sp)
                 mass_sp[sp.version] = mass_var
+
 
     if qs.discount_t < 1 or qs.discount_c < 1 or qs.discount_w < 1:
         dis_state = {
@@ -873,7 +909,10 @@ def OrderCreateKp(request, id):
         'finish': finish_mass
     }
 
-    return render(request, 'main/pages-invoice.html', context)
+    # return render(request, 'main/pages-invoice.html', context)
+    return render(request, 'main/index.html', context)
+
+
 
 
 @login_required(login_url='login')
