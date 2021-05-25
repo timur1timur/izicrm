@@ -545,7 +545,10 @@ def TextileAdd(request):
         height = request.POST.get("height", None)
         price_opt = request.POST.get("price_opt", None)
         currency = request.POST.get("currency", None)
-
+        is_active = request.POST.get("fruits", None)
+        print(is_active)
+        if is_active == None:
+            is_active = 0
 
         if collection != None and model != None and price_opt != None:
             collection_obj = TextileCollection.objects.get(pk=collection)
@@ -556,7 +559,8 @@ def TextileAdd(request):
                 color=color,
                 height=height,
                 price_opt=price_opt,
-                currency=currency
+                currency=currency,
+                is_active=is_active
 
             )
             instance.manufacturer = manufacturer_obj
@@ -579,7 +583,8 @@ def TextileEdit(request, id):
                             'height': textile_id.height,
                             'currency': textile_id.currency,
                             'price_opt': textile_id.price_opt,
-                            'article': textile_id.article})
+                            'article': textile_id.article,
+                            'is_active': textile_id.is_active})
         return render(request, 'common/textile_edit.html', context={'form': form})
 
     if request.method == 'POST':
@@ -591,6 +596,13 @@ def TextileEdit(request, id):
         price_opt = request.POST.get("price_opt", None)
         article = request.POST.get("article", None)
         currency = request.POST.get("currency", None)
+        is_active = request.POST.get("is_active", None)
+        print(is_active)
+        if is_active == 'on':
+            is_active = 1
+            print(is_active)
+        else:
+            is_active = 0
 
 
         if collection != None and model != None and price_opt != None:
@@ -603,8 +615,9 @@ def TextileEdit(request, id):
             instance.price_opt = price_opt
             instance.article = article
             instance.currency = currency
+            instance.is_active = is_active
 
-            instance.save(update_fields=['model', 'color', 'height', 'price_opt', 'article', 'currency'])
+            instance.save(update_fields=['model', 'color', 'height', 'price_opt', 'article', 'currency', 'is_active'])
             return redirect('common:textile_filter', collection_id=collection_g.id, model_id='all')
         return render(request, 'common/textile_edit.html', context={'form': form})
 
@@ -1248,7 +1261,7 @@ def dashboard_manager(request):
         date2_mass.append([y, d.strftime("%d.%m")])
         y += 1
 
-    max_mass = []
+    max_mass = [0]
     for m in arrival_mass:
         max_mass.append(m[1])
 

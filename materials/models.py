@@ -30,7 +30,7 @@ class Textile(models.Model):
     article = models.CharField(verbose_name='Артикул', max_length=100, blank=True)
     manufacturer = models.ForeignKey(TextileManufact, null=True, on_delete=models.CASCADE, verbose_name='Производитель', blank=True)
     collection = models.ForeignKey(TextileCollection, null=True, on_delete=models.CASCADE, verbose_name='Коллекция')
-    designation = models.CharField(verbose_name='Обозначение', max_length=100, blank=True)
+    designation = models.CharField(verbose_name='Обозначение', max_length=100, blank=True, null=True)
     model = models.CharField(verbose_name='Модель', max_length=100)
     color = models.CharField(verbose_name='Цвет', max_length=100, default='', null=True, blank=True)
     height = models.CharField(verbose_name='Высота', max_length=100, null=True, blank=True)
@@ -38,6 +38,7 @@ class Textile(models.Model):
     currency = models.CharField(verbose_name='Валюта', max_length=100, default='руб.', null=True, blank=True)
     type_i = models.CharField(verbose_name='Тип измерения', max_length=100, default='м', null=True, blank=True)
     date_created = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True, null=True)
+    is_active = models.BooleanField(verbose_name="Снят с производства", default=0)
 
     def __str__(self):
         return self.article

@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         print(os.getcwd())
-        wb = openpyxl.load_workbook(filename='materials/cat.xlsx')
+        wb = openpyxl.load_workbook(filename='materials/cat3.xlsx')
         sheetnames = wb.sheetnames
 
         for s in sheetnames:
@@ -63,13 +63,18 @@ class Command(BaseCommand):
                 height = sheet[f'H{z}'].value
                 price = sheet[f'I{z}'].value
                 currency = sheet[f'J{z}'].value
+                is_active = sheet[f'K{z}'].value
+                if is_active == '-':
+                    is_active = 1
+                else:
+                    is_active = 0
 
                 base_supplier = TextileManufact.objects.get(name=supplier)
                 base_collections = TextileCollection.objects.get(manufacturer=base_supplier, name=collection)
 
                 if Textile.objects.get_or_create(manufacturer=base_supplier, collection=base_collections,
                                                  model=transliterate(str(model)), color=color,
-                                                 height=height, price_opt=price, designation=designation, currency=currency):
+                                                 height=height, price_opt=price, designation=designation, currency=currency, is_active=is_active):
                     instance = Textile.objects.get(manufacturer=base_supplier, collection=base_collections,
                                                    model=transliterate(str(model)), color=color,
                                                    height=height, price_opt=price)
@@ -87,7 +92,7 @@ class Command(BaseCommand):
         # obj = Textile.objects.filter(date_created__gte='2020-10-29')
         #
         #
-        # # obj = Textile.objects.filter(manufacturer__name='Дом Каро')
+        # obj = Textile.objects.all()
         # for ob in obj:
         #     print(ob.id, ob.article)
         #     ob.delete()

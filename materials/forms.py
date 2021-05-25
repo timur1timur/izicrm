@@ -120,15 +120,25 @@ class CorniceCollectionForm(forms.ModelForm):
         }
 
 class TextileForm(forms.ModelForm):
+    is_active = forms.BooleanField(required=False)
+
+
     class Meta:
         model = Textile
-        fields = ['manufacturer', 'collection', 'model', 'color', 'height', 'price_opt', 'article', 'currency']
+        fields = ['manufacturer', 'collection', 'model', 'color', 'height', 'price_opt', 'article', 'is_active', 'currency']
 
         widgets = {
             "manufacturer": forms.Select(
                 attrs={
                     "type": "Select",
                     "class": "custom-select",
+
+                }
+            ),
+            "is_active": forms.CheckboxSelectMultiple(
+                attrs={
+                    "type": "checkbox",
+                    "class": "custom-checkbox custom-control-input",
 
                 }
             ),

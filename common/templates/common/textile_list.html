@@ -107,6 +107,7 @@
                                         <th>Цвет</th>
                                          <th>СМ</th>
                                          <th>Цена</th>
+                                         <th>Снята?</th>
 
                                         {% if request.user|has_group:"designer" %}
                                          {% else %}
@@ -154,6 +155,11 @@
                                                 {% endif %}
 
 
+                                            </td>
+                                            <td>
+                                                {% if q.is_active %}
+                                                    Да
+                                                {% endif %}
                                             </td>
                                             {% if request.user|has_group:"designer" %}
                                             {% else %}
